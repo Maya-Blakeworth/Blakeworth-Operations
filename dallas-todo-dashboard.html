@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blakeworth — Weekly Operations Review</title>
+    <style>
+        :root {
+            --primary-light: #4A90E2;
+            --primary-dark: #357ABD;
+            --accent: #72C4E8;
+            --success: #27AE60;
+            --hold: #F39C12;
+            --reject: #E74C3C;
+            --bg-light: #FFFFFF;
+            --bg-secondary-light: #F5F8FB;
+            --text-light: #2C3E50;
+            --border-light: #D5E0EA;
+            --stuck-red: #DC2626;
+            --pending-yellow: #EAB308;
+            --inprogress-orange: #EA580C;
+            --new-blue: #2563EB;
+            
+            --bg-dark: #1A1F2E;
+            --bg-secondary-dark: #242A3A;
+            --text-dark: #E0E6ED;
+            --border-dark: #3F4654;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: background 0.3s ease, color 0.3s ease;
+            padding: 24px 20px;
+            line-height: 1.6;
+        }
+
+        body.dark-mode {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        body.dark-mode header {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            color: var(--primary-light);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .header-left p {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+        }
+
+        .header-meta {
+            font-size: 12px;
+            color: var(--primary-light);
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn {
+            background: var(--bg-secondary-light);
+            color: var(--text-light);
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .toggle-btn {
+            background: var(--bg-secondary-dark);
+            color: var(--text-dark);
+            border-color: var(--border-dark);
+        }
+
+        .export-btn {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .export-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .guidance {
+            background: var(--accent);
+            color: white;
+            padding: 14px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 28px;
+            line-height: 1.5;
+            display: flex;
+            gap: 12px;
+        }
+
+        .guidance-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .wins-section {
+            margin-bottom: 40px;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.08) 0%, rgba(39, 174, 96, 0.02) 100%);
+            border: 2px solid var(--success);
+            border-radius: 8px;
+        }
+
+        body.dark-mode .wins-section {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.15) 0%, rgba(39, 174, 96, 0.05) 100%);
+        }
+
+        .wins-section h2 {
+            font-size: 18px;
+            color: var(--success);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .wins-section p {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 16px;
+        }
+
+        .wins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 12px;
+        }
+
+        .win-item {
+            background: var(--bg-secondary-light);
+            padding: 12px 14px;
+            border-radius: 6px;
+            border-left: 4px solid var(--success);
+            font-size: 13px;
+        }
+
+        body.dark-mode .win-item {
+            background: var(--bg-secondary-dark);
+        }
+
+        .win-property {
+            font-size: 11px;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .portfolio-section {
+            margin-bottom: 36px;
+        }
+
+        .portfolio-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        .portfolio-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .item-count {
+            background: var(--primary-light);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .task-card {
+            background: var(--bg-secondary-light);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode .task-card {
+            background: var(--bg-secondary-dark);
+            border-color: var(--border-dark);
+        }
+
+        .task-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .task-description {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-light);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        body.dark-mode .task-description {
+            color: var(--text-dark);
+        }
+
+        .task-description.stuck {
+            color: var(--stuck-red);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .status-badge.stuck {
+            background: rgba(220, 38, 38, 0.15);
+            color: var(--stuck-red);
+        }
+
+        .status-badge.pending {
+            background: rgba(234, 179, 8, 0.15);
+            color: #a16207;
+        }
+
+        .status-badge.inprogress {
+            background: rgba(234, 88, 12, 0.15);
+            color: #7c2d12;
+        }
+
+        .status-badge.new {
+            background: rgba(37, 99, 235, 0.15);
+            color: var(--new-blue);
+        }
+
+        .status-badge.approval {
+            background: rgba(37, 99, 235, 0.15);
+            color: var(--new-blue);
+        }
+
+        .task-meta {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        body.dark-mode .task-actions {
+            border-top-color: var(--border-dark);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: 1.5px solid currentColor;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            background: transparent;
+            text-transform: uppercase;
+        }
+
+        .action-btn.yes { color: var(--success); }
+        .action-btn.yes.active { background: var(--success); color: white; }
+        .action-btn.hold { color: var(--hold); }
+        .action-btn.hold.active { background: var(--hold); color: white; }
+        .action-btn.no { color: var(--reject); }
+        .action-btn.no.active { background: var(--reject); color: white; }
+
+        .notes-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 6px 10px;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            font-size: 12px;
+            background: var(--bg-light);
+            color: var(--text-light);
+            font-family: inherit;
+        }
+
+        body.dark-mode .notes-input {
+            background: var(--bg-secondary-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .notes-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+
+        .final-comments {
+            margin-top: 40px;
+            padding: 24px;
+            background: var(--bg-secondary-light);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+        }
+
+        body.dark-mode .final-comments {
+            background: var(--bg-secondary-dark);
+            border-color: var(--border-dark);
+        }
+
+        .final-comments h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--primary-light);
+        }
+
+        .final-comments textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg-light);
+            color: var(--text-light);
+            min-height: 100px;
+        }
+
+        body.dark-mode .final-comments textarea {
+            background: var(--bg-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .empty-state {
+            padding: 20px;
+            text-align: center;
+            opacity: 0.5;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .header-left h1 { font-size: 24px; }
+            .task-actions { flex-direction: column; }
+            .notes-input { width: 100%; min-width: auto; }
+            .wins-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>Blakeworth Operations</h1>
+                <p>Weekly Review for Dallas</p>
+                <div class="header-meta" id="reportDate">Monday, May 12, 2026</div>
+            </div>
+            <div class="header-right">
+                <button class="toggle-btn" onclick="toggleDarkMode()">🌙 Dark</button>
+                <button class="export-btn" onclick="exportForEmail()">📋 View Summary</button>
+            </div>
+        </header>
+
+        <div class="guidance">
+            <div class="guidance-icon">ℹ️</div>
+            <div><strong>For your review:</strong> Items marked blue need your decision (Yes/No/Hold). All other items are updates—leave comments below if you have questions.</div>
+        </div>
+
+        <!-- WINS SECTION -->
+        <div class="wins-section">
+            <h2>✨ Quick Wins Completed Yesterday</h2>
+            <p>Ready to celebrate</p>
+            <div class="wins-grid" id="winsList"></div>
+        </div>
+
+        <!-- OPEN ITEMS BY PORTFOLIO -->
+        <div id="tasksContainer"></div>
+
+        <!-- FINAL COMMENTS -->
+        <div class="final-comments">
+            <h3>💬 Your Comments (Optional)</h3>
+            <textarea id="finalComments" placeholder="Add any questions, notes, or follow-ups..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            decisions: {},
+            notes: {},
+            finalComments: ''
+        };
+
+        // ACTUAL DATA FROM YOUR TRACKER (May 12, 2026)
+        const data = {
+            wins: {
+                "JHU PORTFOLIO": [
+                    { description: "Kasablanca Invoice - $1,095 — payment authorized" },
+                    { description: "JHU - violation and citation — documentation complete" }
+                ],
+                "Woodrow Apartments (JHU)": [
+                    { description: "Fix website listing for Unit A5 - incorrectly shows balcony (flagged by Heather)" }
+                ],
+                "Southlight": [
+                    { description: "PIERCE ST, LLC zelle information — received" }
+                ]
+            },
+            openItems: {
+                "Guilford Apartments": [
+                    {
+                        id: 1,
+                        description: "Ceiling tile still unresolved after 2 weeks",
+                        status: "Stuck",
+                        deadline: "2026-04-23",
+                        assignment: "Maya/Bernard"
+                    },
+                    {
+                        id: 2,
+                        description: "Advantage Cleaning Balance ($1,298.50) — awaiting PayPal link for payment",
+                        status: "In progress",
+                        deadline: "2026-05-23",
+                        assignment: "Dallas/Maya",
+                        isDallasApproval: false,
+                        isUpdate: true
+                    },
+                    {
+                        id: 3,
+                        description: "Mailbox Rekey — no word from Bernard",
+                        status: "Stuck",
+                        deadline: "2026-04-20",
+                        assignment: "Maya/Bernard/Dallas"
+                    },
+                    {
+                        id: 4,
+                        description: "Verizon quote ~$45/month for dial tone line (quote valid 15 days from 4/20)",
+                        status: "Stuck",
+                        deadline: "2026-04-20",
+                        assignment: "Maya"
+                    }
+                ],
+                "Woodrow Apartments (JHU)": [
+                    {
+                        id: 5,
+                        description: "URGENT: Security fix needed — break-in April 2, no lock on back door, no auto-lock on communal doors. Escalation for team meeting next week.",
+                        status: "New",
+                        deadline: "2026-05-09",
+                        assignment: "Dallas/Maya",
+                        isUpdate: true
+                    },
+                    {
+                        id: 6,
+                        description: "Units 1E and 2E move out 5/31 — confirm leasing pipeline with Heather",
+                        status: "In progress",
+                        deadline: "2026-05-31",
+                        assignment: "Maya"
+                    },
+                    {
+                        id: 7,
+                        description: "Confirm leasing follow-up for new leads: Reeya Ramasamy (2B/1B, 8/20) & Pranav Doradla (1BR, 8/15)",
+                        status: "In progress",
+                        deadline: "2026-05-11",
+                        assignment: "Maya"
+                    },
+                    {
+                        id: 8,
+                        description: "Units 6E and A1 currently vacant — confirm active marketing status with Heather",
+                        status: "In progress",
+                        deadline: null,
+                        assignment: "Maya"
+                    }
+                ],
+                "DC Properties": [
+                    {
+                        id: 9,
+                        description: "Approve $500 resident referral concession",
+                        status: "Pending",
+                        deadline: "2026-05-12",
+                        assignment: "Dallas approval",
+                        isDallasApproval: true
+                    },
+                    {
+                        id: 10,
+                        description: "Clarify $11,000 DOB balance — Ramonia to verify if cleared",
+                        status: "Pending",
+                        deadline: "2026-05-12",
+                        assignment: "Maya",
+                        isUpdate: true
+                    },
+                    {
+                        id: 11,
+                        description: "Follow up with Ramonia on washer/dryer quote from Lalo (Unit 5)",
+                        status: "Pending",
+                        deadline: "2026-05-05",
+                        assignment: "Maya"
+                    },
+                    {
+                        id: 22,
+                        description: "Monitor abatement exit progress at 3538 Park Worth Flats — confirm timeline with Ramonia",
+                        status: "Pending",
+                        deadline: null,
+                        assignment: "Maya"
+                    }
+                ],
+                "Southlight / Lehigh": [
+                    {
+                        id: 12,
+                        description: "Annie Sherman — Referral Claims (on hold, Dallas decision pending)",
+                        status: "Stuck",
+                        deadline: "2026-04-20",
+                        assignment: "Dallas",
+                        isUpdate: true
+                    },
+                    {
+                        id: 13,
+                        description: "Follow up with Dallas to confirm ceiling repair quote at 462 Carlton Ave, Unit 2 (awaiting quote from Marjorie)",
+                        status: "Pending",
+                        deadline: "2026-05-06",
+                        assignment: "Maya/Dallas/Marj",
+                        isUpdate: true
+                    },
+                    {
+                        id: 14,
+                        description: "Upload city violation list for 608 Pierce St to Adrian",
+                        status: "Pending",
+                        deadline: null,
+                        assignment: "Marjorie"
+                    },
+                    {
+                        id: 15,
+                        description: "Verify Will's Thursday/Friday walkthrough commitment",
+                        status: "Pending",
+                        deadline: "2026-05-08",
+                        assignment: "Marjorie"
+                    },
+                    {
+                        id: 16,
+                        description: "Check bedroom window compliance (egress requirements) at 422 Pierce St",
+                        status: "Pending",
+                        deadline: "2026-05-06",
+                        assignment: "Marjorie"
+                    },
+                    {
+                        id: 17,
+                        description: "Provide summer cash flow projections by property/LLC for June-July",
+                        status: "Pending",
+                        deadline: null,
+                        assignment: "Marjorie"
+                    },
+                    {
+                        id: 18,
+                        description: "Verify student status and check city permits for family occupancy at 573",
+                        status: "In progress",
+                        deadline: null,
+                        assignment: "Marjorie"
+                    },
+                    {
+                        id: 19,
+                        description: "Send Welcome Email & Complete Guarantor Information for 618 PIERCE ST - 2028",
+                        status: "In progress",
+                        deadline: "2026-05-08",
+                        assignment: "Maya"
+                    }
+                ],
+                "Portfolio Management": [
+                    {
+                        id: 20,
+                        description: "Give sorority group leader Dallas's number for Villa Magnolia discussion (AOII/Mia referral)",
+                        status: "New",
+                        deadline: null,
+                        assignment: "Marjorie"
+                    },
+                    {
+                        id: 21,
+                        description: "Review and rename all Dropbox files per convention (YYYY-MM-DD_PROPERTY_ADDRESS-DOC_TYPE)",
+                        status: "In progress",
+                        deadline: "2026-05-11",
+                        assignment: "Maya"
+                    },
+                    {
+                        id: 23,
+                        description: "DPW Payment Plan (Ticket 11000257595) — Process within 10 working days",
+                        status: "Pending",
+                        deadline: "2026-05-19",
+                        assignment: "Maya"
+                    },
+                    {
+                        id: 24,
+                        description: "Dallas-Portugal violation — Follow up email to city traffic",
+                        status: "Pending",
+                        deadline: "2026-05-27",
+                        assignment: "Maya"
+                    }
+                ]
+            }
+        };
+
+        function init() {
+            renderWins(data.wins);
+            renderOpenItems(data.openItems);
+            loadState();
+        }
+
+        function renderWins(wins) {
+            const winsList = document.getElementById('winsList');
+            winsList.innerHTML = '';
+            let count = 0;
+            Object.entries(wins).forEach(([portfolio, items]) => {
+                items.forEach(win => {
+                    count++;
+                    const el = document.createElement('div');
+                    el.className = 'win-item';
+                    el.innerHTML = `<div class="win-property">${portfolio}</div><div>${win.description}</div>`;
+                    winsList.appendChild(el);
+                });
+            });
+            if (count === 0) {
+                winsList.innerHTML = '<div class="empty-state">No wins logged yet this week</div>';
+            }
+        }
+
+        function renderOpenItems(openItems) {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+            
+            Object.entries(openItems).forEach(([portfolio, tasks]) => {
+                const section = document.createElement('div');
+                section.className = 'portfolio-section';
+                
+                const header = document.createElement('div');
+                header.className = 'portfolio-header';
+                header.innerHTML = `<div class="portfolio-title">${portfolio}</div><div class="item-count">${tasks.length}</div>`;
+                section.appendChild(header);
+
+                tasks.forEach(task => {
+                    const card = document.createElement('div');
+                    card.className = 'task-card';
+                    
+                    const descClass = task.status === 'Stuck' ? 'stuck' : '';
+                    const statusClass = task.status.toLowerCase().replace(' ', '');
+                    
+                    let header = `
+                        <div class="task-header">
+                            <div class="task-description ${descClass}">${task.description}</div>
+                            <span class="status-badge ${statusClass}">${task.status}</span>
+                        </div>
+                    `;
+                    
+                    let meta = '<div class="task-meta">';
+                    if (task.deadline) meta += `📅 ${task.deadline}`;
+                    meta += ` | 👤 ${task.assignment}</div>`;
+                    
+                    card.innerHTML = header + meta;
+
+                    // DALLAS APPROVAL ITEMS ONLY
+                    if (task.isDallasApproval) {
+                        const actions = document.createElement('div');
+                        actions.className = 'task-actions';
+                        actions.innerHTML = `
+                            <div class="action-buttons">
+                                <button class="action-btn yes" onclick="decide(${task.id}, 'yes')">✓ Yes</button>
+                                <button class="action-btn hold" onclick="decide(${task.id}, 'hold')">⏸ Hold</button>
+                                <button class="action-btn no" onclick="decide(${task.id}, 'no')">✗ No</button>
+                            </div>
+                            <input type="text" class="notes-input" placeholder="Add a note..." id="notes-${task.id}" onchange="saveNote(${task.id})">
+                        `;
+                        card.appendChild(actions);
+                    }
+
+                    section.appendChild(card);
+                });
+                container.appendChild(section);
+            });
+        }
+
+        function decide(taskId, decision) {
+            const buttons = document.querySelectorAll(`[onclick*="decide(${taskId}"]`);
+            buttons.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            state.decisions[taskId] = decision;
+            localStorage.setItem('state', JSON.stringify(state));
+        }
+
+        function saveNote(taskId) {
+            const input = document.getElementById(`notes-${taskId}`);
+            state.notes[taskId] = input.value;
+            localStorage.setItem('state', JSON.stringify(state));
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        function loadState() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+            const saved = localStorage.getItem('state');
+            if (saved) Object.assign(state, JSON.parse(saved));
+        }
+
+        document.getElementById('finalComments').onchange = () => {
+            state.finalComments = document.getElementById('finalComments').value;
+            localStorage.setItem('state', JSON.stringify(state));
+        };
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
