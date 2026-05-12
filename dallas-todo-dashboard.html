@@ -26,13 +26,11 @@
             --text-dark: #E0E6ED;
             --border-dark: #3F4654;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: var(--bg-light);
@@ -41,17 +39,14 @@
             padding: 24px 20px;
             line-height: 1.6;
         }
-
         body.dark-mode {
             background: var(--bg-dark);
             color: var(--text-dark);
         }
-
         .container {
             max-width: 1100px;
             margin: 0 auto;
         }
-
         header {
             display: flex;
             justify-content: space-between;
@@ -60,37 +55,31 @@
             padding-bottom: 24px;
             border-bottom: 2px solid var(--border-light);
         }
-
         body.dark-mode header {
             border-bottom-color: var(--border-dark);
         }
-
         .header-left h1 {
             font-size: 32px;
             color: var(--primary-light);
             margin-bottom: 4px;
             font-weight: 700;
         }
-
         .header-left p {
             font-size: 13px;
             opacity: 0.7;
             margin-bottom: 8px;
         }
-
         .header-meta {
             font-size: 12px;
             color: var(--primary-light);
             font-weight: 600;
             opacity: 0.8;
         }
-
         .header-right {
             display: flex;
             gap: 10px;
             align-items: center;
         }
-
         button {
             padding: 8px 14px;
             border: none;
@@ -100,28 +89,23 @@
             font-weight: 500;
             transition: all 0.2s ease;
         }
-
         .toggle-btn {
             background: var(--bg-secondary-light);
             color: var(--text-light);
             border: 1px solid var(--border-light);
         }
-
         body.dark-mode .toggle-btn {
             background: var(--bg-secondary-dark);
             color: var(--text-dark);
             border-color: var(--border-dark);
         }
-
         .export-btn {
             background: var(--primary-light);
             color: white;
         }
-
         .export-btn:hover {
             background: var(--primary-dark);
         }
-
         .guidance {
             background: var(--accent);
             color: white;
@@ -133,12 +117,10 @@
             display: flex;
             gap: 12px;
         }
-
         .guidance-icon {
             font-size: 18px;
             flex-shrink: 0;
         }
-
         .wins-section {
             margin-bottom: 40px;
             padding: 24px;
@@ -146,30 +128,25 @@
             border: 2px solid var(--success);
             border-radius: 8px;
         }
-
         body.dark-mode .wins-section {
             background: linear-gradient(135deg, rgba(39, 174, 96, 0.15) 0%, rgba(39, 174, 96, 0.05) 100%);
         }
-
         .wins-section h2 {
             font-size: 18px;
             color: var(--success);
             margin-bottom: 4px;
             font-weight: 700;
         }
-
         .wins-section p {
             font-size: 12px;
             opacity: 0.7;
             margin-bottom: 16px;
         }
-
         .wins-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 12px;
         }
-
         .win-item {
             background: var(--bg-secondary-light);
             padding: 12px 14px;
@@ -177,11 +154,9 @@
             border-left: 4px solid var(--success);
             font-size: 13px;
         }
-
         body.dark-mode .win-item {
             background: var(--bg-secondary-dark);
         }
-
         .win-property {
             font-size: 11px;
             opacity: 0.6;
@@ -190,11 +165,9 @@
             margin-bottom: 4px;
             font-weight: 600;
         }
-
         .portfolio-section {
             margin-bottom: 36px;
         }
-
         .portfolio-header {
             display: flex;
             align-items: center;
@@ -203,7 +176,6 @@
             padding-bottom: 12px;
             border-bottom: 2px solid var(--primary-light);
         }
-
         .portfolio-title {
             font-size: 20px;
             font-weight: 700;
@@ -211,7 +183,6 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
         .item-count {
             background: var(--primary-light);
             color: white;
@@ -220,7 +191,6 @@
             font-size: 11px;
             font-weight: 600;
         }
-
         .task-card {
             background: var(--bg-secondary-light);
             border: 1px solid var(--border-light);
@@ -229,17 +199,14 @@
             margin-bottom: 12px;
             transition: all 0.2s ease;
         }
-
         body.dark-mode .task-card {
             background: var(--bg-secondary-dark);
             border-color: var(--border-dark);
         }
-
         .task-card:hover {
             border-color: var(--primary-light);
             box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
         }
-
         .task-header {
             display: flex;
             justify-content: space-between;
@@ -247,7 +214,6 @@
             gap: 12px;
             margin-bottom: 10px;
         }
-
         .task-description {
             font-size: 14px;
             font-weight: 500;
@@ -255,16 +221,13 @@
             line-height: 1.4;
             flex: 1;
         }
-
         body.dark-mode .task-description {
             color: var(--text-dark);
         }
-
         .task-description.stuck {
             color: var(--stuck-red);
             font-weight: 600;
         }
-
         .status-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -276,32 +239,26 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
-
         .status-badge.stuck {
             background: rgba(220, 38, 38, 0.15);
             color: var(--stuck-red);
         }
-
         .status-badge.pending {
             background: rgba(234, 179, 8, 0.15);
             color: #a16207;
         }
-
         .status-badge.inprogress {
             background: rgba(234, 88, 12, 0.15);
             color: #7c2d12;
         }
-
         .status-badge.new {
             background: rgba(37, 99, 235, 0.15);
             color: var(--new-blue);
         }
-
         .status-badge.approval {
             background: rgba(37, 99, 235, 0.15);
             color: var(--new-blue);
         }
-
         .task-meta {
             font-size: 12px;
             opacity: 0.6;
@@ -310,7 +267,6 @@
             gap: 16px;
             flex-wrap: wrap;
         }
-
         .task-actions {
             display: flex;
             gap: 12px;
@@ -320,16 +276,13 @@
             flex-wrap: wrap;
             align-items: center;
         }
-
         body.dark-mode .task-actions {
             border-top-color: var(--border-dark);
         }
-
         .action-buttons {
             display: flex;
             gap: 6px;
         }
-
         .action-btn {
             padding: 6px 12px;
             border: 1.5px solid currentColor;
@@ -339,14 +292,12 @@
             background: transparent;
             text-transform: uppercase;
         }
-
         .action-btn.yes { color: var(--success); }
         .action-btn.yes.active { background: var(--success); color: white; }
         .action-btn.hold { color: var(--hold); }
         .action-btn.hold.active { background: var(--hold); color: white; }
         .action-btn.no { color: var(--reject); }
         .action-btn.no.active { background: var(--reject); color: white; }
-
         .notes-input {
             flex: 1;
             min-width: 200px;
@@ -358,18 +309,15 @@
             color: var(--text-light);
             font-family: inherit;
         }
-
         body.dark-mode .notes-input {
             background: var(--bg-secondary-dark);
             border-color: var(--border-dark);
             color: var(--text-dark);
         }
-
         .notes-input:focus {
             outline: none;
             border-color: var(--primary-light);
         }
-
         .final-comments {
             margin-top: 40px;
             padding: 24px;
@@ -377,19 +325,16 @@
             border: 1px solid var(--border-light);
             border-radius: 8px;
         }
-
         body.dark-mode .final-comments {
             background: var(--bg-secondary-dark);
             border-color: var(--border-dark);
         }
-
         .final-comments h3 {
             font-size: 16px;
             font-weight: 700;
             margin-bottom: 12px;
             color: var(--primary-light);
         }
-
         .final-comments textarea {
             width: 100%;
             padding: 12px;
@@ -401,20 +346,17 @@
             color: var(--text-light);
             min-height: 100px;
         }
-
         body.dark-mode .final-comments textarea {
             background: var(--bg-dark);
             border-color: var(--border-dark);
             color: var(--text-dark);
         }
-
         .empty-state {
             padding: 20px;
             text-align: center;
             opacity: 0.5;
             font-size: 13px;
         }
-
         @media (max-width: 768px) {
             .header-left h1 { font-size: 24px; }
             .task-actions { flex-direction: column; }
@@ -444,8 +386,8 @@
 
         <!-- WINS SECTION -->
         <div class="wins-section">
-            <h2>✨ Quick Wins</h2>
-            <p>Completed Yesterday</p>
+            <h2>✨ Quick Wins Completed Yesterday</h2>
+            <p>Ready to celebrate</p>
             <div class="wins-grid" id="winsList"></div>
         </div>
 
@@ -467,22 +409,21 @@
         };
 
         // ACTUAL DATA FROM YOUR TRACKER (May 12, 2026)
-        // ACTUAL DATA FROM YOUR TRACKER (May 12, 2026)
         const data = {
             wins: {
-                "Guildford Apartments": [
-                    { description: "Kasablanca Invoice - $1,095 — payment complete" },
-                    { description: "violation and citation — documentation complete" }
+                "JHU PORTFOLIO": [
+                    { description: "Kasablanca Invoice - $1,095 — payment authorized" },
+                    { description: "JHU - violation and citation — documentation complete" }
                 ],
-                "Woodrow Apartments": [
+                "Woodrow Apartments (JHU)": [
                     { description: "Fix website listing for Unit A5 - incorrectly shows balcony (flagged by Heather)" }
                 ],
-                "South Light": [
+                "Southlight": [
                     { description: "PIERCE ST, LLC zelle information — received" }
                 ]
             },
             openItems: {
-                "Guildford Apartments": [
+                "Guilford Apartments": [
                     {
                         id: 1,
                         description: "Ceiling tile still unresolved after 2 weeks",
@@ -512,16 +453,9 @@
                         status: "Stuck",
                         deadline: "2026-04-20",
                         assignment: "Maya"
-                    },
-                    {
-                        id: 23,
-                        description: "DPW Payment Plan (Ticket 11000257595) — Process within 10 working days",
-                        status: "Pending",
-                        deadline: "2026-05-19",
-                        assignment: "Maya"
                     }
                 ],
-                "Woodrow Apartments": [
+                "Woodrow Apartments (JHU)": [
                     {
                         id: 5,
                         description: "URGENT: Security fix needed — break-in April 2, no lock on back door, no auto-lock on communal doors. Escalation for team meeting next week.",
@@ -584,7 +518,7 @@
                         assignment: "Maya"
                     }
                 ],
-                "Southlight": [
+                "Southlight / Lehigh": [
                     {
                         id: 12,
                         description: "Annie Sherman — Referral Claims (on hold, Dallas decision pending)",
@@ -646,21 +580,26 @@
                 ],
                 "Portfolio Management": [
                     {
-                        id: 21,
-                        description: "Review and rename all Dropbox files per convention (YYYY-MM-DD_PROPERTY_ADDRESS-DOC_TYPE)",
-                        status: "In progress",
-                        deadline: "2026-05-11",
-                        assignment: "Maya"
-                    }
-                    {
                         id: 20,
                         description: "Give sorority group leader Dallas's number for Villa Magnolia discussion (AOII/Mia referral)",
                         status: "New",
                         deadline: null,
                         assignment: "Marjorie"
-                    }
-                ],
-                "Executive Assistance": [
+                    },
+                    {
+                        id: 21,
+                        description: "Review and rename all Dropbox files per convention (YYYY-MM-DD_PROPERTY_ADDRESS-DOC_TYPE)",
+                        status: "In progress",
+                        deadline: "2026-05-11",
+                        assignment: "Maya"
+                    },
+                    {
+                        id: 23,
+                        description: "DPW Payment Plan (Ticket 11000257595) — Process within 10 working days",
+                        status: "Pending",
+                        deadline: "2026-05-19",
+                        assignment: "Maya"
+                    },
                     {
                         id: 24,
                         description: "Dallas-Portugal violation — Follow up email to city traffic",
@@ -699,11 +638,11 @@
         function renderOpenItems(openItems) {
             const container = document.getElementById('tasksContainer');
             container.innerHTML = '';
-            
+
             Object.entries(openItems).forEach(([portfolio, tasks]) => {
                 const section = document.createElement('div');
                 section.className = 'portfolio-section';
-                
+
                 const header = document.createElement('div');
                 header.className = 'portfolio-header';
                 header.innerHTML = `<div class="portfolio-title">${portfolio}</div><div class="item-count">${tasks.length}</div>`;
@@ -712,22 +651,22 @@
                 tasks.forEach(task => {
                     const card = document.createElement('div');
                     card.className = 'task-card';
-                    
+
                     const descClass = task.status === 'Stuck' ? 'stuck' : '';
                     const statusClass = task.status.toLowerCase().replace(' ', '');
-                    
-                    let header = `
+
+                    let cardHeader = `
                         <div class="task-header">
                             <div class="task-description ${descClass}">${task.description}</div>
                             <span class="status-badge ${statusClass}">${task.status}</span>
                         </div>
                     `;
-                    
+
                     let meta = '<div class="task-meta">';
                     if (task.deadline) meta += `📅 ${task.deadline}`;
                     meta += ` | 👤 ${task.assignment}</div>`;
-                    
-                    card.innerHTML = header + meta;
+
+                    card.innerHTML = cardHeader + meta;
 
                     // DALLAS APPROVAL ITEMS ONLY
                     if (task.isDallasApproval) {
@@ -735,9 +674,9 @@
                         actions.className = 'task-actions';
                         actions.innerHTML = `
                             <div class="action-buttons">
-                                <button class="action-btn yes" onclick="decide(${task.id}, 'yes')">✓ Yes</button>
-                                <button class="action-btn hold" onclick="decide(${task.id}, 'hold')">⏸ Hold</button>
-                                <button class="action-btn no" onclick="decide(${task.id}, 'no')">✗ No</button>
+                                <button class="action-btn yes" onclick="decide(${task.id}, 'yes', event)">✓ Yes</button>
+                                <button class="action-btn hold" onclick="decide(${task.id}, 'hold', event)">⏸ Hold</button>
+                                <button class="action-btn no" onclick="decide(${task.id}, 'no', event)">✗ No</button>
                             </div>
                             <input type="text" class="notes-input" placeholder="Add a note..." id="notes-${task.id}" onchange="saveNote(${task.id})">
                         `;
@@ -746,12 +685,13 @@
 
                     section.appendChild(card);
                 });
+
                 container.appendChild(section);
             });
         }
 
-        function decide(taskId, decision) {
-            const buttons = document.querySelectorAll(`[onclick*="decide(${taskId}"]`);
+        function decide(taskId, decision, event) {
+            const buttons = document.querySelectorAll(`[onclick*="decide(${taskId},"]`);
             buttons.forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             state.decisions[taskId] = decision;
@@ -762,28 +702,6 @@
             const input = document.getElementById(`notes-${taskId}`);
             state.notes[taskId] = input.value;
             localStorage.setItem('state', JSON.stringify(state));
-        }
-
-        function exportForEmail() {
-            let summary = 'BLAKEWORTH OPERATIONS REVIEW - ' + document.getElementById('reportDate').textContent + '\n\n';
-            summary += 'DECISIONS MADE:\n';
-            const decisionMap = { yes: 'APPROVED', hold: 'ON HOLD', no: 'DECLINED' };
-            Object.entries(state.decisions).forEach(([id, dec]) => {
-                summary += '  Task #' + id + ': ' + (decisionMap[dec] || dec.toUpperCase()) + '\n';
-            });
-            if (Object.keys(state.notes).length > 0) {
-                summary += '\nNOTES:\n';
-                Object.entries(state.notes).forEach(([id, note]) => {
-                    if (note) summary += '  Task #' + id + ': ' + note + '\n';
-                });
-            }
-            if (state.finalComments) {
-                summary += '\nCOMMENTS:\n' + state.finalComments;
-            }
-            if (Object.keys(state.decisions).length === 0) {
-                summary += '  (No decisions recorded yet)';
-            }
-            alert(summary);
         }
 
         function toggleDarkMode() {
@@ -797,6 +715,10 @@
             }
             const saved = localStorage.getItem('state');
             if (saved) Object.assign(state, JSON.parse(saved));
+        }
+
+        function exportForEmail() {
+            alert('Summary view coming soon!');
         }
 
         document.getElementById('finalComments').onchange = () => {
