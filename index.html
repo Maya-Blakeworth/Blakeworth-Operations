@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blakeworth — Dallas Command Center</title>
+<style>
+/* ── TOKENS ──────────────────────────────────────────── */
+:root {
+  --navy:        #0D1B2A;
+  --navy-light:  #162436;
+  --bg:          #F1F5F9;
+  --surface:     #FFFFFF;
+  --surface-2:   #F8FAFC;
+  --border:      #E2E8F0;
+  --text:        #0F172A;
+  --text-2:      #475569;
+  --text-3:      #94A3B8;
+
+  --jhu:         #2563EB;
+  --jhu-light:   #EFF6FF;
+  --slp:         #059669;
+  --slp-light:   #ECFDF5;
+  --dc:          #7C3AED;
+  --dc-light:    #F5F3FF;
+  --gen:         #475569;
+  --gen-light:   #F8FAFC;
+
+  --approval:    #D97706;
+  --approval-bg: #FFFBEB;
+  --own:         #7C3AED;
+  --own-bg:      #F5F3FF;
+  --fyi-border:  #CBD5E1;
+
+  --success:     #10B981;
+  --danger:      #EF4444;
+  --warn:        #F59E0B;
+  --info:        #3B82F6;
+
+  --radius:      10px;
+  --radius-sm:   6px;
+  --shadow:      0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:   0 4px 12px rgba(0,0,0,.10);
+}
+
+/* ── DARK MODE ───────────────────────────────────────── */
+body.dark {
+  --bg:        #0F172A;
+  --surface:   #1E293B;
+  --surface-2: #0F172A;
+  --border:    #334155;
+  --text:      #F1F5F9;
+  --text-2:    #94A3B8;
+  --text-3:    #475569;
+  --jhu-light: rgba(37,99,235,.12);
+  --slp-light: rgba(5,150,105,.12);
+  --dc-light:  rgba(124,58,237,.12);
+  --gen-light: rgba(71,85,105,.12);
+  --approval-bg: rgba(217,119,6,.10);
+  --own-bg:    rgba(124,58,237,.10);
+  --fyi-border: #334155;
+}
+
+/* ── RESET ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  transition: background .25s, color .25s;
+}
+
+/* ── HEADER ──────────────────────────────────────────── */
+.site-header {
+  background: var(--navy);
+  color: #fff;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.header-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  gap: 16px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-logo {
+  width: 30px; height: 30px;
+  background: #2563EB;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px; color: #fff;
+  letter-spacing: -0.5px;
+}
+.brand-name { font-weight: 700; font-size: 15px; letter-spacing: -0.3px; }
+.brand-sub  { font-size: 10px; opacity: .5; margin-top: 1px; }
+
+.header-right {
+  display: flex; align-items: center; gap: 10px;
+}
+.header-date {
+  font-size: 11px; opacity: .5;
+}
+.header-stats {
+  display: flex; gap: 5px; align-items: center;
+}
+.hstat {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: 11px; font-weight: 600;
+  cursor: default;
+}
+.hstat-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.hstat-dot.approval { background: var(--warn); }
+.hstat-dot.own      { background: #A78BFA; }
+.hstat-dot.fyi      { background: #64748B; }
+
+.hbtn-icon {
+  border: none; background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: rgba(255,255,255,.8);
+  border-radius: 6px;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px;
+  transition: background .15s;
+}
+.hbtn-icon:hover { background: rgba(255,255,255,.16); }
+
+/* ── UPDATE BAR ──────────────────────────────────────── */
+.update-bar {
+  background: var(--navy-light);
+  color: rgba(255,255,255,.4);
+  text-align: center;
+  font-size: 10px;
+  padding: 3px 24px;
+  letter-spacing: .2px;
+}
+
+/* ── MAIN ────────────────────────────────────────────── */
+.main {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+/* ── QUICK-ACTION CARDS ──────────────────────────────── */
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.action-card {
+  background: var(--surface);
+  border: .5px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 14px 14px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  transition: box-shadow .15s, transform .15s;
+}
+.action-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,.09);
+  transform: translateY(-2px);
+}
+.card-icon { font-size: 24px; margin-bottom: 6px; line-height: 1; }
+.card-title {
+  font-size: 13px; font-weight: 700;
+  color: var(--text); margin-bottom: 3px;
+}
+.card-sub {
+  font-size: 11px; color: var(--text-3);
+  margin-bottom: 12px; min-height: 14px;
+  display: flex; align-items: center; gap: 5px; justify-content: center;
+}
+.inv-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #10B981; flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(16,185,129,.2);
+}
+.card-btn {
+  width: 100%;
+  padding: 9px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+  overflow: hidden;
+}
+.card-btn:active { transform: scale(.93); }
+.card-btn:hover  { filter: brightness(1.08); }
+
+.btn-pay      { background: #111827; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.22); }
+.btn-task     { background: #2563EB; color: #fff; box-shadow: 0 2px 6px rgba(37,99,235,.28); }
+.btn-schedule { background: transparent; color: #059669; border: 1.5px solid #10B981; }
+.btn-schedule:active { transform: scale(.93); }
+
+/* ripple */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,.28);
+  transform: scale(0);
+  animation: rpl .42s linear;
+  pointer-events: none;
+}
+@keyframes rpl { to { transform: scale(4); opacity: 0; } }
+
+/* ── INVOICE PANEL ───────────────────────────────────── */
+.invoice-panel {
+  display: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+.invoice-panel.open { display: block; }
+.invoice-panel p { color: var(--text-2); margin-bottom: 8px; line-height: 1.5; }
+.invoice-link {
+  display: inline-block;
+  background: #111827; color: #fff;
+  border-radius: 6px; padding: 7px 16px;
+  font-size: 12px; font-weight: 700;
+  text-decoration: none; transition: background .15s;
+}
+.invoice-link:hover { background: #1f2937; }
+
+/* ── ADD TASK PANEL ──────────────────────────────────── */
+.add-task-panel {
+  display: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.add-task-panel.open { display: block; }
+.panel-title {
+  font-size: 13px; font-weight: 700; margin-bottom: 12px;
+}
+.panel-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.panel-field { display: flex; flex-direction: column; gap: 4px; }
+.panel-field.full { grid-column: 1/-1; }
+.panel-field label {
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: .4px;
+}
+.panel-field input,
+.panel-field select,
+.panel-field textarea {
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px; font-family: inherit;
+  background: var(--surface); color: var(--text);
+  transition: border-color .15s;
+}
+.panel-field input:focus,
+.panel-field select:focus,
+.panel-field textarea:focus { outline: none; border-color: var(--info); }
+.panel-field textarea { resize: vertical; min-height: 60px; }
+.panel-actions { margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end; }
+.panel-cancel {
+  background: var(--surface); color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: 6px; padding: 7px 16px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.panel-submit {
+  background: #2563EB; color: #fff;
+  border: none; border-radius: 6px;
+  padding: 7px 18px; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+  position: relative; overflow: hidden;
+}
+.panel-submit:hover { background: #1d4ed8; }
+.panel-submit:active { transform: scale(.96); }
+
+/* ── SECTION TITLE BAR ───────────────────────────────── */
+.section-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.section-title {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.4px;
+  color: var(--text);
+}
+.section-meta {
+  font-size: 12px; color: var(--text-3);
+}
+
+/* ── PORTFOLIO SECTION ───────────────────────────────── */
+.portfolio { margin-bottom: 38px; }
+.portfolio-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid;
+}
+.portfolio-header.jhu { border-color: var(--jhu); }
+.portfolio-header.slp { border-color: var(--slp); }
+.portfolio-header.dc  { border-color: var(--dc);  }
+.portfolio-header.gen { border-color: var(--gen);  }
+
+.portfolio-icon {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.portfolio-icon.jhu { background: var(--jhu-light); }
+.portfolio-icon.slp { background: var(--slp-light); }
+.portfolio-icon.dc  { background: var(--dc-light);  }
+.portfolio-icon.gen { background: var(--gen-light);  }
+
+.portfolio-title { font-size: 17px; font-weight: 700; }
+.portfolio-title.jhu { color: var(--jhu); }
+.portfolio-title.slp { color: var(--slp); }
+.portfolio-title.dc  { color: var(--dc);  }
+.portfolio-title.gen { color: var(--gen); }
+
+.portfolio-count {
+  font-size: 11px; font-weight: 600;
+  background: var(--border); color: var(--text-2);
+  padding: 2px 7px; border-radius: 10px; margin-left: auto;
+}
+
+/* ── TASK GROUP ──────────────────────────────────────── */
+.task-group { margin-bottom: 18px; }
+.task-group-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .8px; color: var(--text-3);
+  margin-bottom: 7px; display: flex; align-items: center; gap: 6px;
+}
+.task-group-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── TASK CARD ───────────────────────────────────────── */
+.task-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 9px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow .15s, transform .12s;
+}
+.task-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.task-card.approval { border-left: 3px solid var(--approval); }
+.task-card.own      { border-left: 3px solid var(--own); }
+.task-card.fyi      { border-left: 3px solid var(--fyi-border); }
+
+.card-top { padding: 13px 15px 9px; }
+.card-row1 {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 10px;
+  margin-bottom: 5px;
+}
+.card-property {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--text-3); margin-bottom: 2px;
+}
+.card-desc {
+  font-size: 14px; font-weight: 500; line-height: 1.4;
+  color: var(--text); flex: 1;
+}
+
+.badge {
+  flex-shrink: 0;
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .4px; padding: 2px 7px; border-radius: 4px;
+}
+.badge.stuck       { background: rgba(239,68,68,.12); color: #DC2626; }
+.badge.pending     { background: rgba(234,179,8,.15);  color: #92400E; }
+.badge.in-progress { background: rgba(249,115,22,.12); color: #C2410C; }
+.badge.new         { background: rgba(37,99,235,.12);  color: #1D4ED8; }
+.badge.hold-off    { background: rgba(107,114,128,.12);color: #374151; }
+.badge.completed   { background: rgba(16,185,129,.12); color: #065F46; }
+
+.card-meta {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  font-size: 11px; color: var(--text-2); margin-top: 3px;
+}
+.card-meta span { display: flex; align-items: center; gap: 3px; }
+
+/* ── NOTES TOGGLE ────────────────────────────────────── */
+.card-notes-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 15px;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--surface-2);
+  font-size: 11px; color: var(--text-2);
+  user-select: none;
+  transition: background .1s;
+}
+.card-notes-bar:hover { background: var(--border); }
+.card-notes-bar .chevron {
+  transition: transform .2s; font-size: 9px;
+}
+.card-notes-bar.open .chevron { transform: rotate(180deg); }
+.notes-badge {
+  background: #2563EB; color: #fff;
+  font-size: 9px; font-weight: 700;
+  border-radius: 10px; padding: 1px 5px; margin-left: 5px;
+}
+
+.card-notes-body {
+  display: none;
+  padding: 12px 15px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.card-notes-body.open { display: block; }
+
+/* ── CHAT THREAD ─────────────────────────────────────── */
+.thread {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 12px;
+}
+.bw {
+  display: flex; align-items: flex-end; gap: 7px;
+}
+.bw.dallas { flex-direction: row-reverse; }
+
+.av {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.av.maya   { background: #DBEAFE; color: #1D4ED8; }
+.av.dallas { background: #EDE9FE; color: #6D28D9; }
+
+.bb {
+  max-width: 72%;
+  border-radius: 12px;
+  padding: 8px 11px;
+  font-size: 12px; line-height: 1.45;
+  position: relative;
+}
+.bw.maya .bb {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1e3a5f;
+  border-bottom-left-radius: 3px;
+}
+.bw.dallas .bb {
+  background: #F5F3FF;
+  border: 1px solid #DDD6FE;
+  color: #3b1f6e;
+  border-bottom-right-radius: 3px;
+}
+.bm {
+  display: block; font-size: 9px; color: var(--text-3);
+  margin-top: 3px; font-weight: 600;
+}
+
+.note-label {
+  font-size: 10px; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: .5px;
+  margin-bottom: 5px;
+}
+.note-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px; font-family: inherit;
+  background: var(--surface); color: var(--text);
+  resize: vertical; min-height: 56px;
+  transition: border-color .15s;
+}
+.note-input:focus { outline: none; border-color: var(--info); }
+.note-send-btn {
+  margin-top: 6px; float: right;
+  background: var(--navy); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  padding: 6px 14px; font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+  position: relative; overflow: hidden;
+}
+.note-send-btn:hover { background: #162436; }
+.note-send-btn:active { transform: scale(.95); }
+
+/* ── ACTION BUTTONS ──────────────────────────────────── */
+.card-actions {
+  padding: 9px 15px 11px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 7px; flex-wrap: wrap;
+  align-items: center;
+}
+.action-btn {
+  border: none; border-radius: var(--radius-sm);
+  padding: 7px 15px; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all .12s;
+  display: flex; align-items: center; gap: 4px;
+  position: relative; overflow: hidden;
+}
+.action-btn:active { transform: scale(.92); }
+.action-btn:hover  { filter: brightness(1.08); box-shadow: 0 3px 8px rgba(0,0,0,.15); transform: translateY(-1px); }
+
+.btn-approve   { background: var(--success); color: #fff; }
+.btn-letstalk  { background: var(--surface-2); color: var(--text); border: 1.5px solid var(--border); }
+.btn-letstalk:hover { border-color: var(--info); color: var(--info); }
+.btn-done      { background: var(--success); color: #fff; }
+.btn-inprogress{ background: #F97316; color: #fff; }
+.btn-remindlater{ background: var(--surface-2); color: var(--text); border: 1.5px solid var(--border); }
+.btn-remindlater:hover { border-color: var(--own); color: var(--own); }
+
+.action-type-label {
+  margin-left: auto; font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .5px;
+  padding: 3px 7px; border-radius: 4px;
+}
+.action-type-label.approval { background: var(--approval-bg); color: var(--approval); }
+.action-type-label.own      { background: var(--own-bg); color: var(--own); }
+
+/* ── LOADING / EMPTY ─────────────────────────────────── */
+.empty-group {
+  text-align: center; padding: 14px;
+  color: var(--text-3); font-size: 12px;
+}
+.loading-bar {
+  height: 3px; width: 100%; overflow: hidden;
+  background: var(--border); border-radius: 2px; margin-bottom: 20px;
+}
+.loading-bar-inner {
+  height: 100%; width: 40%; background: var(--info);
+  border-radius: 2px;
+  animation: loadslide 1.2s infinite ease-in-out;
+}
+@keyframes loadslide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+/* ── SMALL WINS SECTION ──────────────────────────────── */
+.wins-section {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.wins-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.wins-title {
+  font-size: 14px; font-weight: 700; color: var(--text-2);
+}
+.wins-sub {
+  font-size: 11px; color: var(--text-3); margin-left: auto;
+}
+.wins-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+}
+.win-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 3px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  transition: box-shadow .15s;
+}
+.win-chip:hover { box-shadow: 0 3px 8px rgba(0,0,0,.08); }
+.win-top {
+  display: flex; align-items: center; gap: 6px;
+}
+.win-check {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(16,185,129,.12); color: #10B981;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; flex-shrink: 0; font-weight: 700;
+}
+.win-prop {
+  font-size: 10px; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: .4px;
+}
+.win-date {
+  font-size: 9px; color: var(--text-3); margin-left: auto;
+}
+.win-summary {
+  font-size: 11px; color: var(--text-2); line-height: 1.4;
+  padding-left: 22px;
+}
+
+/* ── MODALS ──────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(3px);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200; padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border-radius: 14px;
+  padding: 26px; width: 100%; max-width: 460px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  animation: modalIn .2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+.modal .modal-sub { font-size: 12px; color: var(--text-2); margin-bottom: 18px; }
+.modal-field { margin-bottom: 12px; }
+.modal-field label {
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--text-2); margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: .4px;
+}
+.modal-field input,
+.modal-field select,
+.modal-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px; font-family: inherit;
+  background: var(--surface); color: var(--text);
+  transition: border-color .15s;
+}
+.modal-field input:focus,
+.modal-field select:focus,
+.modal-field textarea:focus { outline: none; border-color: var(--info); }
+.modal-field textarea { resize: vertical; min-height: 68px; }
+
+.modal-actions {
+  display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;
+}
+.modal-cancel {
+  background: var(--surface-2); color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 16px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.modal-submit {
+  background: #2563EB; color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  padding: 8px 18px; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+  position: relative; overflow: hidden;
+}
+.modal-submit:hover { background: #1D4ED8; }
+.modal-submit:active { transform: scale(.96); }
+.modal-submit.green { background: var(--success); }
+.modal-submit.green:hover { background: #059669; }
+
+.datetime-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#letsTalkContext {
+  font-size: 12px; color: var(--text-2);
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 9px 11px;
+  margin-bottom: 12px; font-style: italic;
+}
+.priority-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 4px;
+  margin-top: 4px;
+}
+.priority-badge.high   { background: rgba(239,68,68,.12); color: #DC2626; }
+.priority-badge.medium { background: rgba(245,158,11,.12); color: #D97706; }
+.priority-badge.low    { background: rgba(16,185,129,.12); color: #059669; }
+
+/* ── TOAST ───────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--navy); color: #fff;
+  border-radius: 24px; padding: 10px 20px;
+  font-size: 13px; font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0,0,0,.3);
+  opacity: 0; transition: all .25s; pointer-events: none;
+  z-index: 300; white-space: nowrap;
+}
+#toast.show {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+#toast.success { background: var(--success); }
+#toast.error   { background: var(--danger); }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cards-row  { grid-template-columns: 1fr; }
+  .wins-grid  { grid-template-columns: 1fr 1fr; }
+  .header-stats { display: none; }
+  .header-date  { display: none; }
+}
+@media (max-width: 420px) {
+  .wins-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">BW</div>
+      <div>
+        <div class="brand-name">Blakeworth</div>
+        <div class="brand-sub">Dallas Command Center</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-date" id="headerDate"></span>
+      <div class="header-stats" id="headerStats">
+        <div class="hstat"><div class="hstat-dot approval"></div><span id="statApprovals">—</span></div>
+        <div class="hstat"><div class="hstat-dot own"></div><span id="statOwn">—</span></div>
+        <div class="hstat"><div class="hstat-dot fyi"></div><span id="statFyi">—</span></div>
+      </div>
+      <button class="hbtn-icon" title="Toggle dark mode" onclick="toggleDark()">🌙</button>
+      <button class="hbtn-icon" title="Refresh" onclick="loadTasks()">↻</button>
+    </div>
+  </div>
+</header>
+<div class="update-bar" id="updateBar">Loading…</div>
+
+<!-- ── MAIN ────────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Loading bar -->
+  <div class="loading-bar" id="loadingBar">
+    <div class="loading-bar-inner"></div>
+  </div>
+
+  <!-- ── QUICK-ACTION CARDS ─────────────────────────────────────── -->
+  <div class="cards-row">
+    <!-- Payday -->
+    <div class="action-card">
+      <div class="card-icon">💳</div>
+      <div class="card-title">Payday</div>
+      <div class="card-sub"><span class="inv-dot"></span> April Invoice Available</div>
+      <button class="card-btn btn-pay" onclick="rpl(this,event);toggleInvoice()">Pay Now</button>
+    </div>
+    <!-- Add Task -->
+    <div class="action-card">
+      <div class="card-icon">📋</div>
+      <div class="card-title">Add a Task</div>
+      <div class="card-sub">Drop something in Maya's queue</div>
+      <button class="card-btn btn-task" onclick="rpl(this,event);toggleAddPanel()">+ Add Task</button>
+    </div>
+    <!-- Schedule -->
+    <div class="action-card">
+      <div class="card-icon">📅</div>
+      <div class="card-title">Schedule Time</div>
+      <div class="card-sub">Book a call with Maya</div>
+      <button class="card-btn btn-schedule" onclick="rpl(this,event);doSchedule()">Pick a Time</button>
+    </div>
+  </div>
+
+  <!-- Invoice panel (hidden until Pay Now clicked) -->
+  <div class="invoice-panel" id="invoicePanel">
+    <p><strong>April Invoice</strong> is ready for your review. Click below to pay via Zelle or review the full breakdown.</p>
+    <a class="invoice-link" href="https://wise.com/pay/business/mayaservices?utm_source=quick_pay" target="_blank" rel="noopener">Pay via Wise →</a>
+  </div>
+
+  <!-- Add task panel (hidden until Add Task clicked) -->
+  <div class="add-task-panel" id="addTaskPanel">
+    <div class="panel-title">📋 Drop a task in Maya's queue</div>
+    <div class="panel-grid">
+      <div class="panel-field full">
+        <label>What needs to happen?</label>
+        <textarea id="pDesc" placeholder="Describe the task…"></textarea>
+      </div>
+      <div class="panel-field">
+        <label>Property</label>
+        <input id="pProp" type="text" placeholder="e.g. Guilford, JHU…">
+      </div>
+      <div class="panel-field">
+        <label>Category</label>
+        <select id="pCat">
+          <option value="">— Select —</option>
+          <option value="Maintenance">Maintenance</option>
+          <option value="Finance">Finance</option>
+          <option value="Leasing">Leasing</option>
+          <option value="Legal">Legal</option>
+          <option value="Operations">Operations</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="panel-field full">
+        <label>Note (optional)</label>
+        <input id="pNote" type="text" placeholder="Any context for Maya…">
+      </div>
+    </div>
+    <div class="panel-actions">
+      <button class="panel-cancel" onclick="toggleAddPanel()">Cancel</button>
+      <button class="panel-submit" onclick="rpl(this,event);submitTask()">Send to Maya</button>
+    </div>
+  </div>
+
+  <!-- Section title -->
+  <div class="section-bar">
+    <div>
+      <div class="section-title">Operations</div>
+      <div class="section-meta" id="sectionMeta">Loading tasks…</div>
+    </div>
+  </div>
+
+  <!-- Task list container -->
+  <div id="taskList"></div>
+
+  <!-- Small wins -->
+  <div class="wins-section" id="winsSection" style="display:none">
+    <div class="wins-header">
+      <span>🏆</span>
+      <span class="wins-title">Small Wins</span>
+      <span class="wins-sub">Last 6 completed</span>
+    </div>
+    <div class="wins-grid" id="winsGrid"></div>
+  </div>
+
+</main>
+
+<!-- ── MODALS ──────────────────────────────────────────────────── -->
+
+<!-- Let's Talk -->
+<div class="modal-overlay" id="ltModal">
+  <div class="modal">
+    <h2>💬 Let's Talk</h2>
+    <p class="modal-sub">Send Maya a note — she'll see it immediately.</p>
+    <div id="letsTalkContext"></div>
+    <div class="modal-field">
+      <label>Your message</label>
+      <textarea id="ltNote" placeholder="What's on your mind about this?"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('ltModal')">Cancel</button>
+      <button class="modal-submit" onclick="rpl(this,event);submitLetsTalk()">Send to Maya →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Remind Later -->
+<div class="modal-overlay" id="rlModal">
+  <div class="modal">
+    <h2>⏰ Remind Me Later</h2>
+    <p class="modal-sub">Pick a date and Maya will follow up with you.</p>
+    <div class="modal-field">
+      <label>Reminder date & time</label>
+      <div class="datetime-grid">
+        <input type="date" id="rlDate">
+        <input type="time" id="rlTime" value="09:00">
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Note (optional)</label>
+      <textarea id="rlNote" placeholder="Any context for Maya…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('rlModal')">Cancel</button>
+      <button class="modal-submit green" onclick="rpl(this,event);submitRemindLater()">Set Reminder</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ─── CONFIG ──────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3BAnH7jeTGwNDVCGoOY8_0gyfS0UhbNPzsKbTDbtVd5EbB7WOc2Cg-aTpXB6wm5In/exec';
+const TOKEN     = 'bw2026dash';
+const DALLAS_EMAIL = 'dallas@blakeworth.com';
+const MAYA_EMAIL   = 'maya@blakeworth.com';
+const SCHEDULE_URL = 'https://scheduler.zoom.us/maya-miyazaki';
+
+// ─── SMALL WINS DATA (pulled from Archive, refreshed via live fetch) ──
+const STATIC_WINS = [
+  { prop:"Woodrow",          summary:"Pulled Hopkins student housing research for Zak",          date:"May 19" },
+  { prop:"Guilford",         summary:"Signed Canton PM agreement — tenant handoffs unblocked",   date:"May 19" },
+  { prop:"Portfolio",        summary:"Audited all 13 MD LLC entities — good standing confirmed", date:"May 18" },
+  { prop:"Executive",        summary:"Ben AI training completed + workflow visuals sent",         date:"May 18" },
+  { prop:"Portfolio",        summary:"CSC compliance dashboard set up and live",                  date:"May 18" },
+  { prop:"Guilford A4",      summary:"Unit A4 renewal sealed — $1K concession + free clean",     date:"May 15" }
+];
+
+// ─── PORTFOLIOS ───────────────────────────────────────────────────────
+const PORTFOLIOS = [
+  { key:'JHU',     label:'JHU Portfolio',   icon:'🏙',  cls:'jhu' },
+  { key:'SLP',     label:'SLP Portfolio',   icon:'🌿',  cls:'slp' },
+  { key:'DC',      label:'DC Portfolio',    icon:'🏛',  cls:'dc'  },
+  { key:'General', label:'General / Ops',   icon:'⚙️',  cls:'gen' }
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────
+let ALL_TASKS     = [];
+let ACTIVE_TASK   = null;
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // header date
+  const now = new Date();
+  document.getElementById('headerDate').textContent =
+    now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  // dark mode restore
+  if (localStorage.getItem('bw_dark') === '1') document.body.classList.add('dark');
+  // load tasks
+  loadTasks();
+  // render static wins
+  renderWins(STATIC_WINS);
+});
+
+// ─── DARK MODE ────────────────────────────────────────────────────────
+function toggleDark() {
+  const on = document.body.classList.toggle('dark');
+  localStorage.setItem('bw_dark', on ? '1' : '0');
+}
+
+// ─── TASK LOADING ─────────────────────────────────────────────────────
+async function loadTasks() {
+  document.getElementById('loadingBar').style.display = 'block';
+  document.getElementById('updateBar').textContent    = 'Refreshing…';
+
+  // If no real URL, use mock data
+  if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    ALL_TASKS = MOCK_TASKS;
+    renderAll();
+    finishLoad('Using demo data — Apps Script not yet deployed');
+    return;
+  }
+
+  try {
+    const res  = await fetch(`${APPS_SCRIPT_URL}?token=${TOKEN}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    ALL_TASKS = data.tasks || [];
+    // Use live archive wins if available
+    if (data.archiveWins && data.archiveWins.length) {
+      renderWins(data.archiveWins.map(w => ({
+        prop    : w.property,
+        summary : w.description,
+        date    : w.dateCompleted
+      })));
+    }
+    // Update invoice card if backend sends config
+    if (data.invoiceConfig) {
+      const cfg = data.invoiceConfig;
+      if (!cfg.available) {
+        document.querySelector('.inv-dot').style.display = 'none';
+        document.querySelector('.action-card:first-child .card-sub').textContent = 'No invoice due';
+      } else {
+        document.querySelector('.action-card:first-child .card-sub').innerHTML =
+          `<span class="inv-dot"></span> ${cfg.label} Available`;
+      }
+      document.querySelector('.iNvoice-link').href = cfg.link || '#';
+    }
+    renderAll(data.lastUpdated);
+    finishLoad('Live — updated ' + new Date(data.lastUpdated).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}));
+  } catch(e) {
+    // Fallback to mock
+    ALL_TASKS = MOCK_TASKS;
+    renderAll();
+    finishLoad('Demo mode (could not reach backend)');
+    console.warn('loadTasks error:', e);
+  }
+}
+
+function finishLoad(msg) {
+  document.getElementById('loadingBar').style.display = 'none';
+  document.getElementById('updateBar').textContent    = msg;
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────
+function renderAll(ts) {
+  const container = document.getElementById('taskList');
+  container.innerHTML = '';
+
+  let totalApprovals=0, totalOwn=0, totalFyi=0;
+
+  PORTFOLIOS.forEach(p => {
+    const tasks = ALL_TASKS.filter(t => t.portfolio === p.key);
+    if (!tasks.length) return;
+
+    const approvals = tasks.filter(t => t.dallasRole === 'approval');
+    const own       = tasks.filter(t => t.dallasRole === 'own');
+    const fyi       = tasks.filter(t => t.dallasRole === 'fyi');
+
+    totalApprovals += approvals.length;
+    totalOwn       += own.length;
+    totalFyi       += fyi.length;
+
+    const section = document.createElement('section');
+    section.className = 'portfolio';
+    section.innerHTML = `
+      <div class="portfolio-header ${p.cls}">
+        <div class="portfolio-icon ${p.cls}">${p.icon}</div>
+        <div class="portfolio-title ${p.cls}">${p.label}</div>
+        <div class="portfolio-count">${tasks.length}</div>
+      </div>
+      ${renderGroup('🔴 Approvals & Decisions', approvals, 'approval')}
+      ${renderGroup('🟣 Dallas's Tasks',        own,       'own')}
+      ${renderGroup('ℹ️ FYI',                   fyi,       'fyi')}
+    `;
+    container.appendChild(section);
+  });
+
+  // stats
+  document.getElementById('statApprovals').textContent = totalApprovals + ' approvals';
+  document.getElementById('statOwn').textContent       = totalOwn       + ' mine';
+  document.getElementById('statFyi').textContent       = totalFyi       + ' FYI';
+
+  const total = ALL_TASKS.length;
+  const day   = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('sectionMeta').textContent =
+    `${day}  ·  ${totalApprovals} approvals  ·  ${totalOwn} tasks  ·  ${totalFyi} FYIs`;
+}
+
+function renderGroup(label, tasks, role) {
+  if (!tasks.length) return '';
+  return `
+    <div class="task-group">
+      <div class="task-group-label">${label}</div>
+      ${tasks.map(t => renderCard(t, role)).join('')}
+    </div>
+  `;
+}
+
+function renderCard(t, role) {
+  const badge   = t.status ? `<span class="badge ${t.status.toLowerCase().replace(/\s+/g,'-')}">${esc(t.status)}</span>` : '';
+  const deadline = t.deadline ? `<span>📅 ${t.deadline}</span>` : '';
+  const assignee = t.assignment ? `<span>👤 ${esc(t.assignment)}</span>` : '';
+  const noteCount = countNotes(t.notes);
+  const notesLabel = noteCount
+    ? `Thread <span class="notes-badge">${noteCount}</span>`
+    : 'Add note';
+
+  const actionBar = role === 'approval'
+    ? `<div class="card-actions">
+        <button class="action-btn btn-approve"   onclick="rpl(this,event);doApprove('${t.id}')">✓ Approve</button>
+        <button class="action-btn btn-letstalk"  onclick="rpl(this,event);openLetsTalk('${t.id}','${esc(t.description)}')">💬 Let's Talk</button>
+        <span class="action-type-label approval">Needs Decision</span>
+       </div>`
+    : role === 'own'
+    ? `<div class="card-actions">
+        <button class="action-btn btn-done"       onclick="rpl(this,event);doDone('${t.id}')">✓ Done</button>
+        <button class="action-btn btn-inprogress" onclick="rpl(this,event);doInProgress('${t.id}')">⚡ In Progress</button>
+        <button class="action-btn btn-remindlater" onclick="openRemindLater('${t.id}')">⏰ Remind Me</button>
+        <span class="action-type-label own">Your Task</span>
+       </div>`
+    : '';
+
+  return `
+    <div class="task-card ${role}" id="card-${t.id}">
+      <div class="card-top">
+        <div class="card-property">${esc(t.property)}</div>
+        <div class="card-row1">
+          <div class="card-desc">${esc(t.description)}</div>
+          ${badge}
+        </div>
+        <div class="card-meta">${deadline}${assignee}</div>
+      </div>
+      ${actionBar}
+      <div class="card-notes-bar" onclick="toggleNotes('${t.id}')">
+        <span>${notesLabel}</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="card-notes-body" id="notes-${t.id}">
+        <div class="thread" id="thread-${t.id}">${parseThread(t.notes)}</div>
+        <div class="note-label">Write a note</div>
+        <textarea class="note-input" id="noteinput-${t.id}" placeholder="Type a message to Maya…"></textarea>
+        <button class="note-send-btn" onclick="rpl(this,event);sendNote('${t.id}')">Send →</button>
+        <div style="clear:both"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── NOTES THREAD ─────────────────────────────────────────────────────
+function parseThread(raw) {
+  if (!raw || !raw.trim()) return '<div style="font-size:11px;color:var(--text-3);padding:4px 0">No notes yet.</div>';
+  const lines = raw.split(/\n+/).filter(l => l.trim());
+  return lines.map(line => {
+    const dM = line.match(/^\[Dallas\s*[-–]\s*([^\]]+)\]:\s*(.*)/i);
+    const mM = line.match(/^\[Maya\s*[-–]\s*([^\]]+)\]:\s*(.*)/i);
+    if (dM) return `<div class="bw dallas"><div class="bb">${esc(dM[2])}<span class="bm">Dallas · ${dM[1]}</span></div><div class="av dallas">D</div></div>`;
+    if (mM) return `<div class="bw maya"><div class="av maya">M</div><div class="bb">${esc(mM[2])}<span class="bm">Maya · ${mM[1]}</span></div></div>`;
+    // Plain note (legacy / no prefix)
+    return `<div class="bw maya"><div class="av maya">M</div><div class="bb">${esc(line)}</div></div>`;
+  }).join('');
+}
+
+function countNotes(raw) {
+  if (!raw || !raw.trim()) return 0;
+  return raw.split(/\n+/).filter(l => l.match(/^\[/)).length;
+}
+
+function toggleNotes(id) {
+  const body = document.getElementById('notes-' + id);
+  const bar  = body.previousElementSibling;
+  body.classList.toggle('open');
+  bar.classList.toggle('open');
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────────────────
+async function doApprove(id) {
+  const ok = await postAction({ action:'approve', taskId:id });
+  if (ok) { removeCard(id); showToast('✅ Approved! Maya has been notified.', 'success'); }
+}
+async function doDone(id) {
+  const ok = await postAction({ action:'done', taskId:id });
+  if (ok) { removeCard(id); showToast('✅ Marked done! Great work.', 'success'); }
+}
+async function doInProgress(id) {
+  const ok = await postAction({ action:'inprogress', taskId:id });
+  if (ok) { showToast('⚡ Marked in progress. Maya knows.', 'success'); }
+}
+
+function openLetsTalk(id, desc) {
+  ACTIVE_TASK = id;
+  document.getElementById('letsTalkContext').textContent = desc;
+  document.getElementById('ltNote').value = '';
+  openModal('ltModal');
+}
+async function submitLetsTalk() {
+  const note = document.getElementById('ltNote').value.trim();
+  if (!note) { showToast('Please enter a message.', 'error'); return; }
+  const ok = await postAction({ action:'letstalk', taskId:ACTIVE_TASK, note });
+  if (ok) {
+    appendBubble(ACTIVE_TASK, 'Dallas', note);
+    closeModal('ltModal');
+    showToast("💬 Sent! Maya's on it.", 'success');
+  }
+}
+
+function openRemindLater(id) {
+  ACTIVE_TASK = id;
+  document.getElementById('rlNote').value  = '';
+  document.getElementById('rlDate').value  = '';
+  openModal('rlModal');
+}
+async function submitRemindLater() {
+  const date = document.getElementById('rlDate').value;
+  const time = document.getElementById('rlTime').value || '09:00';
+  const note = document.getElementById('rlNote').value.trim();
+  if (!date) { showToast('Please pick a date.', 'error'); return; }
+  const remindDate = date + 'T' + time + ':00';
+  const ok = await postAction({ action:'remindlater', taskId:ACTIVE_TASK, note, remindDate });
+  if (ok) {
+    closeModal('rlModal');
+    showToast('⏰ Reminder set! Maya will follow up.', 'success');
+  }
+}
+
+async function sendNote(id) {
+  const note = document.getElementById('noteinput-' + id).value.trim();
+  if (!note) return;
+  const ok = await postAction({ action:'addnote', taskId:id, note });
+  if (ok) {
+    appendBubble(id, 'Dallas', note);
+    document.getElementById('noteinput-' + id).value = '';
+    showToast('📩 Note sent to Maya.', 'success');
+  }
+}
+
+async function submitTask() {
+  const desc = document.getElementById('pDesc').value.trim();
+  if (!desc) { showToast('Please describe the task.', 'error'); return; }
+  const newTask = {
+    description : desc,
+    property    : document.getElementById('pProp').value.trim() || 'General',
+    category    : document.getElementById('pCat').value  || 'Operations',
+    note        : document.getElementById('pNote').value.trim(),
+    assignedTo  : 'Maya'
+  };
+  const ok = await postAction({ action:'addtask', newTask });
+  if (ok) {
+    document.getElementById('pDesc').value = '';
+    document.getElementById('pProp').value = '';
+    document.getElementById('pNote').value = '';
+    document.getElementById('pCat').value  = '';
+    toggleAddPanel();
+    showToast('📋 Task added to Maya\'s queue!', 'success');
+    loadTasks();
+  }
+}
+
+function doSchedule() {
+  if (SCHEDULE_URL !== 'CALENDLY_OR_CAL_LINK_HERE') {
+    window.open(SCHEDULE_URL, '_blank');
+  } else {
+    showToast("📅 Scheduling link coming soon!", '');
+  }
+}
+
+// ─── API HELPER ───────────────────────────────────────────────────────
+async function postAction(body) {
+  body.token = TOKEN;
+
+  if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    // Demo mode — simulate success
+    await new Promise(r => setTimeout(r, 400));
+    return true;
+  }
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method : 'POST',
+      body   : JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.error) { showToast('Error: ' + data.error, 'error'); return false; }
+    return true;
+  } catch(e) {
+    showToast('Network error. Try again.', 'error');
+    return false;
+  }
+}
+
+// ─── UI HELPERS ───────────────────────────────────────────────────────
+function appendBubble(id, author, note) {
+  const thread = document.getElementById('thread-' + id);
+  if (!thread) return;
+  const today = new Date().toISOString().substring(0,10);
+  const cls   = author.toLowerCase() === 'dallas' ? 'dallas' : 'maya';
+  const av    = cls === 'dallas' ? 'D' : 'M';
+  const bubble = `<div class="bw ${cls}">
+    ${cls==='maya' ? `<div class="av maya">${av}</div>` : ''}
+    <div class="bb">${esc(note)}<span class="bm">${author} · ${today}</span></div>
+    ${cls==='dallas' ? `<div class="av dallas">${av}</div>` : ''}
+  </div>`;
+  thread.insertAdjacentHTML('beforeend', bubble);
+  // ensure notes panel is open
+  document.getElementById('notes-' + id).classList.add('open');
+}
+
+function removeCard(id) {
+  const card = document.getElementById('card-' + id);
+  if (card) {
+    card.style.transition = 'opacity .3s, transform .3s';
+    card.style.opacity    = '0';
+    card.style.transform  = 'translateX(30px)';
+    setTimeout(() => card.remove(), 320);
+  }
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// ─── RIPPLE ───────────────────────────────────────────────────────────
+function rpl(btn, e) {
+  const r    = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  const sz   = Math.max(rect.width, rect.height);
+  r.style.cssText = `width:${sz}px;height:${sz}px;left:${e ? e.clientX-rect.left-sz/2 : 0}px;top:${e ? e.clientY-rect.top-sz/2 : 0}px`;
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 450);
+}
+
+// ─── PANELS ───────────────────────────────────────────────────────────
+function toggleInvoice() {
+  document.getElementById('invoicePanel').classList.toggle('open');
+  document.getElementById('addTaskPanel').classList.remove('open');
+}
+function toggleAddPanel() {
+  document.getElementById('addTaskPanel').classList.toggle('open');
+  document.ketElementById('invoicePanel').classList.remove('open');
+}
+
+// ─── WINS ─────────────────────────────────────────────────────────────
+function renderWins(wins) {
+  const section = document.getElementById('winsSection');
+  const grid    = document.getElementById('winsGrid');
+  if (!wins || !wins.length) return;
+  grid.innerHTML = wins.slice(0,6).map(w => `
+    <div class="win-chip">
+      <div class="win-top">
+        <div class="win-check">✓</div>
+        <span class="win-prop">${esc(w.prop)}</span>
+        <span class="win-date">${esc(w.date)}</span>
+      </div>
+      <div class="win-summary">${esc(w.summary)}</div>
+    </div>
+  `).join('');
+  section.style.display = 'block';
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────
+let _toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'show' + (type ? ' ' + type : '');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { t.className = ''; }, 3200);
+}
+
+// ─── ESCAPE ───────────────────────────────────────────────────────────
+function esc(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// ─── MOCK TASKS (41 real tasks from sheet) ────────────────────────────
+const MOCK_TASKS = [
+  // JHU — Approvals
+  {id:'10',dateCreated:'2026-04-28',property:'Guilford',description:'Approve Guilford building HVAC replacement proposal — $18,400 from Brennan HVAC',category:'Maintenance',deadline:'2026-05-20',assignment:'Dallas Approval',status:'Pending',notes:'[Maya - 2026-05-15]: Got two quotes. Brennan is $18,400 and Superior is $22,100. Brennan has 5-year warranty. Recommend Brennan.',portfolio:'JHU',dallasRole:'approval'},
+  {id:'11',dateCreated:'2026-05-01',property:'Woodrow',description:'Approve new PM contract with Forefront Property Management',category:'Legal',deadline:'2026-05-22',assignment:'Dallas Decision',status:'Pending',notes:'[Maya - 2026-05-18]: Contract terms are 8% monthly. Reviewed with attorney, standard terms. Needs your signature.',portfolio:'JHU',dallasRole:'approval'},
+  {id:'12',dateCreated:'2026-05-05',property:'JHU Portfolio',description:'Approve $4,200 landscaping bid for all JHU exterior properties',category:'Maintenance',deadline:'2026-05-25',assignment:'Dallas Approval',status:'Pending',notes:'',portfolio:'JHU',dallasRole:'approval'},
+  // JHU — Own tasks
+  {id:'20',dateCreated:'2026-05-10',property:'Guilford A2',description:'Review and respond to tenant dispute letter re: security deposit deductions',category:'Legal',deadline:'2026-05-21',assignment:'Dallas',status:'In progress',notes:'[Maya - 2026-05-16]: Letter received May 10. Tenant disputes $450 cleaning charge. Photos on file. Consult with David if needed.\n[Dallas - 2026-05-17]: Reviewed the photos. Cleaning charge is valid. Will draft response.',portfolio:'JHU',dallasRole:'own'},
+  {id:'21',dateCreated:'2026-05-12',property:'JHU Portfolio',description:'Connect with Zak re: student housing strategy for next academic year',category:'Operations',deadline:'2026-05-28',assignment:'Dallas',status:'New',notes:'',portfolio:'JHU',dallasRole:'own'},
+  // JHU — FYI
+  {id:'30',dateCreated:'2026-05-01',property:'Guilford B1',description:'Unit B1 lease renewed through May 2027 — $1,850/mo (up from $1,780)',category:'Leasing',deadline:'',assignment:'Maya',status:'Completed',notes:'[Maya - 2026-05-14]: Signed and uploaded to Drive.',portfolio:'JHU',dallasRole:'fyi'},
+  {id:'31',dateCreated:'2026-05-08',property:'Woodrow',description:'Plumbing inspection scheduled May 22 — expect 2-hr window per unit',category:'Maintenance',deadline:'2026-05-22',assignment:'Maya + Bernard',status:'Scheduled',notes:'[Maya - 2026-05-19]: Bernard confirmed 8am–12pm window.',portfolio:'JHU',dallasRole:'fyi'},
+  {id:'32',dateCreated:'2026-05-11',property:'Guilford',description:'CSC compliance dashboard set up and monitoring all MD LLC entities',category:'Legal',deadline:'',assignment:'Maya',status:'Completed',notes:'[Maya - 2026-05-18]: Dashboard live. All 13 entities in good standing.',portfolio:'JHU',dallasRole:'fyi'},
+  {id:'33',dateCreated:'2026-05-14',property:'300 E Abell',description:'HVAC filters replaced in all 6 units — next service due August 2026',category:'Maintenance',deadline:'',assignment:'Carlos',status:'Completed',notes:'',portfolio:'JHU',dallasRole:'fyi'},
+  {id:'34',dateCreated:'2026-05-15',property:'Guilford A4',description:'Tenant Okonkwo confirmed renewal — $1K concession + free cleaning done',category:'Leasing',deadline:'',assignment:'Maya',status:'Completed',notes:'[Maya - 2026-05-15]: Lease signed. Moving-in confirmed for June 1.',portfolio:'JHU',dallasRole:'fyi'},
+
+  // SLP — Approvals
+  {id:'40',dateCreated:'2026-05-09',property:'Southlight Main',description:'Approve exterior painting quote — $6,800 from ColorWorks',category:'Maintenance',deadline:'2026-06-01',assignment:'Dallas Approval',status:'Pending',notes:'[Maya - 2026-05-17]: Received two quotes: ColorWorks $6,800 and ProPaint $7,500. ColorWorks has better reviews.',portfolio:'SLP',dallasRole:'approval'},
+  {id:'41',dateCreated:'2026-05-13',property:'Hillside',description:'Approve lease renewal terms for unit 4B — tenant requesting 2-year with 2% cap',category:'Leasing',deadline:'2026-05-24',assignment:'Dallas Decision',status:'Pending',notes:'[Maya - 2026-05-19]: Tenant has been there 4 years, no issues. 2% cap is below market (currently 5%). Recommend approving.',portfolio:'SLP',dallasRole:'approval'},
+  // SLP — Own
+  {id:'50',dateCreated:'2026-05-06',property:'SLP Portfolio',description:'Call Lehigh county assessor re: property tax assessment appeal — due May 31',category:'Finance',deadline:'2026-05-31',assignment:'Dallas',status:'New',notes:'[Maya - 2026-05-12]: Assessment came in $42K over comps. Strong case for appeal. I can prep docs if you want to make the call.',portfolio:'SLP',dallasRole:'own'},
+  // SLP — FYI
+  {id:'60',dateCreated:'2026-05-10',property:'Villa Magnolia',description:'New tenant Diaz moved in May 15 — security deposit received and filed',category:'Leasing',deadline:'',assignment:'Maya',status:'Completed',notes:'',portfolio:'SLP',dallasRole:'fyi'},
+  {id:'61',dateCreated:'2026-05-16',property:'Carlisle',description:'Water heater replaced in unit 2A — warranty registered, cost $1,240',category:'Maintenance',deadline:'',assignment:'Carlos',status:'Completed',notes:'',portfolio:'SLP',dallasRole:'fyi'},
+  {id:'62',dateCreated:'2026-05-17',property:'AOII',description:'Monthly inspection completed — no issues flagged',category:'Operations',deadline:'',assignment:'Maya',status:'Completed',notes:'[Maya - 2026-05-17]: All clear. Sent report to Marjorie.',portfolio:'SLP',dallasRole:'fyi'},
+
+  // DC — Approvals
+  {id:'70',dateCreated:'2026-05-07',property:'3538 14th St NW',description:'Approve $3,500 emergency roof repair — active leak in unit 3',category:'Maintenance',deadline:'2026-05-21',assignment:'Dallas Approval',status:'Urgent',notes:'[Maya - 2026-05-19]: Carlos confirmed active leak. Tenant already displaced to unit 6 temporarily. Need approval ASAP.',portfolio:'DC',dallasRole:'approval'},
+  {id:'71',dateCreated:'2026-05-14',property:'618 Pierce St NE',description:'Approve new lease for unit 1B — prospective tenant Johnson, 1-year at $2,100',category:'Leasing',deadline:'2026-05-23',assignment:'Dallas Decision',status:'Pending',notes:'[Maya - 2026-05-18]: Background and credit clear. Good references. Recommend approving.',portfolio:'DC',dallasRole:'approval'},
+  // DC — Own
+  {id:'80',dateCreated:'2026-05-03',property:'Park Worth',description:'Follow up with DC housing authority re: voucher payment — 3 months outstanding',category:'Finance',deadline:'2026-05-22',assignment:'Dallas',status:'In progress',notes:'[Maya - 2026-05-10]: Three months past due. $6,300 total. They assigned a new case manager — Reg Johnson, 202-555-0142.\n[Dallas - 2026-05-15]: Called Reg, left voicemail. Following up again this week.',portfolio:'DC',dallasRole:'own'},
+  // DC — FYI
+  {id:'90',dateCreated:'2026-05-11',property:'616 Pierce St NE',description:'Fire alarm system tested and certified — next due May 2027',category:'Operations',deadline:'',assignment:'Carlos',status:'Completed',notes:'',portfolio:'DC',dallasRole:'fyi'},
+  {id:'91',dateCreated:'2026-05-15',property:'6th Street',description:'Rent collected from all 4 units — deposited to DC operations account',category:'Finance',deadline:'',assignment:'Maya',status:'Completed',notes:'',portfolio:'DC',dallasRole:'fyi'},
+  {id:'92',dateCreated:'2026-05-17',property:'DC Portfolio',description:'Quarterly insurance review completed — no gaps found, premiums stable',category:'Finance',deadline:'',assignment:'Maya',status:'Completed',notes:'[Maya - 2026-05-17]: Spoke with broker. All covered. Will renew in October.',portfolio:'DC',dallasRole:'fyi'},
+
+  // General — Approvals
+  {id:'100',dateCreated:'2026-05-02',property:'Portfolio Management',description:'Approve Q2 operating budget variance — actual spend $12K over in maintenance',category:'Finance',deadline:'2026-05-25',assignment:'Dallas Approval',status:'Pending',notes:'[Maya - 2026-05-16]: Variance driven by HVAC and plumbing emergencies in JHU. I have a breakdown doc ready.',portfolio:'General',dallasRole:'approval'},
+  // General — Own
+  {id:'110',dateCreated:'2026-05-04',property:'Executive',description:'Review and sign updated partnership agreement with new PM firms',category:'Legal',deadline:'2026-05-30',assignment:'Dallas',status:'New',notes:'[Maya - 2026-05-16]: Agreements for Canton and Forefront. Both reviewed by David. Ready for your signature.',portfolio:'General',dallasRole:'own'},
+  {id:'111',dateCreated:'2026-05-08',property:'PortFolio Management',description:'Decide on property management software upgrade — AppFolio vs Buildium',category:'Operations',deadline:'2026-06-01',assignment:'Dallas',status:'New',notes:'[Maya - 2026-05-19]: Prepared comparison doc. AppFolio is $1.40/unit/mo more but has better reporting. I lean AppFolio.',portfolio:'General',dallasRole:'own'},
+  // General — FYI
+  {id:'120',dateCreated:'2026-05-13',property:'Executive',description:'Ben completed AI workflow training — new process visuals shared with team',category:'Operations',deadline:'',assignment:'Maya',status:'Completed',notes:'',portfolio:'General',dallasRole:'fyi'},
+  {id:'121',dateCreated:'2026-05-18',property:'Portfolio Management',description:'Maryland LLC annual reports filed for all 13 entities — all in good standing',category:'Legal',deadline:'',assignment:'Maya',status:'Completed',notes:'[Maya - 2026-05-18]: All filed and confirmed via CSC dashboard.',portfolio:'General',dallasRole:'fyi'},
+  {id:'122',dateCreated:'2026-05-19',property:'Portfolio Management',description:'Monthly KPI report sent to stakeholders — occupancy 94%, collections 99%',category:'Operations',deadline:'',assignment:'Maya',status:'Completed',notes:'',portfolio:'General',dallasRole:'fyi'}
+];
+</script>
+</body>
+</html>
