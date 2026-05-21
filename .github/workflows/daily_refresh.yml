@@ -1,0 +1,44 @@
+name: Daily Dashboard Refresh
+
+on:
+  # Runs every day at 1pm Eastern (17:00 UTC in summer / 18:00 UTC in winter)
+  # Update the hour if the timing ever feels off by an hour (DST).
+  schedule:
+    - cron: '0 17 * * *'
+
+  # Also lets you trigger it manually from the Actions tab in GitHub
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # needed to commit the new index.html
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Generate dashboard
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+        run: python scripts/generate_dashboard.py
+
+      - name: Commit and push updated index.html
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          # Only commit if there are actual changes
+          git diff --staged --quiet || git commit -m "chore: daily dashboard refresh $(date -u '+%Y-%m-%d')"
+          git push
