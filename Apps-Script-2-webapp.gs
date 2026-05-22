@@ -173,7 +173,195 @@ function handleDone(taskId) {
     rowData[COL.TASK         - 1],  // C: Task / Issue
     rowData[COL.NOTES        - 1],  // D: Notes
     rowData[COL.CATEGORY     - 1],  // E: Category
-    rowData[COL.DEADLINE   �����c�FVFƖ�P�&�tFF�4���54�t��T�B�����s�76�v��V�@�t6���WFVBr�����7FGW0�F�F������FFR6���WFV@�Ӱ��6��7B��6����6�6W'f�6R�vWE67&�D��6�������6��v�D��6�����G'���&6��fU6�VWB�V�E&�r�&6��fU&�r���6�VWB�FV�WFU&�r�&�t�Vғ���f���ǒ����6��&V�V6T��6�����Р���u7FGW5WFFR�F6��B�t6���WFVBr�t�&�VBF��R'�F��2r�tF��2r����6��7B7V&�V7B�~)�RF��S�r�&�W'G��r(	Br�F6�F�F�S��6��7B&�G��tF��2�&�VB"r�F6�F�F�R�r"�r�&�W'G��r�2F��R��r�F�F��r�����p��u&�r��fVBF�&6��fR�s����F�g����7V&�V7B�&�G����6V�E6�2�~)�RF��S�r�&�W'G��r(	Br�F6�F�F�R����&WGW&�����G'VRӰ�Р��F��2�&�2F6���&�w&W72���gV�7F�����F�T��&�w&W72�F6��B���6��7B�6�VWB�&�t�V��&�tFF��f��EF6��F6��B����b�&�t�VҒ&WGW&��W'&�#�uF6���Bf�V�C�r�F6��BӰ��6��7BF6�F�F�R�&�tFF�4���D4��Ӱ�6��7B&�W'G��&�tFF�4���$�U%E��Ӱ��6�VWB�vWE&�vR�&�t�V��4���5DEU2��6WEf�VR�t��&�w&W72r���V�D��FR�6�VWB�&�t�V��tF��2r�u7F'FVBv�&���r��F��2�r�����u7FGW5WFFR�F6��B�t��&�w&W72r�tF��27F'FVBF��2F6�r�tF��2r����6��7B7V&�V7B�~)���&�w&W73�r�&�W'G��r(	Br�F6�F�F�S��6��7B&�G��tF��2�27F'FVBv�&���r��"r�F6�F�F�R�r"�r�&�W'G��r������p��u7FGW2WFFVBF���&�w&W72����W"G&6�W"�s����F�g����7V&�V7B�&�G����6V�E6�2�~)�F��27F'FVC�r�&�W'G��r(	Br�F6�F�F�R����&WGW&�����G'VRӰ�Р��F��2�V�2$�VfR��FR"��F��B6V�G2�W76vR���gV�7F�����F�T�WG5FƲ�F6��B���FR����b���FR�&WGW&��W'&�#�t��FRFW�B�2&WV�&VBrӰ�6��7B�6�VWB�&�t�V��&�tFF��f��EF6��F6��B����b�&�t�VҒ&WGW&��W'&�#�uF6���Bf�V�C�r�F6��BӰ��6��7BF6�F�F�R�&�tFF�4���D4��Ӱ�6��7B&�W'G��&�tFF�4���$�U%E��Ӱ��V�D��FR�6�VWB�&�t�V��tF��2r���FR�����u7FGW5WFFR�F6��B�rr���FR�tF��2r����6��7B7V&�V7B�	�9���FRg&��F��3�r�&�W'G��r(	Br�F6�F�F�S��6��7B&�G��tF��2�VgB��FR��"r�F6�F�F�R�r"�r�&�W'G��r������p��r"r���FR�r%����p��t6�V6���W"G&6�W"f�"FWF��2�s����F�g����7V&�V7B�&�G�����6��7B6�5&Wf�Wr���FR��V�wF�����FR�7V'7G&��r���r��r���r���FS��6V�E6�2�	�9�F��2��r�&�W'G��s�"r�6�5&Wf�Wr�r"r����&WGW&�����G'VRӰ�Р��F��26Ɩ6�2%&V֖�B�R"�B�6�2FFR���gV�7F�����F�U&V֖�D�FW"�F6��B���FR�&V֖�DFFR����b�&V֖�DFFR�&WGW&��W'&�#�w&V֖�DFFR�2&WV�&VBrӰ�6��7B�6�VWB�&�t�V��&�tFF��f��EF6��F6��B����b�&�t�VҒ&WGW&��W'&�#�uF6���Bf�V�C�r�F6��BӰ��6��7BF6�F�F�R�&�tFF�4���D4��Ӱ�6��7B&�W'G��&�tFF�4���$�U%E��Ӱ�6��7BFFT�&���WrFFR�&V֖�DFFR���6��7BFFT�&V��WF�ƗF�W2�f�&�DFFR��FFT�&��6W76����vWE67&�EF��U���R���t����B����������p����6��7BV�EF��R��WrFFR�FFT�&��vWEF��R���3�c�����3�֖�WfV�@����7&VFRv��v�R6�V�F"WfV�B����w26�V�F �6��7B6�F�F�R�~(�f����rW�r�&�W'G��r(	Br�F6�F�F�S��6��7B6�FWF��2�tF��2&WVW7FVBf����r�W��F��2F6������p��uF6��r�F6�F�F�R�u��p��u&�W'G��r�&�W'G������FR�u����F��5�w2��FS�r���FR�rr����6��7B6��F���2��FW67&�F���6�FWF��2Ӱ��b�%u�4dr�D��5�T����6��F���2�wVW7G2�%u�4dr�D��5�T��ð�6��F���2�6V�D��f�FW2�G'VS��Р�6��7B6��6�V�F$�vWDFVfV�D6�V�F"����6��7BWfV�B�6��7&VFTWfV�B�6�F�F�R�FFT�&��V�EF��R�6��F���2������V�B��FRF�F6�F�&V@�6��7B��FUFW�B�u&V֖�FW"6WBf�"r�FFT�&V�����FR�r���FS�r���FR�r�r���V�D��FR�6�VWB�&�t�V��tF��2r���FUFW�B�����u7FGW5WFFR�F6��B�rr���FUFW�B�tF��2r����6��7B7V&�V7B�~(�&V֖�FW"6WC�r�&�W'G��r(	Br�F6�F�F�S��6��7B&�G��tF��26WBf����r�W&V֖�FW"f�""r�F6�F�F�R�r"�r�&�W'G��r������p��tFFS�r�FFT�&V��u��p�����FR�t��2��FS�"r���FR�r%����r�u��r���t6�V�F"WfV�B�2&VV�7&VFVB����W"v��v�R6�V�F"�s����F�g����7V&�V7B�&�G����6V�E6�2�~(�F��26WB&V֖�FW"f�"r�&�W'G��s�r�FFT�&V���&WGW&�����G'VR�WfV�D�C�WfV�B�vWD�B��Ӱ�Р��F��2FG2F�&VB��FRg&��F�R��FW2�V����BF�R��F���gV�7F�����F�TFD��FR�F6��B���FR����b���FR�&WGW&��W'&�#�t��FRFW�B�2&WV�&VBrӰ�6��7B�6�VWB�&�t�V��&�tFF��f��EF6��F6��B����b�&�t�VҒ&WGW&��W'&�#�uF6���Bf�V�C�r�F6��BӰ��6��7BF6�F�F�R�&�tFF�4���D4��Ӱ�6��7B&�W'G��&�tFF�4���$�U%E��Ӱ��V�D��FR�6�VWB�&�t�V��tF��2r���FR�����u7FGW5WFFR�F6��B�rr���FR�tF��2r������V�����6��V�Fǒ���4�2f�"&�WF��RF�&VB��FW2��6��7B7V&�V7B�	�*���FRg&��F��3�r�&�W'G��r(	Br�F6�F�F�S��6��7B&�G��tF��2FFVB��FRF�"r�F6�F�F�R�r"�r�&�W'G��r������"r���FR�r"s����F�g����7V&�V7B�&�G�����&WGW&�����G'VRӰ�Р��F��2W6W2F�RFBF6��V�F�7&VFR�WrF6����gV�7F�����F�TFEF6���WuF6�����b��WuF6����WuF6��FW67&�F���&WGW&��W'&�#�uF6�FW67&�F����2&WV�&VBrӰ��6��7B72�7&VG6�VWD��V�'��B�%u�4dr�5$TE4�TUE��B���6��7B6�VWB�72�vWE6�VWD'���R�%u�4dr�5D�dU�D4�5�D"����b�6�VWB�F�&�r�WrW'&�"�t7F�fRF6�26�VWB��Bf�V�Br����6��7BF�F��F�F�7G"����6��7B&�W'G����WuF6��&�W'G���tvV�W&�r��G&�҂���6��7BF6���WuF6��FW67&�F����G&�҂���6��7B6FVv�'����WuF6��6FVv�'���tF֖�r��G&�҂���6��7B76�v��V�B���WuF6��76�v��V�B��t��r��G&�҂���6��7B��FUFW�B���WuF6����FR��rr��G&�҂�������bF��276�v�2F����6V�b�W6R$F��2F�F�"7FGW26��B6��w2����2&�&@�6��7B7FGW2��76�v��V�B���tF��2r��tF��2F�F�r�t��&�w&W72s�����6VVBF�R��FW26��V��v�F�F��2w2�F������FP�6��7B��FW5f�VR���FUFW�B�u�F��2�r�F�F��uӢr���FUFW�B�rs���6�VWB�V�E&�r���F�F�����FFR7&VFV@�&�W'G����#�&�W'G��F6����3�F6���77VP���FW5f�VR���C���FW0�6FVv�'����S�6FVv�'��rr���c�FVFƖ�P�76�v��V�B���s�76�v��V�@�f�6R�����6���WFVC�7FGW2�����7FGW0�rr�����W�G&�ғ���6��7B7V&�V7B�	�8��WrF6�g&��F��3�r�&�W'G��r(	Br�F6���6��7B&�G��tF��2FFVB�WrF6�76�v�VBF�r�76�v��V�B�s�����p��uF6��r�F6��u��p��u&�W'G��r�&�W'G��u��p��t6FVv�'��r�6FVv�'������FUFW�B�u����FS�r���FUFW�B�rr�����F�g����7V&�V7B�&�G�������4�2��ǒv�V�76�v��rF�6��V��RV�6R����"6��G&7F�"���b�76�v��V�B��tF��2r���6V�E6�2�	�8��WrF6�g&��F��2(i"r�76�v��V�B�s�r�&�W'G��r(	Br�F6����Р�&WGW&�����G'VRӰ�Р����)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y)Y══════════════
+    rowData[COL.DEADLINE     - 1],  // F: Deadline
+    rowData[COL.ASSIGNMENT   - 1],  // G: Assignment
+    'Completed',                     // H: Status
+    today,                           // I: Date Completed
+  ];
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    archiveSheet.appendRow(archiveRow);
+    sheet.deleteRow(rowNum);
+  } finally {
+    lock.releaseLock();
+  }
+
+  logStatusUpdate(taskId, 'Completed', 'Marked done by Dallas', 'Dallas');
+
+  const subject = '✅ Done: ' + property + ' — ' + taskTitle;
+  const body    = 'Dallas marked "' + taskTitle + '" (' + property + ') as done on ' + today + '.\n\n'
+                + 'Row moved to Archive.';
+  notifyMaya(subject, body);
+  sendSms('✅ Done: ' + property + ' — ' + taskTitle);
+
+  return { ok: true };
+}
+
+/** Dallas marks a task In Progress. */
+function handleInProgress(taskId) {
+  const { sheet, rowNum, rowData } = findTask(taskId);
+  if (!rowNum) return { error: 'Task not found: ' + taskId };
+
+  const taskTitle = rowData[COL.TASK     - 1];
+  const property  = rowData[COL.PROPERTY - 1];
+
+  sheet.getRange(rowNum, COL.STATUS).setValue('In Progress');
+  appendNote(sheet, rowNum, 'Dallas', 'Started working on this.');
+  logStatusUpdate(taskId, 'In Progress', 'Dallas started this task', 'Dallas');
+
+  const subject = '⚡ In Progress: ' + property + ' — ' + taskTitle;
+  const body    = 'Dallas has started working on "' + taskTitle + '" (' + property + ').\n\n'
+                + 'Status updated to In Progress in your tracker.';
+  notifyMaya(subject, body);
+  sendSms('⚡ Dallas started: ' + property + ' — ' + taskTitle);
+
+  return { ok: true };
+}
+
+/** Dallas opens "Leave a Note" modal and sends a message. */
+function handleLetsTalk(taskId, note) {
+  if (!note) return { error: 'Note text is required' };
+  const { sheet, rowNum, rowData } = findTask(taskId);
+  if (!rowNum) return { error: 'Task not found: ' + taskId };
+
+  const taskTitle = rowData[COL.TASK     - 1];
+  const property  = rowData[COL.PROPERTY - 1];
+
+  appendNote(sheet, rowNum, 'Dallas', note);
+  logStatusUpdate(taskId, '', note, 'Dallas');
+
+  const subject = '📝 Note from Dallas: ' + property + ' — ' + taskTitle;
+  const body    = 'Dallas left a note on "' + taskTitle + '" (' + property + '):\n\n'
+                + '"' + note + '"\n\n'
+                + 'Check your tracker for details.';
+  notifyMaya(subject, body);
+
+  const smsPreview = note.length > 100 ? note.substring(0, 97) + '...' : note;
+  sendSms('📝 Dallas on ' + property + ': "' + smsPreview + '"');
+
+  return { ok: true };
+}
+
+/** Dallas clicks "Remind Me" and picks a date. */
+function handleRemindLater(taskId, note, remindDate) {
+  if (!remindDate) return { error: 'remindDate is required' };
+  const { sheet, rowNum, rowData } = findTask(taskId);
+  if (!rowNum) return { error: 'Task not found: ' + taskId };
+
+  const taskTitle = rowData[COL.TASK     - 1];
+  const property  = rowData[COL.PROPERTY - 1];
+  const dateObj   = new Date(remindDate);
+  const dateLabel = Utilities.formatDate(
+    dateObj, Session.getScriptTimeZone(), 'MMMM d, yyyy h:mm a z'
+  );
+  const endTime   = new Date(dateObj.getTime() + 30 * 60 * 1000); // 30-min event
+
+  // Create Google Calendar event in Maya's calendar
+  const calTitle   = '⏰ Follow up: ' + property + ' — ' + taskTitle;
+  const calDetails = 'Dallas requested a follow-up on this task.\n\n'
+                   + 'Task: '     + taskTitle + '\n'
+                   + 'Property: ' + property
+                   + (note ? '\n\nDallas\'s note: ' + note : '');
+
+  const calOptions = { description: calDetails };
+  if (BW_CFG.DALLAS_EMAIL) {
+    calOptions.guests      = BW_CFG.DALLAS_EMAIL;
+    calOptions.sendInvites = true;
+  }
+
+  const cal   = CalendarApp.getDefaultCalendar();
+  const event = cal.createEvent(calTitle, dateObj, endTime, calOptions);
+
+  // Append note to task thread
+  const noteText = 'Reminder set for ' + dateLabel + (note ? '. Note: ' + note : '.');
+  appendNote(sheet, rowNum, 'Dallas', noteText);
+  logStatusUpdate(taskId, '', noteText, 'Dallas');
+
+  const subject = '⏰ Reminder set: ' + property + ' — ' + taskTitle;
+  const body    = 'Dallas set a follow-up reminder for "' + taskTitle + '" (' + property + ').\n\n'
+                + 'Date: ' + dateLabel + '\n'
+                + (note ? 'His note: "' + note + '"\n\n' : '\n')
+                + 'A calendar event has been created in your Google Calendar.';
+  notifyMaya(subject, body);
+  sendSms('⏰ Dallas set reminder for ' + property + ': ' + dateLabel);
+
+  return { ok: true, eventId: event.getId() };
+}
+
+/** Dallas adds a thread note from the notes panel (not the modal). */
+function handleAddNote(taskId, note) {
+  if (!note) return { error: 'Note text is required' };
+  const { sheet, rowNum, rowData } = findTask(taskId);
+  if (!rowNum) return { error: 'Task not found: ' + taskId };
+
+  const taskTitle = rowData[COL.TASK     - 1];
+  const property  = rowData[COL.PROPERTY - 1];
+
+  appendNote(sheet, rowNum, 'Dallas', note);
+  logStatusUpdate(taskId, '', note, 'Dallas');
+
+  // Email Maya silently (no SMS for routine thread notes)
+  const subject = '💬 Note from Dallas: ' + property + ' — ' + taskTitle;
+  const body    = 'Dallas added a note to "' + taskTitle + '" (' + property + '):\n\n"' + note + '"';
+  notifyMaya(subject, body);
+
+  return { ok: true };
+}
+
+/** Dallas uses the Add Task panel to create a new task. */
+function handleAddTask(newTask) {
+  if (!newTask || !newTask.description) return { error: 'Task description is required' };
+
+  const ss    = SpreadsheetApp.openById(BW_CFG.SPREADSHEET_ID);
+  const sheet = ss.getSheetByName(BW_CFG.ACTIVE_TASKS_TAB);
+  if (!sheet) throw new Error('Active Tasks sheet not found');
+
+  const today      = todayStr();
+  const property   = (newTask.property   || 'General').trim();
+  const task       = newTask.description.trim();
+  const category   = (newTask.category   || 'Admin').trim();
+  const assignment = (newTask.assignment || 'Maya').trim();
+  const noteText   = (newTask.note       || '').trim();
+
+  // If Dallas assigns to himself, use "Dallas To Do" status so it shows on his board
+  const status = (assignment === 'Dallas') ? 'Dallas To Do' : 'In Progress';
+
+  // Seed the notes column with Dallas's optional note
+  const notesValue = noteText ? '[Dallas - ' + today + ']: ' + noteText : '';
+
+  sheet.appendRow([
+    today,       // A: Date Created
+    property,    // B: Property
+    task,        // C: Task / Issue
+    notesValue,  // D: Notes
+    category,    // E: Category
+    '',          // F: Deadline
+    assignment,  // G: Assignment
+    false,       // H: Completed?
+    status,      // I: Status
+    '',          // J: Extra
+  ]);
+
+  const subject = '📋 New task from Dallas: ' + property + ' — ' + task;
+  const body    = 'Dallas added a new task assigned to ' + assignment + ':\n\n'
+                + 'Task: '     + task     + '\n'
+                + 'Property: ' + property + '\n'
+                + 'Category: ' + category
+                + (noteText ? '\nNote: '  + noteText : '');
+  notifyMaya(subject, body);
+
+  // SMS only when assigning to someone else (Maya or a contractor)
+  if (assignment !== 'Dallas') {
+    sendSms('📋 New task from Dallas → ' + assignment + ': ' + property + ' — ' + task);
+  }
+
+  return { ok: true };
+}
+
+
+// ══════════════════════════════════════════════════════════════
 // DATA HELPERS
 // ═══════════════════════════════════════════════════════════════
 
@@ -199,8 +387,8 @@ function getTasks() {
     }
   }
 
-  const headers   = allValues[headerIdx].map(c => String(c).trim());
-  const idColIdx  = headers.findIndex(h => ['#', 'ID', 'Id', 'id'].includes(h));
+  const headers = allValues[headerIdx].map(c => String(c).trim());
+  const idColIdx = headers.findIndex(h => ['#', 'ID', 'Id', 'id'].includes(h));
 
   const tasks = [];
 
@@ -216,7 +404,7 @@ function getTasks() {
     // Only show Dallas-relevant statuses
     if (DALLAS_STATUSES.indexOf(status) === -1) continue;
 
-    // Compute task ID — matches Python generator logic
+    // Compute task ID — Matches Python generator logic
     let taskId;
     if (idColIdx >= 0 && String(row[idColIdx]).trim()) {
       taskId = String(row[idColIdx]).trim();
@@ -224,7 +412,7 @@ function getTasks() {
       taskId = 'row-' + (i + 1); // 1-indexed sheet row number
     }
 
-    const category  = get(COL.CATEGORY);
+    const category = get(COL.CATEGORY);
     const portfolio = CAT_PORTFOLIO[category] || 'Admin';
 
     // dallasRole drives which action buttons appear on the card
@@ -292,7 +480,7 @@ function findTask(taskId) {
 
 /**
  * Append a timestamped note bubble to the task's Notes column (D).
- * Format: [Author - YYYY-MM-DD]: text
+ * Format: [Author - YYYY-MM-DE]: text
  */
 function appendNote(sheet, rowNum, author, text) {
   const cell     = sheet.getRange(rowNum, COL.NOTES);
@@ -319,7 +507,6 @@ function logStatusUpdate(taskId, status, note, by) {
   sheet.appendRow([ts, taskId, status, note, by]);
 }
 
-
 // ═══════════════════════════════════════════════════════════════
 // NOTIFICATIONS
 // ═══════════════════════════════════════════════════════════════
@@ -328,9 +515,9 @@ function logStatusUpdate(taskId, status, note, by) {
 function notifyMaya(subject, bodyText) {
   try {
     MailApp.sendEmail({
-      to:      BW_CFG.MAYA_EMAIL,
+      to:     BW_CFG.MAYA_EMAIL,
       subject: subject,
-      body:    bodyText + '\n\n— Blakeworth Command Center',
+      body:   bodyText + '\n\n— Blakeworth Command Center',
     });
   } catch (e) {
     Logger.log('Email send error: ' + e);
@@ -350,10 +537,10 @@ function sendSms(message) {
   if (!c.QUO_API_URL || !c.QUO_API_KEY || !c.QUO_TO_MAYA) return;
   try {
     UrlFetchApp.fetch(c.QUO_API_URL, {
-      method:             'POST',
-      contentType:        'application/json',
-      headers:            { 'Authorization': 'Bearer ' + c.QUO_API_KEY },
-      payload:            JSON.stringify({
+      method: 'POST',
+      contentType: 'application/json',
+      headers: { 'Authorization': 'Bearer ' + c.QUO_API_KEY },
+      payload: JSON.stringify({
         from: c.QUO_FROM_NUMBER,
         to:   c.QUO_TO_MAYA,
         body: message,
@@ -364,7 +551,6 @@ function sendSms(message) {
     Logger.log('SMS send error: ' + e);
   }
 }
-
 
 // ═══════════════════════════════════════════════════════════════
 // UTILITIES
@@ -384,4 +570,6 @@ function jsonErr(msg) {
 
 function todayStr() {
   return Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+}
+te(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
 }
