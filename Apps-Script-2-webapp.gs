@@ -361,7 +361,7 @@ function handleAddTask(newTask) {
 }
 
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // DATA HELPERS
 // ═══════════════════════════════════════════════════════════════
 
@@ -387,8 +387,8 @@ function getTasks() {
     }
   }
 
-  const headers = allValues[headerIdx].map(c => String(c).trim());
-  const idColIdx = headers.findIndex(h => ['#', 'ID', 'Id', 'id'].includes(h));
+  const headers   = allValues[headerIdx].map(c => String(c).trim());
+  const idColIdx  = headers.findIndex(h => ['#', 'ID', 'Id', 'id'].includes(h));
 
   const tasks = [];
 
@@ -404,7 +404,7 @@ function getTasks() {
     // Only show Dallas-relevant statuses
     if (DALLAS_STATUSES.indexOf(status) === -1) continue;
 
-    // Compute task ID — Matches Python generator logic
+    // Compute task ID — matches Python generator logic
     let taskId;
     if (idColIdx >= 0 && String(row[idColIdx]).trim()) {
       taskId = String(row[idColIdx]).trim();
@@ -412,7 +412,7 @@ function getTasks() {
       taskId = 'row-' + (i + 1); // 1-indexed sheet row number
     }
 
-    const category = get(COL.CATEGORY);
+    const category  = get(COL.CATEGORY);
     const portfolio = CAT_PORTFOLIO[category] || 'Admin';
 
     // dallasRole drives which action buttons appear on the card
@@ -480,7 +480,7 @@ function findTask(taskId) {
 
 /**
  * Append a timestamped note bubble to the task's Notes column (D).
- * Format: [Author - YYYY-MM-DE]: text
+ * Format: [Author - YYYY-MM-DD]: text
  */
 function appendNote(sheet, rowNum, author, text) {
   const cell     = sheet.getRange(rowNum, COL.NOTES);
@@ -507,6 +507,7 @@ function logStatusUpdate(taskId, status, note, by) {
   sheet.appendRow([ts, taskId, status, note, by]);
 }
 
+
 // ═══════════════════════════════════════════════════════════════
 // NOTIFICATIONS
 // ═══════════════════════════════════════════════════════════════
@@ -515,9 +516,9 @@ function logStatusUpdate(taskId, status, note, by) {
 function notifyMaya(subject, bodyText) {
   try {
     MailApp.sendEmail({
-      to:     BW_CFG.MAYA_EMAIL,
+      to:      BW_CFG.MAYA_EMAIL,
       subject: subject,
-      body:   bodyText + '\n\n— Blakeworth Command Center',
+      body:    bodyText + '\n\n— Blakeworth Command Center',
     });
   } catch (e) {
     Logger.log('Email send error: ' + e);
@@ -537,10 +538,10 @@ function sendSms(message) {
   if (!c.QUO_API_URL || !c.QUO_API_KEY || !c.QUO_TO_MAYA) return;
   try {
     UrlFetchApp.fetch(c.QUO_API_URL, {
-      method: 'POST',
-      contentType: 'application/json',
-      headers: { 'Authorization': 'Bearer ' + c.QUO_API_KEY },
-      payload: JSON.stringify({
+      method:             'POST',
+      contentType:        'application/json',
+      headers:            { 'Authorization': 'Bearer ' + c.QUO_API_KEY },
+      payload:            JSON.stringify({
         from: c.QUO_FROM_NUMBER,
         to:   c.QUO_TO_MAYA,
         body: message,
@@ -551,6 +552,7 @@ function sendSms(message) {
     Logger.log('SMS send error: ' + e);
   }
 }
+
 
 // ═══════════════════════════════════════════════════════════════
 // UTILITIES
@@ -570,6 +572,4 @@ function jsonErr(msg) {
 
 function todayStr() {
   return Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
-}
-te(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
 }
