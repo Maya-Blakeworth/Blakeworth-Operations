@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blakeworth — Dallas Command Center</title>
+<style>
+:root {
+  --navy:#0D1B2A; --navy-light:#162436;
+  --bg:#F1F5F9; --surface:#FFFFFF; --surface-2:#F8FAFC; --border:#E2E8F0;
+  --text:#0F172A; --text-2:#475569; --text-3:#94A3B8;
+  --jhu:#881337; --jhu-light:#FFF1F2;
+  --slp:#2563EB; --slp-light:#EFF6FF;
+  --dc:#7C3AED;  --dc-light:#F5F3FF;
+  --gen:#475569; --gen-light:#F8FAFC;
+  --approval:#D97706; --approval-bg:#FFFBEB;
+  --own:#7C3AED; --own-bg:#F5F3FF;
+  --fyi-border:#CBD5E1;
+  --success:#10B981; --danger:#EF4444; --warn:#F59E0B; --info:#3B82F6;
+  --stuck:#DC2626; --stuck-bg:#FEF2F2;
+  --radius:10px; --radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.10);
+}
+body.dark {
+  --bg:#0F172A; --surface:#1E293B; --surface-2:#0F172A; --border:#334155;
+  --text:#F1F5F9; --text-2:#94A3B8; --text-3:#64748B;
+  --jhu-light:rgba(136,19,55,.12); --slp-light:rgba(37,99,235,.12);
+  --dc-light:rgba(124,58,237,.12); --gen-light:rgba(71,85,105,.12);
+  --approval-bg:rgba(217,119,6,.10); --own-bg:rgba(124,58,237,.10);
+  --stuck-bg:rgba(220,38,38,.12); --fyi-border:#334155;
+}
+/* Dark mode bubble colors - distinct Maya (blue) vs Dallas (purple) */
+body.dark .bw.maya .bb {
+  background: #1E3A5F;
+  border: 1px solid #2563EB;
+  color: #DBEAFE;
+}
+body.dark .bw.dallas .bb {
+  background: #3B1F6E;
+  border: 1px solid #7C3AED;
+  color: #EDE9FE;
+}
+body.dark .av.maya   { background: #2563EB; color: #DBEAFE; }
+body.dark .av.dallas { background: #7C3AED; color: #EDE9FE; }
+body.dark .notes-subtitle {
+  background: rgba(59,130,246,.08);
+  border-left-color: #2563EB;
+  color: var(--text-2);
+}
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.5;
+  transition:background .25s, color .25s;
+}
+.site-header {
+  background:var(--navy); color:#fff; padding:0 24px;
+  position:sticky; top:0; z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.header-inner {
+  max-width:1140px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+  height:56px; gap:16px;
+}
+.brand { display:flex; align-items:center; gap:10px; }
+.brand-logo {
+  width:30px; height:30px; background:#2563EB; border-radius:7px;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:13px; color:#fff;
+}
+.brand-name { font-weight:700; font-size:15px; }
+.brand-sub { font-size:10px; opacity:.5; margin-top:1px; }
+.header-right { display:flex; align-items:center; gap:10px; }
+.view-toggle {
+  display:inline-flex;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px; padding:2px;
+}
+.view-toggle button {
+  background:transparent; border:none; cursor:pointer;
+  color:rgba(255,255,255,.6);
+  padding:5px 12px; border-radius:6px;
+  font-size:11px; font-weight:600;
+  transition:all .15s;
+}
+.view-toggle button.active {
+  background:rgba(255,255,255,.15); color:#fff;
+  box-shadow:0 1px 2px rgba(0,0,0,.18);
+}
+.view-toggle button:hover:not(.active) { color:rgba(255,255,255,.85); }
+.hbtn-icon {
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.08);
+  color:rgba(255,255,255,.8);
+  border-radius:6px; width:30px; height:30px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:14px;
+  transition:background .15s;
+}
+.hbtn-icon:hover { background:rgba(255,255,255,.16); }
+.update-bar {
+  background:var(--navy-light); color:rgba(255,255,255,.4);
+  text-align:center; font-size:10px; padding:3px 24px;
+}
+.main { max-width:1140px; margin:0 auto; padding:24px 20px 80px; }
+
+.greeting {
+  background:linear-gradient(135deg,#1E293B 0%,#0F172A 100%);
+  color:#fff; border-radius:14px; padding:20px 22px;
+  margin-bottom:24px; box-shadow:0 4px 16px rgba(0,0,0,.12);
+  position:relative; overflow:hidden;
+}
+.greeting::before {
+  content:''; position:absolute; right:-40px; top:-40px;
+  width:160px; height:160px;
+  background:radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.greeting-line1 { font-size:17px; font-weight:700; margin-bottom:4px; }
+.greeting-line2 { font-size:13px; color:rgba(255,255,255,.7); line-height:1.45; }
+.greeting-line2 strong { color:#fff; font-weight:700; }
+.greeting-pulse {
+  display:inline-block; width:8px; height:8px; border-radius:50%;
+  background:#10B981; margin-right:6px; vertical-align:middle;
+  animation:greenPulse 2s infinite;
+}
+@keyframes greenPulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,.6); }
+  50%     { box-shadow:0 0 0 6px rgba(16,185,129,0); }
+}
+
+.cards-row {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:12px; margin-bottom:24px;
+}
+.action-card {
+  background:var(--surface); border:.5px solid var(--border);
+  border-radius:14px; padding:18px 14px 14px;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center; box-shadow:0 1px 4px rgba(0,0,0,.05);
+  transition:box-shadow .15s, transform .15s;
+}
+.action-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.09); transform:translateY(-2px); }
+.card-icon { font-size:24px; margin-bottom:6px; }
+.card-title { font-size:13px; font-weight:700; margin-bottom:3px; }
+.card-sub {
+  font-size:11px; color:var(--text-3); margin-bottom:12px;
+  display:flex; align-items:center; gap:5px; justify-content:center; min-height:14px;
+}
+.inv-dot {
+  width:6px; height:6px; border-radius:50%; background:#10B981;
+  box-shadow:0 0 0 2px rgba(16,185,129,.2);
+}
+.card-btn {
+  width:100%; padding:9px 0; border:none; border-radius:8px;
+  font-size:12px; font-weight:700; cursor:pointer;
+  transition:all .15s;
+}
+.card-btn:hover { filter:brightness(1.08); }
+.btn-pay { background:#111827; color:#fff; }
+.btn-task { background:#2563EB; color:#fff; }
+.btn-schedule { background:transparent; color:#059669; border:1.5px solid #10B981; }
+
+.add-task-panel {
+  display:none;
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:10px; padding:16px; margin-bottom:20px;
+}
+.add-task-panel.open { display:block; }
+.panel-title { font-size:13px; font-weight:700; margin-bottom:12px; }
+.panel-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.panel-grid-3 { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; margin-top:10px; }
+@media (max-width:640px) { .panel-grid-3 { grid-template-columns:1fr; } }
+.panel-field { display:flex; flex-direction:column; gap:4px; }
+.panel-field.full { grid-column:1/-1; }
+.panel-field label {
+  font-size:11px; font-weight:600; color:var(--text-3);
+  text-transform:uppercase; letter-spacing:.4px;
+}
+.panel-field input, .panel-field select, .panel-field textarea {
+  padding:8px 10px; border:1.5px solid var(--border);
+  border-radius:6px; font-size:12px; font-family:inherit;
+  background:var(--surface); color:var(--text);
+}
+.panel-field textarea { resize:vertical; min-height:60px; }
+.panel-actions { margin-top:10px; display:flex; gap:8px; justify-content:flex-end; }
+.panel-cancel, .panel-submit {
+  border-radius:6px; padding:7px 16px;
+  font-size:12px; font-weight:600; cursor:pointer;
+}
+.panel-cancel { background:var(--surface); color:var(--text); border:1.5px solid var(--border); }
+.panel-submit { background:#2563EB; color:#fff; border:none; font-weight:700; padding:7px 18px; }
+
+.urgency-section { margin-bottom:32px; }
+.urgency-header {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:14px; padding-bottom:10px;
+  border-bottom:2px solid;
+}
+.urgency-header.stuck { border-color:var(--stuck); }
+.urgency-header.yours { border-color:var(--own); }
+.urgency-header.fyi   { border-color:var(--text-3); }
+.urgency-icon {
+  width:34px; height:34px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0;
+}
+.urgency-icon.stuck { background:var(--stuck-bg); }
+.urgency-icon.yours { background:var(--own-bg); }
+.urgency-icon.fyi   { background:var(--gen-light); }
+.urgency-title { font-size:17px; font-weight:700; }
+.urgency-title.stuck { color:var(--stuck); }
+.urgency-title.yours { color:var(--own); }
+.urgency-title.fyi   { color:var(--text-2); }
+.urgency-sub { font-size:12px; color:var(--text-3); margin-top:2px; }
+.urgency-count {
+  font-size:11px; font-weight:600;
+  background:var(--border); color:var(--text-2);
+  padding:2px 8px; border-radius:10px; margin-left:auto;
+}
+
+.portfolio { margin-bottom:36px; }
+.portfolio-header {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:14px; padding-bottom:10px;
+  border-bottom:2px solid;
+}
+.portfolio-header.jhu { border-color:var(--jhu); }
+.portfolio-header.slp { border-color:var(--slp); }
+.portfolio-header.dc  { border-color:var(--dc);  }
+.portfolio-header.gen { border-color:var(--gen); }
+.portfolio-icon {
+  width:34px; height:34px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px;
+}
+.portfolio-icon.jhu { background:var(--jhu-light); }
+.portfolio-icon.slp { background:var(--slp-light); }
+.portfolio-icon.dc  { background:var(--dc-light);  }
+.portfolio-icon.gen { background:var(--gen-light); }
+.portfolio-title { font-size:17px; font-weight:700; }
+.portfolio-title.jhu { color:var(--jhu); }
+.portfolio-title.slp { color:var(--slp); }
+.portfolio-title.dc  { color:var(--dc);  }
+.portfolio-title.gen { color:var(--gen); }
+.portfolio-count {
+  font-size:11px; font-weight:600;
+  background:var(--border); color:var(--text-2);
+  padding:2px 8px; border-radius:10px; margin-left:auto;
+}
+.pw-row {
+  background:linear-gradient(180deg,var(--surface) 0%,var(--surface-2) 100%);
+  border:1px solid var(--border);
+  border-left:3px solid var(--text-2);
+  border-radius:var(--radius);
+  padding:12px 14px; margin-bottom:14px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:all .15s;
+}
+.pw-row:hover { transform:translateX(2px); box-shadow:var(--shadow-md); }
+.pw-row.jhu { border-left-color:var(--jhu); }
+.pw-row.slp { border-left-color:var(--slp); }
+.pw-row.dc  { border-left-color:var(--dc); }
+.pw-row.gen { border-left-color:var(--gen); }
+.pw-icon { font-size:18px; }
+.pw-text { flex:1; }
+.pw-title { font-size:13px; font-weight:700; }
+.pw-meta { font-size:11px; color:var(--text-3); margin-top:1px; }
+.pw-meta strong { color:var(--stuck); }
+.pw-chevron { font-size:12px; color:var(--text-3); transition:transform .2s; }
+.pw-row.open .pw-chevron { transform:rotate(180deg); }
+.pw-cards { display:none; padding-left:16px; border-left:2px dashed var(--border); margin-left:4px; margin-bottom:14px; }
+.pw-cards.open { display:block; padding-top:6px; }
+.group-label {
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.8px; color:var(--text-3);
+  margin-bottom:7px; display:flex; align-items:center; gap:6px;
+}
+.group-label::after { content:''; flex:1; height:1px; background:var(--border); }
+.group-wrap { margin-bottom:14px; }
+
+.task-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); margin-bottom:10px;
+  overflow:hidden; box-shadow:var(--shadow);
+  transition:box-shadow .15s, transform .12s;
+  position:relative;
+}
+.task-card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.task-card.stuck    { border-left:3px solid var(--stuck); }
+.task-card.approval { border-left:3px solid var(--approval); }
+.task-card.own      { border-left:3px solid var(--own); }
+.task-card.fyi      { border-left:3px solid var(--fyi-border); }
+.unread-dot {
+  position:absolute; top:12px; right:12px;
+  width:9px; height:9px; border-radius:50%;
+  background:var(--danger);
+  animation:unreadPulse 1.8s infinite;
+  z-index:2;
+}
+@keyframes unreadPulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(239,68,68,.5); }
+  50%     { box-shadow:0 0 0 6px rgba(239,68,68,0); }
+}
+.unread-dot.read-flash { animation:readFlash .9s ease-out forwards; }
+@keyframes readFlash {
+  0%   { transform:scale(1); box-shadow:0 0 0 0 rgba(239,68,68,.6); }
+  40%  { transform:scale(1.8); box-shadow:0 0 0 10px rgba(239,68,68,.25); }
+  100% { transform:scale(0); opacity:0; }
+}
+.card-top { padding:13px 15px 9px; padding-right:30px; }
+.card-property {
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.5px; color:var(--text-3); margin-bottom:4px;
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+}
+.portfolio-pill {
+  font-size:9px; font-weight:700; padding:2px 6px;
+  border-radius:3px; text-transform:uppercase; letter-spacing:.4px;
+}
+.portfolio-pill.jhu { background:var(--jhu-light); color:var(--jhu); }
+.portfolio-pill.slp { background:var(--slp-light); color:var(--slp); }
+.portfolio-pill.dc  { background:var(--dc-light);  color:var(--dc); }
+.portfolio-pill.gen { background:var(--gen-light); color:var(--gen); }
+.card-row1 {
+  display:flex; align-items:flex-start;
+  justify-content:space-between; gap:10px;
+  margin-bottom:5px;
+}
+.card-desc { font-size:14px; font-weight:500; line-height:1.4; flex:1; }
+.badge {
+  font-size:9px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.4px; padding:2px 7px; border-radius:4px;
+  flex-shrink:0;
+}
+.badge.stuck       { background:rgba(239,68,68,.12);  color:#DC2626; }
+.badge.pending     { background:rgba(234,179,8,.15);  color:#92400E; }
+.badge.in-progress { background:rgba(249,115,22,.12); color:#C2410C; }
+.badge.new         { background:rgba(37,99,235,.12);  color:#1D4ED8; }
+.badge.hold-off    { background:rgba(107,114,128,.12);color:#374151; }
+.badge.completed   { background:rgba(16,185,129,.12); color:#065F46; }
+.badge.urgent      { background:rgba(239,68,68,.18);  color:#991B1B; }
+.badge.scheduled   { background:rgba(16,185,129,.12); color:#065F46; }
+.card-meta {
+  display:flex; gap:12px; flex-wrap:wrap;
+  font-size:11px; color:var(--text-2); margin-top:3px;
+}
+
+
+/* v3.3 - collapsed cards */
+.card-body { display: none; }
+.task-card.expanded .card-body { display: block; }
+.expand-toggle {
+  width: 100%;
+  background: var(--surface-2);
+  border: none;
+  border-top: 1px solid var(--border);
+  padding: 8px 15px;
+  font-size: 11px; font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: background .15s, color .15s;
+}
+.expand-toggle:hover { background: var(--border); color: var(--text); }
+.expand-arrow { display: inline-block; transition: transform .2s; font-size: 9px; }
+.task-card.expanded .expand-arrow { transform: rotate(180deg); }
+.notes-subtitle {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.5;
+  background: var(--surface-2);
+  border-left: 3px solid var(--info);
+  padding: 8px 10px;
+  border-radius: 0 6px 6px 0;
+  white-space: pre-wrap;
+  flex: 1;
+}
+.notes-subtitle-label {
+  display: inline; font-size: 10px; font-weight: 700;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: .5px;
+  margin-right: 4px;
+}
+.card-subtitle-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-top: 8px;
+}
+.assignee-side {
+  font-size: 11px; color: var(--text-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0;
+  display: flex; align-items: center; gap: 4px;
+}
+.thread-context-label {
+  font-size: 9px; font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase; letter-spacing: .5px;
+  margin-bottom: 8px;
+}
+
+/* Thread - rest of conversation */
+.card-thread {
+  padding:12px 15px;
+  background:var(--surface-2);
+  border-top:1px solid var(--border);
+}
+.thread-context-label {
+  font-size:10px; font-weight:700; color:var(--text-3);
+  text-transform:uppercase; letter-spacing:.5px;
+  margin-bottom:8px;
+}
+.thread-more-btn {
+  display:block; width:100%;
+  margin-top:8px;
+  background:transparent;
+  border:1px dashed var(--border);
+  color:var(--text-3);
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:11px; font-weight:600;
+  cursor:pointer; transition:all .15s;
+}
+.thread-more-btn:hover {
+  background:var(--surface);
+  color:var(--text-2);
+  border-color:var(--text-3);
+  border-style:solid;
+}
+.thread-rest { display:none; margin-top:8px; padding-top:8px; border-top:1px dashed var(--border); }
+.thread-rest.open { display:block; }
+
+.bw { display:flex; align-items:flex-end; gap:7px; margin-bottom:8px; }
+.bw:last-child { margin-bottom:0; }
+.bw.dallas { flex-direction:row-reverse; }
+.av {
+  width:26px; height:26px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; flex-shrink:0;
+}
+.av.maya   { background:#DBEAFE; color:#1D4ED8; }
+.av.dallas { background:#EDE9FE; color:#6D28D9; }
+.bb {
+  max-width:72%; border-radius:12px; padding:8px 11px;
+  font-size:12px; line-height:1.45;
+  cursor:pointer; transition:filter .15s;
+  white-space:pre-wrap;
+}
+.bb:hover { filter:brightness(.98); }
+.bw.maya .bb {
+  background:#EFF6FF; border:1px solid #BFDBFE; color:#1e3a5f;
+  border-bottom-left-radius:3px;
+}
+.bw.dallas .bb {
+  background:#F5F3FF; border:1px solid #DDD6FE; color:#3b1f6e;
+  border-bottom-right-radius:3px;
+}
+.bm { display:block; font-size:9px; color:var(--text-3); margin-top:3px; font-weight:600; }
+.reactions { display:flex; gap:3px; margin-top:4px; flex-wrap:wrap; }
+.reaction {
+  font-size:11px; background:var(--surface);
+  border:1px solid var(--border); border-radius:10px;
+  padding:1px 6px;
+}
+
+/* Note box — always visible */
+.card-note-box {
+  padding:10px 15px;
+  border-top:1px solid var(--border);
+  background:var(--surface-2);
+}
+.note-input {
+  width:100%; padding:8px 10px;
+  border:1.5px solid var(--border); border-radius:var(--radius-sm);
+  font-size:12px; font-family:inherit;
+  background:var(--surface); color:var(--text);
+  resize:vertical; min-height:44px;
+}
+.note-input:focus { outline:none; border-color:var(--info); }
+.note-send-btn {
+  margin-top:6px; float:right;
+  background:var(--navy); color:#fff;
+  border:none; border-radius:var(--radius-sm);
+  padding:6px 14px; font-size:11px; font-weight:600;
+  cursor:pointer;
+}
+.note-send-btn:hover { background:#162436; }
+
+/* Action chips */
+.card-chips-row {
+  padding:10px 15px;
+  border-top:1px solid var(--border);
+  display:flex; gap:6px; flex-wrap:wrap;
+  align-items:center;
+}
+.qchip {
+  background:var(--surface); border:1.5px solid var(--border);
+  color:var(--text-2); border-radius:14px;
+  padding:6px 12px; font-size:11px; font-weight:600;
+  cursor:pointer; transition:all .15s;
+  display:inline-flex; align-items:center; gap:4px;
+}
+.qchip:hover {
+  background:var(--info); color:#fff; border-color:var(--info);
+  transform:translateY(-1px);
+}
+.qchip.decline:hover { background:var(--danger); border-color:var(--danger); }
+.qchip-primary {
+  background:rgba(16,185,129,.10);
+  color:#047857;
+  border-color:rgba(16,185,129,.45);
+  font-weight:700;
+  box-shadow:0 0 8px rgba(16,185,129,.18), inset 0 0 6px rgba(16,185,129,.06);
+}
+.qchip-primary:hover {
+  background:var(--success); color:#fff; border-color:var(--success);
+  box-shadow:0 0 16px rgba(16,185,129,.45);
+}
+
+.card-footer-row {
+  padding:7px 15px;
+  border-top:1px solid var(--border);
+  display:flex; justify-content:flex-end;
+  background:var(--surface);
+}
+.action-type-label {
+  font-size:10px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.5px;
+  padding:3px 7px; border-radius:4px;
+}
+.action-type-label.approval { background:var(--approval-bg); color:var(--approval); }
+.action-type-label.own      { background:var(--own-bg); color:var(--own); }
+.action-type-label.fyi      { background:var(--gen-light); color:var(--text-2); }
+.action-type-label.stuck    { background:var(--stuck-bg); color:var(--stuck); }
+
+.emoji-picker {
+  position:absolute; background:var(--surface);
+  border:1px solid var(--border); border-radius:22px;
+  padding:5px 8px; box-shadow:0 6px 24px rgba(0,0,0,.18);
+  display:none; gap:4px; z-index:50;
+  animation:epIn .15s ease-out;
+}
+.emoji-picker.open { display:flex; }
+@keyframes epIn {
+  from { opacity:0; transform:translateY(6px) scale(.92); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.epbtn {
+  background:transparent; border:none;
+  font-size:18px; cursor:pointer;
+  padding:3px 5px; border-radius:50%;
+  transition:transform .12s, background .12s;
+}
+.epbtn:hover { transform:scale(1.25); background:var(--surface-2); }
+
+.loading-bar { height:3px; background:var(--border); border-radius:2px; margin-bottom:20px; overflow:hidden; }
+.loading-bar-inner {
+  height:100%; width:40%; background:var(--info); border-radius:2px;
+  animation:loadslide 1.2s infinite ease-in-out;
+}
+@keyframes loadslide { 0% { transform:translateX(-100%); } 100% { transform:translateX(300%); } }
+.wins-section { margin-top:40px; padding-top:28px; border-top:1px solid var(--border); }
+.wins-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.wins-title { font-size:14px; font-weight:700; color:var(--text-2); }
+.wins-sub { font-size:11px; color:var(--text-3); margin-left:auto; }
+.wins-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.win-chip {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:10px 12px;
+  display:flex; flex-direction:column; gap:3px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+.win-top { display:flex; align-items:center; gap:6px; }
+.win-check {
+  width:16px; height:16px; border-radius:50%;
+  background:rgba(16,185,129,.12); color:#10B981;
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700;
+}
+.win-prop { font-size:10px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.4px; }
+.win-date { font-size:9px; color:var(--text-3); margin-left:auto; }
+.win-summary { font-size:11px; color:var(--text-2); line-height:1.4; padding-left:22px; }
+
+.modal-overlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.5); backdrop-filter:blur(3px);
+  display:none; align-items:center; justify-content:center;
+  z-index:200; padding:16px;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--surface); border-radius:14px;
+  padding:26px; width:100%; max-width:460px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.modal h2 { font-size:17px; font-weight:700; margin-bottom:3px; }
+.modal .modal-sub { font-size:12px; color:var(--text-2); margin-bottom:18px; }
+.modal-field { margin-bottom:12px; }
+.modal-field label {
+  display:block; font-size:11px; font-weight:600;
+  color:var(--text-2); margin-bottom:4px;
+  text-transform:uppercase; letter-spacing:.4px;
+}
+.modal-field input, .modal-field select, .modal-field textarea {
+  width:100%; padding:8px 10px;
+  border:1.5px solid var(--border); border-radius:var(--radius-sm);
+  font-size:13px; font-family:inherit;
+  background:var(--surface); color:var(--text);
+}
+.modal-field textarea { resize:vertical; min-height:68px; }
+.modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
+.modal-cancel {
+  background:var(--surface-2); color:var(--text);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm); padding:8px 16px;
+  font-size:12px; font-weight:600; cursor:pointer;
+}
+.modal-submit {
+  background:#2563EB; color:#fff;
+  border:none; border-radius:var(--radius-sm);
+  padding:8px 18px; font-size:12px; font-weight:700;
+  cursor:pointer;
+}
+.modal-submit.green { background:var(--success); }
+.datetime-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+#toast {
+  position:fixed; bottom:24px; left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--navy); color:#fff;
+  border-radius:24px; padding:10px 20px;
+  font-size:13px; font-weight:600;
+  box-shadow:0 6px 20px rgba(0,0,0,.3);
+  opacity:0; transition:all .25s; pointer-events:none;
+  z-index:300;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+#toast.success { background:var(--success); }
+#toast.error { background:var(--danger); }
+
+@media (max-width:640px) {
+  .cards-row { grid-template-columns:1fr; }
+  .wins-grid { grid-template-columns:1fr 1fr; }
+  .panel-grid, .datetime-grid { grid-template-columns:1fr; }
+  .main { padding:16px 12px 80px; }
+  .greeting-line1 { font-size:15px; }
+  .greeting-line2 { font-size:12px; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">BW</div>
+      <div>
+        <div class="brand-name">Blakeworth</div>
+        <div class="brand-sub">Dallas Command Center</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="view-toggle">
+        <button id="vt-urgency" class="active" onclick="setView('urgency')">By Urgency</button>
+        <button id="vt-portfolio" onclick="setView('portfolio')">By Portfolio</button>
+      </div>
+      <button class="hbtn-icon" title="Toggle dark mode" onclick="toggleDark()">🌙</button>
+      <button class="hbtn-icon" title="Reload" onclick="loadTasks()">↻</button>
+    </div>
+  </div>
+</header>
+<div class="update-bar" id="updateBar">Loading…</div>
+
+<main class="main">
+  <div class="loading-bar" id="loadingBar"><div class="loading-bar-inner"></div></div>
+
+  <div class="greeting" id="greetingCard">
+    <div class="greeting-line1" id="greetingLine1">Hey Dallas,</div>
+    <div class="greeting-line2" id="greetingLine2"><span class="greeting-pulse"></span>Loading…</div>
+  </div>
+
+  <div class="cards-row">
+    <div class="action-card">
+      <div class="card-icon">💼</div>
+      <div class="card-title">Time Tracker</div>
+      <div class="card-sub"><span class="inv-dot"></span> May log ready</div>
+      <button class="card-btn btn-pay" onclick="openTimeTracker()">Pay Now</button>
+    </div>
+    <div class="action-card">
+      <div class="card-icon">📋</div>
+      <div class="card-title">Create Task</div>
+      <div class="card-sub">Drop a new task in our queue</div>
+      <button class="card-btn btn-task" onclick="toggleAddPanel()">+ Add a Task</button>
+    </div>
+    <div class="action-card">
+      <div class="card-icon">📅</div>
+      <div class="card-title">Schedule Time</div>
+      <div class="card-sub">Book a Zoom with Maya</div>
+      <button class="card-btn btn-schedule" onclick="callMaya()">Pick a Time</button>
+    </div>
+  </div>
+
+  <div class="add-task-panel" id="addTaskPanel">
+    <div class="panel-title">Drop a new task</div>
+    <div class="panel-grid">
+      <div class="panel-field full">
+        <label>What needs to happen?</label>
+        <textarea id="pDesc" placeholder="Describe the task…"></textarea>
+      </div>
+    </div>
+    <div class="panel-grid-3">
+      <div class="panel-field">
+        <label>Property</label>
+        <select id="pProp">
+          <option value="__PW__">— Portfolio-wide —</option>
+          <option disabled>──────────</option>
+          <option>Guildford Apartments, Unit B3</option>
+          <option>Guilford</option>
+          <option>Woodrow</option>
+          <option>300 E 30th</option>
+          <option>Southlight</option>
+          <option>573 Hillside</option>
+          <option>618 Pierce St NE</option>
+          <option>Other…</option>
+        </select>
+      </div>
+      <div class="panel-field">
+        <label>Category</label>
+        <select id="pCat">
+          <option value="">— Select —</option>
+          <option>Maintenance</option>
+          <option>Financial</option>
+          <option>Admin</option>
+          <option>Compliance</option>
+          <option>Vendor</option>
+        </select>
+      </div>
+      <div class="panel-field">
+        <label>Assign to</label>
+        <select id="pAssign">
+          <option>Maya</option>
+          <option>Dallas</option>
+          <option>Marjorie</option>
+        </select>
+      </div>
+    </div>
+    <div class="panel-grid">
+      <div class="panel-field full">
+        <label>Note (optional)</label>
+        <input id="pNote" type="text" placeholder="Any context…">
+      </div>
+    </div>
+    <div class="panel-actions">
+      <button class="panel-cancel" onclick="toggleAddPanel()">Cancel</button>
+      <button class="panel-submit" onclick="submitTask()">Add Task</button>
+    </div>
+  </div>
+
+  <div id="taskList"></div>
+
+  <div class="wins-section" id="winsSection" style="display:none">
+    <div class="wins-header">
+      <span>🏆</span>
+      <span class="wins-title">Recent Wins</span>
+      <span class="wins-sub">Last completed</span>
+    </div>
+    <div class="wins-grid" id="winsGrid"></div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="rlModal">
+  <div class="modal">
+    <h2>Remind Me Later</h2>
+    <p class="modal-sub">Pick a date — Maya will follow up and a calendar invite will be sent to you.</p>
+    <div class="modal-field">
+      <label>Date &amp; time</label>
+      <div class="datetime-grid">
+        <input type="date" id="rlDate">
+        <input type="time" id="rlTime" value="09:00">
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Note (optional)</label>
+      <textarea id="rlNote" placeholder="Any context for Maya…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('rlModal')">Cancel</button>
+      <button class="modal-submit green" onclick="submitRemindLater()">Set Reminder</button>
+    </div>
+  </div>
+</div>
+
+<div class="emoji-picker" id="emojiPicker">
+  <button class="epbtn" onclick="addReaction('👍')">👍</button>
+  <button class="epbtn" onclick="addReaction('❤️')">❤️</button>
+  <button class="epbtn" onclick="addReaction('🤔')">🤔</button>
+  <button class="epbtn" onclick="addReaction('✅')">✅</button>
+  <button class="epbtn" onclick="addReaction('🔥')">🔥</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── LIVE CONFIG — these connect the dashboard to the Apps Script backend ──
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFboLG4drvkcseCITQ1SiIY59CRxSEhacFm6vrWXmkO2F9lDd25kZX3_OxxLtfgn5k/exec';
+const TOKEN           = 'bw2026dash';
+const SCHEDULE_URL    = 'https://scheduler.zoom.us/maya-miyazaki';
+let VIEW_MODE = localStorage.getItem('bw_view_v32') || 'urgency';
+let ALL_TASKS = [];
+let ACTIVE_TASK = null;
+let ACTIVE_REACTION_TARGET = null;
+
+// ── BACKEND ─────────────────────────────────────────────
+async function postAction(body) {
+  body.token = TOKEN;
+  // Demo mode: no URL configured — simulate success
+  if (!APPS_SCRIPT_URL) { await new Promise(r => setTimeout(r, 200)); return true; }
+  try {
+    const res  = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.error) { showToast('Error: ' + data.error, 'error'); return false; }
+    return true;
+  } catch (e) {
+    showToast('Network error. Try again.', 'error');
+    return false;
+  }
+}
+
+function esc(s) {
+  if (!s && s !== 0) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function relativeTime(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  const sec = Math.floor((Date.now() - d) / 1000);
+  if (sec < 60)     return 'just now';
+  if (sec < 3600)   return Math.floor(sec/60) + ' min ago';
+  if (sec < 86400)  return Math.floor(sec/3600) + ' hours ago';
+  if (sec < 172800) return 'yesterday';
+  if (sec < 604800) return Math.floor(sec/86400) + ' days ago';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+const PORTFOLIO_MAP = {
+  JHU: ['Guilford','Guildford','Woodrow','300 E 30th','JHU Portfolio','232 University Pkwy','304 University Pkwy'],
+  SLP: ['Southlight','Southfork','SLP Portfolio','573 Hillside','619 Pierce','618 Pierce','Bethlehem','AOII'],
+  DC:  ['DC','3538 Park Worth','Park Worth','6th Street'],
+};
+function getPortfolio(property) {
+  const p = (property || '').toUpperCase();
+  for (const [key, vals] of Object.entries(PORTFOLIO_MAP)) {
+    if (vals.some(v => p.includes(v.toUpperCase()) || v.toUpperCase().includes(p))) return key;
+  }
+  return 'General';
+}
+function isPortfolioWide(t) {
+  const p = (t.property || '').toLowerCase();
+  return p.includes('portfolio') || p === 'executive' || p === 'portfolio management';
+}
+function isStuck(t) {
+  const s = (t.status || '').toLowerCase();
+  return s.includes('stuck') || s === 'urgent' || s === 'hold off';
+}
+function hasUnread(t) {
+  const seen = JSON.parse(localStorage.getItem('bw_seen_v32') || '{}');
+  return t.lastFrom === 'Dallas' && (!seen[t.id] || seen[t.id] < t.lastTs);
+}
+function markRead(id) {
+  const seen = JSON.parse(localStorage.getItem('bw_seen_v32') || '{}');
+  const t = ALL_TASKS.find(x => x.id === id);
+  if (t) seen[id] = t.lastTs || Date.now();
+  localStorage.setItem('bw_seen_v32', JSON.stringify(seen));
+  const dot = document.querySelector('#card-' + id + ' .unread-dot');
+  if (dot) {
+    dot.classList.add('read-flash');
+    setTimeout(() => dot.remove(), 900);
+  }
+}
+
+function setView(mode) {
+  VIEW_MODE = mode;
+  localStorage.setItem('bw_view_v32', mode);
+  document.getElementById('vt-urgency').classList.toggle('active', mode === 'urgency');
+  document.getElementById('vt-portfolio').classList.toggle('active', mode === 'portfolio');
+  renderAll();
+}
+
+const GREETINGS = {
+  Friday: [
+    'Happy Friday, Dallas.',
+    'TGIF, Dallas.',
+    'Made it to Friday, Dallas.',
+    'Friday vibes, Dallas.',
+    'One more push, Dallas.',
+    'Friday at last, Dallas.',
+    'Last lap of the week, Dallas.',
+  ],
+  Monday: [
+    'Good morning, Dallas. New week.',
+    'Welcome to Monday, Dallas.',
+    'Fresh start, Dallas.',
+    'Hey Dallas, new week ahead.',
+    'Monday is here, Dallas.',
+    'Coffee up, Dallas - new week.',
+    'Hope you had a good weekend, Dallas.',
+  ],
+  Saturday: [
+    'Happy Saturday, Dallas.',
+    'Weekend mode, Dallas.',
+    'Saturday vibes, Dallas.',
+    'Hope the weekend treats you well, Dallas.',
+    'Light list today, Dallas - enjoy Saturday.',
+  ],
+  Sunday: [
+    'Easy Sunday, Dallas.',
+    'Sunday check-in, Dallas.',
+    'Hope the weekend was good, Dallas.',
+    'Calm Sunday, Dallas.',
+    'Sunday wind-down, Dallas.',
+  ],
+  AMOther: [
+    'Good morning, Dallas.',
+    'Morning, Dallas.',
+    'Hey Dallas, good morning.',
+    'Rise and shine, Dallas.',
+    'How are you doing today, Dallas?',
+    'Hope the weather is great there today, Dallas.',
+    'Morning, Dallas - hope you slept well.',
+    'Hey Dallas, hope today treats you right.',
+    'Fresh day, Dallas - what does it hold?',
+    'Coffee in hand, Dallas?',
+  ],
+  PMOther: [
+    'Hey Dallas,',
+    'Afternoon, Dallas.',
+    'Hope your day is going well, Dallas.',
+    'Quick check-in, Dallas.',
+    'Let us finish off strong today, Dallas.',
+    'Afternoon push, Dallas.',
+    'Almost there, Dallas - back half of the day.',
+    'How is the day shaping up, Dallas?',
+    'Strong finish, Dallas - you got this.',
+    'Hope the afternoon is treating you well, Dallas.',
+    'Two-thirds of the way there, Dallas.',
+  ],
+};
+function pickGreeting(key) {
+  const pool = GREETINGS[key] || GREETINGS.PMOther;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function renderGreeting() {
+  const now = new Date();
+  const dow = now.toLocaleDateString('en-US',{weekday:'long'});
+  const yourCount = ALL_TASKS.filter(t => t.dallasRole === 'approval' || t.dallasRole === 'own').length;
+  const stuckCount = ALL_TASKS.filter(isStuck).length;
+  let line1;
+  if (dow === 'Friday')         line1 = pickGreeting('Friday');
+  else if (dow === 'Monday')    line1 = pickGreeting('Monday');
+  else if (dow === 'Saturday')  line1 = pickGreeting('Saturday');
+  else if (dow === 'Sunday')    line1 = pickGreeting('Sunday');
+  else if (now.getHours() < 12) line1 = pickGreeting('AMOther');
+  else                          line1 = pickGreeting('PMOther');
+  let line2;
+  if (stuckCount > 0) {
+    line2 = '<span class="greeting-pulse"></span>You have <strong>' + yourCount + ' items</strong> on your plate, with <strong>' + stuckCount + ' stuck</strong> waiting on you.';
+  } else if (yourCount > 0) {
+    line2 = '<span class="greeting-pulse"></span>You have <strong>' + yourCount + ' items</strong> that need you today.';
+  } else {
+    line2 = '<span class="greeting-pulse"></span>You\'re all caught up.';
+  }
+  document.getElementById('greetingLine1').textContent = line1;
+  document.getElementById('greetingLine2').innerHTML = line2;
+}
+
+function renderAll() {
+  renderGreeting();
+  const c = document.getElementById('taskList');
+  c.innerHTML = '';
+  if (VIEW_MODE === 'urgency') renderByUrgency(c);
+  else renderByPortfolio(c);
+  document.getElementById('updateBar').textContent =
+    'Live · updated ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+
+function renderByUrgency(container) {
+  const stuck = ALL_TASKS.filter(isStuck);
+  const yours = ALL_TASKS.filter(t => !isStuck(t) && (t.dallasRole === 'approval' || t.dallasRole === 'own'));
+  const fyi   = ALL_TASKS.filter(t => !isStuck(t) && t.dallasRole === 'fyi');
+  const sections = [
+    {key:'stuck', icon:'🚨', title:'Stuck — Needs Unblocking', sub:'These are waiting on you to move', tasks:stuck},
+    {key:'yours', icon:'🟣', title:'Yours — Action Needed',    sub:'Approvals + your to-dos',          tasks:yours},
+    {key:'fyi',   icon:'ℹ️', title:'FYI — Heads Up',           sub:'No action, just visibility',        tasks:fyi},
+  ];
+  sections.forEach(s => {
+    if (!s.tasks.length) return;
+    const sec = document.createElement('section');
+    sec.className = 'urgency-section';
+    sec.innerHTML =
+      '<div class="urgency-header ' + s.key + '">' +
+        '<div class="urgency-icon ' + s.key + '">' + s.icon + '</div>' +
+        '<div>' +
+          '<div class="urgency-title ' + s.key + '">' + s.title + '</div>' +
+          '<div class="urgency-sub">' + s.sub + '</div>' +
+        '</div>' +
+        '<div class="urgency-count">' + s.tasks.length + '</div>' +
+      '</div>' +
+      s.tasks.map(t => renderCard(t, t.dallasRole, true)).join('');
+    container.appendChild(sec);
+  });
+}
+
+const PORTFOLIOS = [
+  {key:'JHU',label:'JHU Portfolio',icon:'🏙',cls:'jhu'},
+  {key:'SLP',label:'SLP Portfolio',icon:'🏘',cls:'slp'},
+  {key:'DC', label:'DC Portfolio', icon:'🏛',cls:'dc'},
+  {key:'General',label:'General / Ops',icon:'⚙️',cls:'gen'},
+];
+
+function renderByPortfolio(container) {
+  PORTFOLIOS.forEach(p => {
+    const tasks = ALL_TASKS.filter(t => t.portfolio === p.key);
+    if (!tasks.length) return;
+    const pwTasks = tasks.filter(isPortfolioWide);
+    const propTasks = tasks.filter(t => !isPortfolioWide(t));
+    const sec = document.createElement('section');
+    sec.className = 'portfolio';
+    let html =
+      '<div class="portfolio-header ' + p.cls + '">' +
+        '<div class="portfolio-icon ' + p.cls + '">' + p.icon + '</div>' +
+        '<div class="portfolio-title ' + p.cls + '">' + p.label + '</div>' +
+        '<div class="portfolio-count">' + tasks.length + '</div>' +
+      '</div>';
+
+    if (pwTasks.length) {
+      const pwStuck = pwTasks.filter(isStuck).length;
+      const pwYours = pwTasks.filter(t => t.dallasRole === 'approval' || t.dallasRole === 'own').length;
+      const pwMeta = pwStuck > 0
+        ? pwTasks.length + ' tasks · <strong>' + pwStuck + ' stuck</strong>'
+        : pwTasks.length + ' tasks · ' + pwYours + ' need you';
+      html +=
+        '<div class="pw-row ' + p.cls + '" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')">' +
+          '<div class="pw-icon">🏛️</div>' +
+          '<div class="pw-text">' +
+            '<div class="pw-title">' + p.key + ' Portfolio-wide</div>' +
+            '<div class="pw-meta">' + pwMeta + '</div>' +
+          '</div>' +
+          '<div class="pw-chevron">▼</div>' +
+        '</div>' +
+        '<div class="pw-cards">' + pwTasks.map(t => renderCard(t, t.dallasRole, false)).join('') + '</div>';
+    }
+
+    const approvals = propTasks.filter(t => t.dallasRole === 'approval');
+    const own       = propTasks.filter(t => t.dallasRole === 'own');
+    const fyi       = propTasks.filter(t => t.dallasRole === 'fyi');
+    if (approvals.length) html += renderGroup('🔴 Approvals & Decisions', approvals);
+    if (own.length)       html += renderGroup('🟣 Dallas Tasks', own);
+    if (fyi.length)       html += renderGroup('ℹ️ FYI', fyi);
+
+    sec.innerHTML = html;
+    container.appendChild(sec);
+  });
+}
+
+function renderGroup(label, tasks) {
+  return '<div class="group-wrap"><div class="group-label">' + label + '</div>' +
+    tasks.map(t => renderCard(t, t.dallasRole, false)).join('') +
+    '</div>';
+}
+
+// Parse notes into bubble objects (handles multi-line per bubble)
+function parseBubbles(raw) {
+  if (!raw || !raw.trim()) return [];
+  const regex = /\[(Maya|Dallas)\s*[-]\s*([^\]]+)\]:\s*([\s\S]*?)(?=\n\[(?:Maya|Dallas)\s*[-]|$)/gi;
+  const bubbles = [];
+  let m;
+  while ((m = regex.exec(raw)) !== null) {
+    bubbles.push({ author:m[1], date:m[2].trim(), text:m[3].trim() });
+  }
+  if (bubbles.length === 0 && raw.trim()) {
+    bubbles.push({ author:'Maya', date:'', text: raw.trim() });
+  }
+  return bubbles;
+}
+
+function renderBubble(b) {
+  const cls = b.author.toLowerCase() === 'dallas' ? 'dallas' : 'maya';
+  const av  = cls === 'dallas' ? 'D' : 'M';
+  const rel = b.date ? relativeTime(b.date) : '';
+  return '<div class="bw ' + cls + '">' +
+    (cls === 'maya' ? '<div class="av maya">' + av + '</div>' : '') +
+    '<div class="bb" onclick="event.stopPropagation();showEmojiPicker(event,this)">' + esc(b.text) +
+    (rel ? '<span class="bm">' + esc(b.author) + ' &middot; ' + esc(rel) + '</span>' : '') +
+    '</div>' +
+    (cls === 'dallas' ? '<div class="av dallas">' + av + '</div>' : '') +
+  '</div>';
+}
+
+// Build chip set based on role + status
+function buildChips(t, role, safeId) {
+  const status = (t.status || '').toLowerCase();
+  // Completed → no chips
+  if (status === 'completed') return '';
+  // FYI cards — all three dismiss
+  if (role === 'fyi') {
+    return [
+      '<button class="qchip qchip-primary" onclick="dismissFyi(\'' + safeId + '\')">👍 Got it</button>',
+      '<button class="qchip" onclick="pingMaya(\'' + safeId + '\')">📣 Ping</button>',
+      '<button class="qchip" onclick="dismissFyi(\'' + safeId + '\')">📝 Noted</button>',
+    ].join('');
+  }
+  // Approval / Decision cards
+  if (role === 'approval') {
+    return [
+      '<button class="qchip qchip-primary" onclick="doApprove(\'' + safeId + '\')">✅ Approve</button>',
+      '<button class="qchip decline" onclick="quickReply(\'' + safeId + '\',\'❌ Hold off on this one.\')">❌ Hold</button>',
+      '<button class="qchip" onclick="callMaya(\'' + safeId + '\')">📞 Call Maya</button>',
+      '<button class="qchip" onclick="openRemindLater(\'' + safeId + '\')">⏰ Remind me</button>',
+    ].join('');
+  }
+  // Own — depends on status
+  if (status.includes('progress')) {
+    return [
+      '<button class="qchip qchip-primary" onclick="doDone(\'' + safeId + '\')">✅ Done</button>',
+      '<button class="qchip" onclick="pingMaya(\'' + safeId + '\')">📣 Ping</button>',
+      '<button class="qchip" onclick="openRemindLater(\'' + safeId + '\')">⏰ Remind me</button>',
+    ].join('');
+  }
+  if (status === 'hold off') {
+    return [
+      '<button class="qchip qchip-primary" onclick="quickReply(\'' + safeId + '\',\'▶️ Resume — let us pick this back up.\')">▶️ Resume</button>',
+      '<button class="qchip" onclick="openRemindLater(\'' + safeId + '\')">⏰ Remind me</button>',
+    ].join('');
+  }
+  // Pending / New / Stuck etc. -- ping is the primary action
+  return [
+    '<button class="qchip qchip-primary" onclick="pingMaya(\'' + safeId + '\')">📣 Ping</button>',
+    '<button class="qchip" onclick="openRemindLater(\'' + safeId + '\')">⏰ Remind me</button>',
+  ].join('');
+}
+
+function renderCard(t, role, showPortfolioPill) {
+  const safeId = esc(t.id);
+  const stuckFlag = isStuck(t);
+  const cardClass = stuckFlag ? 'stuck' : role;
+  const labelClass = stuckFlag ? 'stuck' : role;
+  const labelText = stuckFlag ? 'Stuck' :
+    (role === 'approval' ? 'Needs Decision' :
+     role === 'own' ? 'Dallas To-Do' : 'FYI');
+
+  const badgeCls = (t.status || '').toLowerCase().replace(/\s+/g,'-');
+  const badge = t.status ? '<span class="badge ' + badgeCls + '">' + esc(t.status) + '</span>' : '';
+  const hasNew = hasUnread(t);
+
+  const pCls = (t.portfolio || '').toLowerCase();
+  const pillCls = pCls === 'general' ? 'gen' : pCls;
+  const pLabel = isPortfolioWide(t) ? (t.portfolio + ' - Portfolio') : t.portfolio;
+  const portfolioPill = (showPortfolioPill || isPortfolioWide(t))
+    ? '<span class="portfolio-pill ' + pillCls + '">' + esc(pLabel) + '</span>'
+    : '';
+
+  // Parse bubbles - first is treated as Maya's sheet notes (always visible)
+  const bubbles = parseBubbles(t.notes);
+  const firstBubble = bubbles[0];
+  const restBubbles = bubbles.slice(1);
+
+  // Notes subtitle (always visible)
+  let subtitleHtml = '<div style="flex:1"></div>';
+  if (firstBubble) {
+    subtitleHtml = '<div class="notes-subtitle">' +
+      '<span class="notes-subtitle-label">Notes:</span> ' +
+      esc(firstBubble.text) +
+    '</div>';
+  }
+
+  // Assignee side
+  const assigneeHtml = t.assignment
+    ? '<div class="assignee-side">&#128100; ' + esc(t.assignment) + '</div>'
+    : '';
+
+  // Thread (only the rest, since first is in subtitle)
+  let threadHtml = '';
+  if (restBubbles.length > 0) {
+    threadHtml = '<div class="card-thread">' +
+      '<div class="thread-context-label">Conversation</div>' +
+      restBubbles.map(renderBubble).join('') +
+    '</div>';
+  }
+
+  // Chips
+  const chips = buildChips(t, role, safeId);
+  const chipsRow = chips ? '<div class="card-chips-row">' + chips + '</div>' : '';
+
+  // Note box (always visible inside expand)
+  const noteBox = '<div class="card-note-box">' +
+    '<textarea class="note-input" id="ni-' + safeId + '" placeholder="Type a message to Maya..."></textarea>' +
+    '<button class="note-send-btn" onclick="sendNote(\'' + safeId + '\')">Send</button>' +
+    '<div style="clear:both"></div>' +
+  '</div>';
+
+  return '<div class="task-card collapsed ' + cardClass + '" id="card-' + safeId + '">' +
+    (hasNew ? '<div class="unread-dot" title="New from Dallas"></div>' : '') +
+    '<div class="card-top">' +
+      '<div class="card-property">' + portfolioPill + '<span>' + esc(t.property) + '</span></div>' +
+      '<div class="card-row1">' +
+        '<div class="card-desc">' + esc(t.description) + '</div>' +
+        badge +
+      '</div>' +
+      '<div class="card-subtitle-row">' +
+        subtitleHtml +
+        assigneeHtml +
+      '</div>' +
+    '</div>' +
+    '<button class="expand-toggle" onclick="toggleCardExpand(event,\'' + safeId + '\')">' +
+      '<span class="expand-arrow">&#9660;</span>' +
+      '<span class="expand-label">View &amp; Respond</span>' +
+    '</button>' +
+    '<div class="card-body">' +
+      chipsRow +
+      threadHtml +
+      noteBox +
+    '</div>' +
+    '<div class="card-footer-row">' +
+      '<span class="action-type-label ' + labelClass + '">' + labelText + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
+function onCardClick(id) {
+  markRead(id);
+}
+function toggleCardExpand(e, id) {
+  e.stopPropagation();
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  const expanded = card.classList.toggle('expanded');
+  card.classList.toggle('collapsed', !expanded);
+  const label = card.querySelector('.expand-label');
+  if (label) label.textContent = expanded ? 'Hide' : 'View & Respond';
+  if (expanded) markRead(id);
+}
+
+
+
+async function callMaya(taskId) {
+  // Open the scheduler in a new tab (with popup-blocker fallback)
+  const win = window.open(SCHEDULE_URL, '_blank', 'noopener');
+  if (!win) {
+    showToast('Popup blocked - opening in this tab in 1s...', 'error');
+    setTimeout(() => { window.location.href = SCHEDULE_URL; }, 1200);
+  } else {
+    showToast('Opening Zoom scheduler — Maya notified', 'success');
+  }
+  // Drop a bubble + notify Maya backend-side
+  if (taskId) {
+    const noteText = 'Booking a Zoom with you about this - checking your scheduler now.';
+    appendBubble(taskId, 'Dallas', noteText);
+    await postAction({ action: 'addnote', taskId: taskId, note: noteText });
+  }
+}
+
+async function pingMaya(taskId, dismissAfter) {
+  const noteText = 'Need an update on this - what is going on?';
+  appendBubble(taskId, 'Dallas', noteText);  // optimistic
+  if (await postAction({ action: 'addnote', taskId: taskId, note: noteText })) {
+    showToast('Pinged Maya for an update', 'success');
+  }
+  if (dismissAfter) setTimeout(() => removeCard(taskId), 350);
+}
+
+function openTimeTracker() {
+  const url = 'https://maya-blakeworth.github.io/maya-timelog/';
+  const win = window.open(url, '_blank', 'noopener');
+  if (!win) {
+    showToast('Popup blocked - opening in this tab...', 'error');
+    setTimeout(() => { window.location.href = url; }, 1200);
+  } else {
+    showToast('Opening your Time Tracker', 'success');
+  }
+}
+
+function showEmojiPicker(e, bubble) {
+  const picker = document.getElementById('emojiPicker');
+  ACTIVE_REACTION_TARGET = bubble;
+  const r = bubble.getBoundingClientRect();
+  picker.style.left = (r.left + window.scrollX) + 'px';
+  picker.style.top  = (r.bottom + window.scrollY + 4) + 'px';
+  picker.classList.add('open');
+}
+function addReaction(emoji) {
+  if (!ACTIVE_REACTION_TARGET) return;
+  let bag = ACTIVE_REACTION_TARGET.parentNode.querySelector('.reactions');
+  if (!bag) {
+    bag = document.createElement('div');
+    bag.className = 'reactions';
+    ACTIVE_REACTION_TARGET.parentNode.appendChild(bag);
+  }
+  const r = document.createElement('span');
+  r.className = 'reaction';
+  r.textContent = emoji + ' 1';
+  bag.appendChild(r);
+  document.getElementById('emojiPicker').classList.remove('open');
+  showToast('Reacted ' + emoji, 'success');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.emoji-picker') && !e.target.closest('.bb')) {
+    document.getElementById('emojiPicker').classList.remove('open');
+  }
+});
+
+async function doApprove(id) {
+  if (await postAction({ action: 'approve', taskId: id })) {
+    removeCard(id);
+    showToast('Approved! Maya has been notified.', 'success');
+  }
+}
+async function doDone(id) {
+  if (await postAction({ action: 'done', taskId: id })) {
+    removeCard(id);
+    showToast('Marked done! Maya has been notified.', 'success');
+  }
+}
+async function dismissFyi(id, replyText) {
+  if (replyText) {
+    if (await postAction({ action: 'addnote', taskId: id, note: replyText })) {
+      removeCard(id);
+      showToast('Ping sent to Maya', 'success');
+    }
+  } else {
+    if (await postAction({ action: 'fyi_ack', taskId: id })) {
+      removeCard(id);
+      showToast('Cleared from FYI', 'success');
+    }
+  }
+}
+
+async function quickReply(id, text) {
+  appendBubble(id, 'Dallas', text);  // optimistic update
+  if (await postAction({ action: 'addnote', taskId: id, note: text })) {
+    showToast('Sent — Maya notified', 'success');
+  }
+}
+
+function openRemindLater(id) {
+  ACTIVE_TASK = id;
+  document.getElementById('rlNote').value = '';
+  document.getElementById('rlDate').value = '';
+  openModal('rlModal');
+}
+async function submitRemindLater() {
+  const date = document.getElementById('rlDate').value;
+  const time = document.getElementById('rlTime').value || '09:00';
+  const note = document.getElementById('rlNote').value.trim();
+  if (!date) { showToast('Please pick a date.', 'error'); return; }
+  if (await postAction({
+    action: 'remindlater',
+    taskId: ACTIVE_TASK,
+    note: note,
+    remindDate: date + 'T' + time + ':00'
+  })) {
+    closeModal('rlModal');
+    showToast('Reminder set — calendar invite on its way.', 'success');
+  }
+}
+
+async function sendNote(id) {
+  const note = document.getElementById('ni-' + id).value.trim();
+  if (!note) return;
+  appendBubble(id, 'Dallas', note);  // optimistic
+  document.getElementById('ni-' + id).value = '';
+  if (await postAction({ action: 'addnote', taskId: id, note: note })) {
+    showToast('Note sent to Maya.', 'success');
+  }
+}
+
+async function submitTask() {
+  const desc = document.getElementById('pDesc').value.trim();
+  if (!desc) { showToast('Please describe the task.', 'error'); return; }
+  const propSel = document.getElementById('pProp').value;
+  const propName = propSel === '__PW__' ? 'Portfolio' : propSel;
+  if (await postAction({
+    action: 'addtask',
+    newTask: {
+      description: desc,
+      property:    propName || 'General',
+      category:    document.getElementById('pCat').value || 'Admin',
+      assignment:  document.getElementById('pAssign').value,
+      note:        document.getElementById('pNote').value.trim()
+    }
+  })) {
+    document.getElementById('pDesc').value = '';
+    document.getElementById('pNote').value = '';
+    document.getElementById('pCat').value  = '';
+    toggleAddPanel();
+    showToast('Task added: ' + desc.slice(0, 30) + '...', 'success');
+    setTimeout(loadTasks, 600);
+  }
+}
+
+function appendBubble(id, author, note) {
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+
+  // Auto-expand collapsed cards so the user can see the new bubble
+  if (card.classList.contains('collapsed')) {
+    card.classList.remove('collapsed');
+    card.classList.add('expanded');
+    const label = card.querySelector('.expand-label');
+    if (label) label.textContent = 'Hide';
+  }
+
+  // Find or create the thread inside .card-body
+  const body = card.querySelector('.card-body');
+  if (!body) return;
+  let thread = body.querySelector('.card-thread');
+  if (!thread) {
+    thread = document.createElement('div');
+    thread.className = 'card-thread';
+    thread.innerHTML = '<div class="thread-context-label">Conversation</div>';
+    const chipsRow = body.querySelector('.card-chips-row');
+    const noteBox = body.querySelector('.card-note-box');
+    if (chipsRow) chipsRow.after(thread);
+    else if (noteBox) body.insertBefore(thread, noteBox);
+    else body.appendChild(thread);
+  }
+
+  // Append the new bubble
+  const cls = author.toLowerCase() === 'dallas' ? 'dallas' : 'maya';
+  const av  = cls === 'dallas' ? 'D' : 'M';
+  thread.insertAdjacentHTML('beforeend',
+    '<div class="bw ' + cls + '">' +
+      (cls === 'maya' ? '<div class="av maya">' + av + '</div>' : '') +
+      '<div class="bb" onclick="event.stopPropagation();showEmojiPicker(event,this)">' + esc(note) + '<span class="bm">' + author + ' &middot; just now</span></div>' +
+      (cls === 'dallas' ? '<div class="av dallas">' + av + '</div>' : '') +
+    '</div>');
+}
+
+
+function removeCard(id) {
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  card.style.transition = 'opacity .3s, transform .3s';
+  card.style.opacity = '0';
+  card.style.transform = 'translateX(30px)';
+  setTimeout(() => card.remove(), 320);
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+function toggleAddPanel() { document.getElementById('addTaskPanel').classList.toggle('open'); }
+function toggleDark() {
+  const on = document.body.classList.toggle('dark');
+  localStorage.setItem('bw_dark_v32', on ? '1' : '0');
+}
+
+function renderWins(wins) {
+  if (!wins || !wins.length) return;
+  document.getElementById('winsGrid').innerHTML = wins.slice(0,6).map(w =>
+    '<div class="win-chip">' +
+      '<div class="win-top">' +
+        '<div class="win-check">✓</div>' +
+        '<span class="win-prop">' + esc(w.prop) + '</span>' +
+        '<span class="win-date">' + esc(w.date) + '</span>' +
+      '</div>' +
+      '<div class="win-summary">' + esc(w.summary) + '</div>' +
+    '</div>').join('');
+  document.getElementById('winsSection').style.display = 'block';
+}
+
+let _tt;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => { t.className = ''; }, 3000);
+}
+
+function ago(hours) {
+  return new Date(Date.now() - hours * 3600 * 1000).toISOString();
+}
+
+// Mock data — used in demo mode (when APPS_SCRIPT_URL is empty) or as fallback if fetch fails
+const MOCK_TASKS = [
+  // ── Guildford B3 — new tenant lease signing (your row 31) ──
+  {id:'31',property:'Guildford Apartments, Unit B3',description:'Lease signing — new tenant',status:'Pending',assignment:'Dallas Approval',
+    notes:'[Maya - ' + ago(30) + ']: New applicant for Unit B3 (vacated last month). Background check clean, credit score 738. Income $84K/yr — 3.4x rent ratio. Two prior landlord references both glowing.\n\nProposed terms:\n• 1-year lease at $1,850/mo (market rate per Rentometer comps)\n• Standard 1-month security deposit\n• $0 move-in concessions (applicant is comfortable with market rate, didn\'t negotiate)\n• Move-in target: June 1\n\nLet me know if you want me to send the lease docs or if you have questions.\n[Dallas - ' + ago(16) + ']: Did you verify employment in writing?\n[Maya - ' + ago(3) + ']: Yes — paystubs from last 3 months + signed offer letter from employer. Both attached to the application packet (Drive link in tracker row 31).',
+    portfolio:'JHU', dallasRole:'approval', lastFrom:'Maya', lastTs: ago(3)},
+
+  // ── JHU ──
+  {id:'10',property:'Guilford',description:'Approve HVAC replacement — $18,400 from Brennan HVAC',status:'Urgent',assignment:'Dallas Approval',
+    notes:'[Maya - ' + ago(48) + ']: Got two quotes. Brennan $18,400, Superior $22,100. Brennan has 5-yr warranty. Recommend Brennan.\n[Dallas - ' + ago(26) + ']: Can you confirm the warranty terms in writing?\n[Maya - ' + ago(3) + ']: Just got the warranty doc — 5 years parts AND labor. Attaching now.',
+    portfolio:'JHU', dallasRole:'approval', lastFrom:'Maya', lastTs: ago(3)},
+
+  {id:'11',property:'Woodrow',description:'Approve new PM contract with Forefront Property Management',status:'Pending',assignment:'Dallas Decision',
+    notes:'[Maya - ' + ago(72) + ']: 8% monthly, standard terms. Reviewed with attorney. Needs your signature.',
+    portfolio:'JHU', dallasRole:'approval', lastFrom:'Maya', lastTs: ago(72)},
+
+  {id:'12',property:'JHU Portfolio',description:'Approve $4,200 landscaping bid for all JHU exterior properties',status:'Pending',assignment:'Dallas Approval',
+    notes:'[Maya - ' + ago(24) + ']: GreenScape $4,200 vs LawnPro $4,800. GreenScape did Q4 cleanup, work was solid.',
+    portfolio:'JHU', dallasRole:'approval', lastFrom:'Maya', lastTs: ago(24)},
+
+  {id:'13',property:'JHU Portfolio',description:'Renew all 4 JHU LLC annual filings — due June 15',status:'Stuck',assignment:'Dallas Approval',
+    notes:'[Maya - ' + ago(120) + ']: CSC processing fee $480 total. Need your card on file or wire authorization.\n[Dallas - ' + ago(20) + ']: Send me the breakdown by LLC.',
+    portfolio:'JHU', dallasRole:'approval', lastFrom:'Dallas', lastTs: ago(20)},
+
+  {id:'20',property:'Guilford A2',description:'Review and respond to tenant dispute re: security deposit',status:'In Progress',assignment:'Dallas',
+    notes:'[Maya - ' + ago(120) + ']: Tenant disputes $450 cleaning charge. Photos on file.\n[Dallas - ' + ago(96) + ']: Reviewed photos. Charge is valid. Will draft response.',
+    portfolio:'JHU', dallasRole:'own', lastFrom:'Dallas', lastTs: ago(96)},
+
+  {id:'21',property:'JHU Portfolio',description:'Connect with Zak re: student housing strategy for 2026-27',status:'New',assignment:'Dallas',
+    notes:'',
+    portfolio:'JHU', dallasRole:'own', lastFrom:'', lastTs: 0},
+
+  {id:'32',property:'Woodrow',description:'Plumbing inspection today — Bernard 8am–12pm',status:'Scheduled',assignment:'Maya',
+    notes:'[Maya - ' + ago(72) + ']: Bernard confirmed 8am–12pm window.',
+    portfolio:'JHU', dallasRole:'fyi', lastFrom:'Maya', lastTs: ago(72)},
+
+  // ── SLP ──
+  {id:'40',property:'Southlight',description:'Approve exterior painting quote — $6,800 from ColorWorks',status:'Pending',assignment:'Dallas Approval',
+    notes:'[Maya - ' + ago(96) + ']: ColorWorks $6,800 vs ProPaint $7,500. ColorWorks has better reviews and Marjorie has worked with them before.',
+    portfolio:'SLP', dallasRole:'approval', lastFrom:'Maya', lastTs: ago(96)},
+
+  {id:'41',property:'573 Hillside',description:'Approve lease renewal for unit 4B — 2-year at 2% rent cap',status:'Pending',assignment:'Dallas Decision',
+    notes:'[Maya - ' + ago(50) + ']: 4-year tenant, no issues. 2% cap is below market. Recommend approving.\n[Dallas - ' + ago(2) + ']: What is market rate for that unit right now?',
+    portfolio:'SLP', dallasRole:'approval', lastFrom:'Dallas', lastTs: ago(2)},
+
+  {id:'42',property:'SLP Portfolio',description:'Hold off — Marjorie wants to discuss 2027 budget face-to-face',status:'Hold off',assignment:'Dallas Decision',
+    notes:'[Maya - ' + ago(144) + ']: Marjorie asked to push budget review to in-person meeting in June.',
+    portfolio:'SLP', dallasRole:'approval', lastFrom:'Maya', lastTs: ago(144)},
+
+  {id:'50',property:'SLP Portfolio',description:'Call Lehigh county assessor re: property tax appeal',status:'Stuck',assignment:'Dallas',
+    notes:'[Maya - ' + ago(240) + ']: Assessment $42K over comps. Strong case. I can prep docs.\n[Maya - ' + ago(48) + ']: Bumping — deadline is in 9 days.',
+    portfolio:'SLP', dallasRole:'own', lastFrom:'Maya', lastTs: ago(48)},
+
+  // ── DC ──
+  {id:'70',property:'DC',description:'Approve $3,500 emergency roof repair — active leak in unit 3',status:'Urgent',assignment:'Dallas Approval',
+    notes:'[Maya - ' + ago(8) + ']: Carlos confirmed active leak. Tenant displaced temporarily. Need approval ASAP.\n[Dallas - ' + ago(1) + ']: Approved, get it done. Send invoice when you have it.',
+    portfolio:'DC', dallasRole:'approval', lastFrom:'Dallas', lastTs: ago(1)},
+
+  {id:'80',property:'DC',description:'Follow up with DC housing authority re: voucher payment',status:'In Progress',assignment:'Dallas',
+    notes:'[Maya - ' + ago(360) + ']: $6,300 total. New case manager: Reg Johnson, 202-555-0142.\n[Dallas - ' + ago(180) + ']: Called Reg, left voicemail.\n[Dallas - ' + ago(4) + ']: Following up again today, will report back.',
+    portfolio:'DC', dallasRole:'own', lastFrom:'Dallas', lastTs: ago(4)},
+
+  // General
+  {id:'100',property:'Portfolio Management',description:'Approve Q2 budget variance: $12K over in maintenance',status:'Pending',assignment:'Dallas Approval',
+    notes:'[Maya - ' + ago(96) + ']: Driven by HVAC and plumbing emergencies in JHU. Breakdown doc ready.',
+    portfolio:'General', dallasRole:'approval', lastFrom:'Maya', lastTs: ago(96)},
+
+  {id:'110',property:'Executive',description:'Sign updated partnership agreements with new PM firms',status:'New',assignment:'Dallas',
+    notes:'[Maya - ' + ago(96) + ']: Canton and Forefront agreements reviewed by David. Ready for signature.',
+    portfolio:'General', dallasRole:'own', lastFrom:'Maya', lastTs: ago(96)},
+
+  {id:'120',property:'Portfolio Management',description:'MD LLC annual reports filed: all 13 in good standing',status:'Completed',assignment:'Maya',
+    notes:'[Maya - ' + ago(72) + ']: Confirmed via CSC dashboard.',
+    portfolio:'General', dallasRole:'fyi', lastFrom:'Maya', lastTs: ago(72)},
+];
+
+const STATIC_WINS = [
+  {prop:'Woodrow',   summary:'Student housing research pulled for Zak',                date:'May 19'},
+  {prop:'Guilford',  summary:'Canton PM agreement signed',                             date:'May 19'},
+  {prop:'Portfolio', summary:'All 13 MD LLC entities confirmed good standing',         date:'May 18'},
+  {prop:'Executive', summary:'Ben AI training complete + workflow visuals sent',       date:'May 18'},
+  {prop:'Portfolio', summary:'CSC compliance dashboard live',                          date:'May 18'},
+  {prop:'Guilford',  summary:'Unit A4 renewal sealed, $1K concession plus free clean', date:'May 15'},
+];
+
+async function loadTasks() {
+  document.getElementById('loadingBar').style.display = 'block';
+  document.getElementById('updateBar').textContent = 'Refreshing...';
+
+  // Demo mode: no Apps Script URL configured
+  if (!APPS_SCRIPT_URL) {
+    ALL_TASKS = MOCK_TASKS.slice();
+    document.getElementById('loadingBar').style.display = 'none';
+    renderAll();
+    renderWins(STATIC_WINS);
+    document.getElementById('updateBar').textContent = 'Demo mode - connect Apps Script for live data';
+    return;
+  }
+
+  // Live mode: fetch from Apps Script
+  try {
+    const res  = await fetch(APPS_SCRIPT_URL + '?action=getTasks&token=' + TOKEN);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    ALL_TASKS = (data.tasks || []).map(t => Object.assign({}, t, {
+      portfolio:  getPortfolio(t.property),
+      dallasRole: t.dallasRole || getDallasRole(t.assignment, t.status),
+      lastFrom:   t.lastFrom || (t.notes && t.notes.match(/\[Dallas/i) ? 'Dallas' : 'Maya'),
+      lastTs:     t.lastTs || Date.now()
+    }));
+    if (data.wins && data.wins.length) renderWins(data.wins);
+    else renderWins(STATIC_WINS);
+    renderAll();
+    document.getElementById('updateBar').textContent =
+      'Live · updated ' + new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  } catch (e) {
+    console.warn('loadTasks failed:', e);
+    ALL_TASKS = MOCK_TASKS.slice();
+    renderAll();
+    renderWins(STATIC_WINS);
+    document.getElementById('updateBar').textContent = 'Could not reach backend — showing demo data';
+  } finally {
+    document.getElementById('loadingBar').style.display = 'none';
+  }
+}
+
+function getDallasRole(assignment, status) {
+  const a = (assignment || '').toLowerCase();
+  const s = (status || '').toLowerCase();
+  if (s.includes('dallas approval') || s.includes('dallas decision') || s.includes('dallas to do') || a.includes('dallas approval') || a.includes('dallas decision')) return 'approval';
+  if (a === 'dallas' || a.startsWith('dallas/') || a.endsWith('/dallas')) return 'own';
+  return 'fyi';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('bw_dark_v32') === '1') document.body.classList.add('dark');
+  document.getElementById('vt-urgency').classList.toggle('active', VIEW_MODE === 'urgency');
+  document.getElementById('vt-portfolio').classList.toggle('active', VIEW_MODE === 'portfolio');
+  loadTasks();
+});
+</script>
+</body>
+</html>
