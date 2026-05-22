@@ -846,7 +846,7 @@ async function loadTasks() {
     if (data.error) throw new Error(data.error);
     ALL_TASKS = (data.tasks || []).map(t => ({
       ...t,
-      portfolio:  t.portfolio  || getPortfolio(t.property),
+      portfolio:  getPortfolio(t.property),
       dallasRole: t.dallasRole || getDallasRole(t.assignment, t.status)
     }));
     if (data.wins && data.wins.length) renderWins(data.wins);
