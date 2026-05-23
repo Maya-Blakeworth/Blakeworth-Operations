@@ -1,0 +1,31 @@
+{
+  "name": "Blakeworth Command Center",
+  "short_name": "Blakeworth",
+  "description": "Dallas's operations dashboard for Blakeworth Management — approve, ping, and stay on top of property tasks.",
+  "start_url": "/Blakeworth-Operations/",
+  "scope": "/Blakeworth-Operations/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F1E8",
+  "theme_color": "#C9603F",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -2,7 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- PWA install support (iPhone home screen) -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Blakeworth">
+<meta name="theme-color" content="#C9603F" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A140F" media="(prefers-color-scheme: dark)">
 <title>Blakeworth — Blakeworth Command Center</title>
 <style>
 :root, html[data-theme="claude"][data-mode="light"] {
@@ -122,6 +134,14 @@ body {
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   background:var(--bg); color:var(--text); line-height:1.5;
   transition:background .25s, color .25s;
+  /* iOS PWA safe-area handling (notch + home indicator) */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+/* When running as installed PWA on iOS, header sits flush with status bar */
+@media (display-mode: standalone) {
+  .site-header { padding-top: env(safe-area-inset-top); }
+  .main { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
 }
 .site-header {
   background:var(--navy); color:#fff; padding:0 24px;
