@@ -1446,6 +1446,12 @@ function renderStats() {
   const s = computeStats();
   const parts = [];
 
+  // Always show "items waiting on you" count for the current actor
+  const needsAction = ALL_TASKS.filter(t => t.dallasRole === 'approval' || t.dallasRole === 'own').length;
+  if (needsAction > 0) {
+    parts.push('<span class="stat-item"><span class="stat-dot warn"></span>📋 <strong>' + needsAction + '</strong> need action</span>');
+  }
+
   if (s.responseTimesCount > 0) {
     parts.push('<span class="stat-item"><span class="stat-dot good"></span>📊 Avg response: <strong>' + fmtDays(s.avgResponseDays) + '</strong></span>');
   }
@@ -2127,12 +2133,29 @@ async function loadTasks() {
     const res  = await fetch(APPS_SCRIPT_URL + '?action=getTasks&token=' + TOKEN);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    ALL_TASKS = (data.tasks || []).map(t => Object.assign({}, t, {
-      portfolio:  getPortfolio(t.property),
-      dallasRole: t.dallasRole || getDallasRole(t.assignment, t.status),
-      lastFrom:   t.lastFrom || (t.notes && t.notes.match(/\[Dallas/i) ? 'Dallas' : 'Maya'),
-      lastTs:     t.lastTs || Date.now()
-    }));
+    ALL_TASKS = (data.tasks || []).map(t => {
+      // Compute lastFrom + lastTs from notes if backend didn't supply them
+      let lastFrom = t.lastFrom;
+      let lastTs   = t.lastTs;
+      if ((!lastFrom || !lastTs) && t.notes) {
+        // Parse [Author - date]: bubbles from notes
+        const matches = [...t.notes.matchAll(/\[(Maya|Dallas|Marjorie)\s*[-]\s*([^\]]+)\]:/gi)];
+        if (matches.length > 0) {
+          const last = matches[matches.length - 1];
+          if (!lastFrom) lastFrom = last[1];
+          if (!lastTs) {
+            const parsed = new Date(last[2].trim());
+            if (!isNaN(parsed.getTime())) lastTs = parsed.getTime();
+          }
+        }
+      }
+      return Object.assign({}, t, {
+        portfolio:  getPortfolio(t.property),
+        dallasRole: t.dallasRole || getDallasRole(t.assignment, t.status),
+        lastFrom:   lastFrom || 'Maya',
+        lastTs:     lastTs || 0
+      });
+    });
     if (data.wins && data.wins.length) renderWins(data.wins);
     else renderWins(STATIC_WINS);
     renderAll();
