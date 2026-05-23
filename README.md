@@ -1,4 +1,4 @@
-# Blakeworth Operations Dashboard
+# Blakeworth Operations Dashboard 
 
 A weekly operations review dashboard for Blakeworth Management. Dallas reviews action items, approves decisions, and provides feedback on property management updates across all portfolios.
 
