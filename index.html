@@ -1619,9 +1619,7 @@ function renderCard(t, role, showPortfolioPill) {
       threadHtml +
       noteBox +
     '</div>' +
-    '<div class="card-footer-row">' +
-      '<span class="action-type-label ' + labelClass + '">' + labelText + '</span>' +
-    '</div>' +
+    (stuckFlag ? '' : '<div class="card-footer-row"><span class="action-type-label ' + labelClass + '">' + labelText + '</span></div>') +
   '</div>';
 }
 
