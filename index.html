@@ -221,6 +221,34 @@ body {
   50%     { box-shadow:0 0 0 6px rgba(16,185,129,0); }
 }
 
+
+.stats-strip {
+  font-size:12px; color:var(--text-2);
+  padding:10px 16px;
+  margin: -10px 0 18px 0;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  display:flex; align-items:center; flex-wrap:wrap;
+  gap:14px;
+  box-shadow:var(--shadow);
+}
+.stats-strip:empty { display:none; }
+.stats-strip .stat-item {
+  display:inline-flex; align-items:center; gap:6px;
+}
+.stats-strip strong { color:var(--accent); font-weight:700; }
+.stats-strip .stat-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--text-3); margin-right:4px;
+}
+.stats-strip .stat-dot.warn { background:var(--warn); }
+.stats-strip .stat-dot.danger { background:var(--danger); }
+.stats-strip .stat-dot.good { background:var(--success); }
+@media (max-width:640px) {
+  .stats-strip { font-size:11px; padding:8px 12px; gap:10px; }
+}
+
 .cards-row {
   display:grid; grid-template-columns:repeat(3,1fr);
   gap:12px; margin-bottom:24px;
@@ -941,6 +969,9 @@ body {
     <div class="greeting-line2" id="greetingLine2"><span class="greeting-pulse"></span>Loading…</div>
   </div>
 
+  <!-- Analytics stats strip (computed from ALL_TASKS) -->
+  <div id="statsStrip" class="stats-strip"></div>
+
   <div class="cards-row">
     <div class="action-card">
       <div class="card-icon">💼</div>
@@ -1344,8 +1375,97 @@ function renderGreeting() {
   document.getElementById('greetingLine2').innerHTML = line2;
 }
 
+
+function computeStats() {
+  let responseTimesMs = [];
+  let oldestWaitingDays = 0;
+  let stuckOver7 = 0;
+  let totalWaiting = 0;
+  let resolvedThisWeek = 0;
+  const now = Date.now();
+  const oneDay = 1000 * 60 * 60 * 24;
+
+  ALL_TASKS.forEach(t => {
+    // Tasks where Maya posted last (Dallas hasn't responded) and Dallas is the actor expected
+    if (t.lastFrom === 'Maya' && t.lastTs && (t.dallasRole === 'approval' || t.dallasRole === 'own')) {
+      const ageDays = (now - new Date(t.lastTs).getTime()) / oneDay;
+      if (ageDays > 0) {
+        totalWaiting++;
+        if (ageDays > oldestWaitingDays) oldestWaitingDays = ageDays;
+        if (ageDays > 7) stuckOver7++;
+      }
+    }
+    // Parse bubbles for response timing (first Maya -> first Dallas)
+    if (t.notes && typeof parseBubbles === 'function') {
+      const bubbles = parseBubbles(t.notes);
+      let firstMayaTs = null;
+      for (let i = 0; i < bubbles.length; i++) {
+        const b = bubbles[i];
+        const isMaya = b.author.toLowerCase() === 'maya';
+        const isDallas = b.author.toLowerCase() === 'dallas';
+        if (isMaya && !firstMayaTs && b.date) {
+          firstMayaTs = new Date(b.date).getTime();
+        } else if (isDallas && firstMayaTs && b.date) {
+          const dallasTs = new Date(b.date).getTime();
+          const diff = dallasTs - firstMayaTs;
+          if (diff > 0 && diff < 60 * oneDay) {
+            responseTimesMs.push(diff);
+          }
+          break;
+        }
+      }
+    }
+    // Recently resolved (status indicates closed within 7 days)
+    const s = (t.status || '').toLowerCase();
+    if ((s === 'completed' || s === 'approved' || s === 'done') && t.lastTs) {
+      const ageDays = (now - new Date(t.lastTs).getTime()) / oneDay;
+      if (ageDays <= 7) resolvedThisWeek++;
+    }
+  });
+
+  const avgMs = responseTimesMs.length ? responseTimesMs.reduce((a, b) => a + b, 0) / responseTimesMs.length : 0;
+  return {
+    avgResponseDays: (avgMs / oneDay),
+    oldestWaitingDays: Math.floor(oldestWaitingDays),
+    stuckOver7,
+    totalWaiting,
+    resolvedThisWeek,
+    responseTimesCount: responseTimesMs.length,
+  };
+}
+
+function fmtDays(d) {
+  if (d < 1) return Math.round(d * 24) + 'h';
+  if (d < 2) return '1 day';
+  return Math.round(d) + ' days';
+}
+
+function renderStats() {
+  const el = document.getElementById('statsStrip');
+  if (!el || !ALL_TASKS || ALL_TASKS.length === 0) return;
+  const s = computeStats();
+  const parts = [];
+
+  if (s.responseTimesCount > 0) {
+    parts.push('<span class="stat-item"><span class="stat-dot good"></span>📊 Avg response: <strong>' + fmtDays(s.avgResponseDays) + '</strong></span>');
+  }
+  if (s.oldestWaitingDays > 0) {
+    const dotCls = s.oldestWaitingDays > 7 ? 'danger' : (s.oldestWaitingDays > 3 ? 'warn' : '');
+    parts.push('<span class="stat-item"><span class="stat-dot ' + dotCls + '"></span>⏳ Oldest waiting: <strong>' + s.oldestWaitingDays + ' days</strong></span>');
+  }
+  if (s.stuckOver7 > 0) {
+    parts.push('<span class="stat-item"><span class="stat-dot danger"></span>🚨 <strong>' + s.stuckOver7 + '</strong> stuck > 1 week</span>');
+  }
+  if (s.resolvedThisWeek > 0) {
+    parts.push('<span class="stat-item"><span class="stat-dot good"></span>✅ <strong>' + s.resolvedThisWeek + '</strong> resolved this week</span>');
+  }
+
+  el.innerHTML = parts.join('<span style="color:var(--text-3);opacity:.4">|</span>');
+}
+
 function renderAll() {
   renderGreeting();
+  renderStats();
   // Update tab counts
   document.getElementById('count-all').textContent = ALL_TASKS.length;
   document.getElementById('count-jhu').textContent = ALL_TASKS.filter(t => t.portfolio === 'JHU').length;
