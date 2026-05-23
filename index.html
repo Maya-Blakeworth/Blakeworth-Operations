@@ -5,30 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blakeworth — Blakeworth Command Center</title>
 <style>
-:root {
-  --navy:#0D1B2A; --navy-light:#162436;
-  --bg:#F1F5F9; --surface:#FFFFFF; --surface-2:#F8FAFC; --border:#E2E8F0;
-  --text:#0F172A; --text-2:#475569; --text-3:#94A3B8;
-  --jhu:#881337; --jhu-light:#FFF1F2;
-  --slp:#2563EB; --slp-light:#EFF6FF;
-  --dc:#7C3AED;  --dc-light:#F5F3FF;
-  --gen:#475569; --gen-light:#F8FAFC;
-  --approval:#D97706; --approval-bg:#FFFBEB;
-  --own:#7C3AED; --own-bg:#F5F3FF;
-  --fyi-border:#CBD5E1;
-  --success:#10B981; --danger:#EF4444; --warn:#F59E0B; --info:#3B82F6;
-  --stuck:#DC2626; --stuck-bg:#FEF2F2;
+:root, html[data-theme="claude"][data-mode="light"] {
+  --navy:#1E140C; --navy-light:#2E2218;
+  --bg:#F5F1E8; --surface:#FFFFFF; --surface-2:#F0E8D6; --border:#E5D9BF;
+  --text:#1E140C; --text-2:#5A4634; --text-3:#8A7559;
+  --accent:#C9603F; --accent-soft:rgba(201,96,63,0.10); --accent-glow:rgba(201,96,63,0.22);
+  --jhu:#B83A33; --jhu-light:rgba(184,58,51,0.10);
+  --slp:#2E6DA8; --slp-light:rgba(46,109,168,0.10);
+  --dc:#7C5BC2;  --dc-light:rgba(124,91,194,0.12);
+  --gen:#6B5E45; --gen-light:rgba(107,94,69,0.10);
+  --approval:#B8552E; --approval-bg:rgba(184,85,46,0.10);
+  --own:#B8552E; --own-bg:rgba(184,85,46,0.10);
+  --fyi-border:#D9CFB8;
+  --success:#3A8A4D; --danger:#B83A33; --warn:#B8552E; --info:#2E6DA8;
+  --stuck:#B83A33; --stuck-bg:rgba(184,58,51,0.10);
   --radius:10px; --radius-sm:6px;
   --shadow:0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
   --shadow-md:0 4px 12px rgba(0,0,0,.10);
 }
-body.dark {
-  --bg:#0F172A; --surface:#1E293B; --surface-2:#0F172A; --border:#334155;
-  --text:#F1F5F9; --text-2:#94A3B8; --text-3:#64748B;
-  --jhu-light:rgba(136,19,55,.12); --slp-light:rgba(37,99,235,.12);
-  --dc-light:rgba(124,58,237,.12); --gen-light:rgba(71,85,105,.12);
-  --approval-bg:rgba(217,119,6,.10); --own-bg:rgba(124,58,237,.10);
-  --stuck-bg:rgba(220,38,38,.12); --fyi-border:#334155;
+html[data-theme="claude"][data-mode="dark"] {
+  --navy:#0D1B2A; --navy-light:#162436;
+  --bg:#1A140F; --surface:#2A2018; --surface-2:#34281E; --border:rgba(245,238,225,0.07);
+  --text:#F5EEE1; --text-2:#C7B8A0; --text-3:#8A7A65;
+  --accent:#D97757; --accent-soft:rgba(217,119,87,0.12); --accent-glow:rgba(217,119,87,0.30);
+  --jhu:#E0524C; --jhu-light:rgba(224,82,76,0.14);
+  --slp:#6BA9E0; --slp-light:rgba(107,169,224,0.14);
+  --dc:#B894E5;  --dc-light:rgba(184,148,229,0.16);
+  --gen:#9A8E7A; --gen-light:rgba(154,142,122,0.12);
+  --approval:#D97757; --approval-bg:rgba(217,119,87,0.14);
+  --own:#D97757; --own-bg:rgba(217,119,87,0.14);
+  --fyi-border:rgba(245,238,225,0.16);
+  --success:#7FC080; --danger:#E0524C; --warn:#D97757; --info:#6BA9E0;
+  --stuck:#E0524C; --stuck-bg:rgba(224,82,76,0.14);
+}
+html[data-theme="midnight"][data-mode="light"] {
+  --navy:#1A1410; --navy-light:#2C231C;
+  --bg:#FBF8F1; --surface:#FFFFFF; --surface-2:#F8F1DF; --border:rgba(26,20,16,0.08);
+  --text:#1A1410; --text-2:#5C4F3D; --text-3:#8C7E66;
+  --accent:#D88A0A; --accent-soft:rgba(216,138,10,0.10); --accent-glow:rgba(216,138,10,0.25);
+  --jhu:#B91C28; --jhu-light:rgba(185,28,40,0.10);
+  --slp:#1E6BB8; --slp-light:rgba(30,107,184,0.10);
+  --dc:#6D3FC2;  --dc-light:rgba(109,63,194,0.12);
+  --gen:#5B6678; --gen-light:rgba(91,102,120,0.10);
+  --approval:#B57500; --approval-bg:rgba(181,117,0,0.10);
+  --own:#B57500; --own-bg:rgba(181,117,0,0.10);
+  --fyi-border:#D9D2C0;
+  --success:#2C8E4A; --danger:#C2261C; --warn:#B57500; --info:#1E6BB8;
+  --stuck:#C2261C; --stuck-bg:rgba(194,38,28,0.10);
+}
+html[data-theme="midnight"][data-mode="dark"] {
+  --navy:#0B0E14; --navy-light:#14171F;
+  --bg:#0B0E14; --surface:#161B26; --surface-2:#1C2230; --border:rgba(255,255,255,0.06);
+  --text:#F5EFE0; --text-2:#B8B0A0; --text-3:#7A7466;
+  --accent:#F5A524; --accent-soft:rgba(245,165,36,0.10); --accent-glow:rgba(245,165,36,0.25);
+  --jhu:#E5484D; --jhu-light:rgba(229,72,77,0.14);
+  --slp:#4D9FE8; --slp-light:rgba(77,159,232,0.14);
+  --dc:#B58AFF;  --dc-light:rgba(181,138,255,0.16);
+  --gen:#8B95A8; --gen-light:rgba(139,149,168,0.12);
+  --approval:#F5A524; --approval-bg:rgba(245,165,36,0.12);
+  --own:#F5A524; --own-bg:rgba(245,165,36,0.12);
+  --fyi-border:rgba(255,255,255,0.12);
+  --success:#5CCB7A; --danger:#FF6B6B; --warn:#F5A524; --info:#4D9FE8;
+  --stuck:#FF6B6B; --stuck-bg:rgba(255,107,107,0.12);
+}
+html[data-theme="electric"][data-mode="light"] {
+  --navy:#0A0A0F; --navy-light:#181A22;
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#F0F3FA; --border:rgba(10,10,15,0.08);
+  --text:#0A0A0F; --text-2:#4A4D58; --text-3:#7A7E8D;
+  --accent:#00B8A0; --accent-soft:rgba(0,184,160,0.10); --accent-glow:rgba(0,184,160,0.22);
+  --jhu:#D63167; --jhu-light:rgba(214,49,103,0.10);
+  --slp:#1E88D0; --slp-light:rgba(30,136,208,0.10);
+  --dc:#8C5BD8;  --dc-light:rgba(140,91,216,0.12);
+  --gen:#5C6378; --gen-light:rgba(92,99,120,0.10);
+  --approval:#B85A00; --approval-bg:rgba(184,90,0,0.10);
+  --own:#B85A00; --own-bg:rgba(184,90,0,0.10);
+  --fyi-border:#D5D9E0;
+  --success:#2C8E5A; --danger:#D63167; --warn:#B85A00; --info:#1E88D0;
+  --stuck:#D63167; --stuck-bg:rgba(214,49,103,0.10);
+}
+html[data-theme="electric"][data-mode="dark"] {
+  --navy:#0A0A0F; --navy-light:#14141C;
+  --bg:#0A0A0F; --surface:#14141C; --surface-2:#1A1A26; --border:rgba(255,255,255,0.05);
+  --text:#ECEEF5; --text-2:#9AA0B4; --text-3:#5C627A;
+  --accent:#00E5C7; --accent-soft:rgba(0,229,199,0.10); --accent-glow:rgba(0,229,199,0.30);
+  --jhu:#FF5C8A; --jhu-light:rgba(255,92,138,0.14);
+  --slp:#5BC0FF; --slp-light:rgba(91,192,255,0.14);
+  --dc:#C792FF;  --dc-light:rgba(199,146,255,0.16);
+  --gen:#6E7891; --gen-light:rgba(110,120,145,0.12);
+  --approval:#00E5C7; --approval-bg:rgba(0,229,199,0.12);
+  --own:#00E5C7; --own-bg:rgba(0,229,199,0.12);
+  --fyi-border:rgba(255,255,255,0.12);
+  --success:#4DD49C; --danger:#FF5C8A; --warn:#FFAE00; --info:#5BC0FF;
+  --stuck:#FF5C8A; --stuck-bg:rgba(255,92,138,0.12);
 }
 /* Dark mode bubble colors - distinct Maya (blue) vs Dallas (purple) */
 body.dark .bw.maya .bb {
@@ -631,6 +699,100 @@ body {
 .datetime-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 
 
+
+/* v4.0 - portfolio tabs */
+.tabs-shell {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; flex-wrap:wrap; margin-bottom:14px; margin-top:8px;
+}
+.portfolio-tabs {
+  display:inline-flex; gap:4px;
+  background:var(--surface); border:1px solid var(--border);
+  padding:5px; border-radius:12px;
+}
+.ptab {
+  background:transparent; border:none; cursor:pointer;
+  padding:8px 16px; border-radius:8px;
+  font-size:13px; font-weight:600; font-family:inherit;
+  color:var(--text-2);
+  display:inline-flex; align-items:center; gap:7px;
+  transition:all .15s;
+}
+.ptab:hover { color:var(--text); background:var(--surface-2); }
+.ptab.active {
+  background:var(--surface-2);
+  color:var(--text);
+  box-shadow:inset 0 0 0 1px var(--border), 0 4px 12px var(--accent-glow);
+}
+.ptab .tab-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); }
+.ptab[data-tab="jhu"] .tab-dot { background:var(--jhu); }
+.ptab[data-tab="slp"] .tab-dot { background:var(--slp); }
+.ptab[data-tab="dc"]  .tab-dot { background:var(--dc); }
+.ptab .tab-count {
+  font-size:10px; font-weight:700;
+  background:var(--surface); color:var(--text-3);
+  padding:1px 7px; border-radius:8px;
+  border:1px solid var(--border); min-width:18px; text-align:center;
+}
+.ptab.active .tab-count { color:var(--text); }
+.sort-shell {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:11px; color:var(--text-3); font-weight:600;
+  text-transform:uppercase; letter-spacing:0.6px;
+}
+.sort-toggle {
+  display:inline-flex; gap:3px;
+  background:var(--surface); border:1px solid var(--border);
+  padding:3px; border-radius:9px;
+}
+.sortbtn {
+  background:transparent; border:none; cursor:pointer;
+  padding:6px 12px; border-radius:6px;
+  font-size:11px; font-weight:600; font-family:inherit;
+  color:var(--text-2); text-transform:none; letter-spacing:0;
+  transition:all .15s;
+}
+.sortbtn:hover { color:var(--text); }
+.sortbtn.active {
+  background:var(--surface-2); color:var(--text);
+  box-shadow:0 1px 0 var(--border);
+}
+.filter-context {
+  font-size:12px; color:var(--text-3);
+  margin-bottom:14px; display:flex; align-items:center; gap:6px;
+}
+.filter-context strong { color:var(--text-2); font-weight:600; }
+
+/* v4.0 - theme switcher */
+.theme-switcher {
+  display:inline-flex; gap:4px;
+  background:var(--surface); border:1px solid var(--border);
+  padding:3px; border-radius:8px;
+  margin-right:6px;
+}
+.theme-btn {
+  background:transparent; border:none; cursor:pointer;
+  padding:5px 9px; border-radius:5px;
+  color:var(--text-2); font-size:11px; font-weight:600; font-family:inherit;
+  display:inline-flex; align-items:center; gap:5px; transition:all .15s;
+}
+.theme-btn:hover { color:var(--text); background:var(--surface-2); }
+.theme-btn.active {
+  background:var(--surface-2); color:var(--text);
+  box-shadow:0 0 0 1px var(--accent-glow);
+}
+.theme-swatch {
+  width:10px; height:10px; border-radius:3px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.15);
+}
+.theme-swatch.claude   { background:linear-gradient(135deg,#C9603F,#D97757); }
+.theme-swatch.midnight { background:linear-gradient(135deg,#D88A0A,#F5A524); }
+.theme-swatch.electric { background:linear-gradient(135deg,#00B8A0,#00E5C7); }
+@media (max-width: 760px) {
+  .theme-switcher .theme-btn span:not(.theme-swatch) { display:none; }
+  .tabs-shell { flex-direction:column; align-items:stretch; }
+}
+
 /* Identity modal - first-time prompt */
 #identityModal {
   position: fixed; inset: 0;
@@ -728,11 +890,18 @@ body {
     </div>
     <div class="header-right">
       <div class="identity-indicator" id="identityIndicator" style="display:none">as: <strong id="identityName"></strong> &middot; <button class="identity-change" onclick="changeIdentity()">change</button></div>
-      <div class="view-toggle">
-        <button id="vt-urgency" class="active" onclick="setView('urgency')">By Urgency</button>
-        <button id="vt-portfolio" onclick="setView('portfolio')">By Portfolio</button>
+      <div class="theme-switcher">
+        <button class="theme-btn active" data-theme-btn="claude" onclick="setTheme('claude')" title="Claude Clay">
+          <span class="theme-swatch claude"></span><span>Claude</span>
+        </button>
+        <button class="theme-btn" data-theme-btn="midnight" onclick="setTheme('midnight')" title="Midnight Amber">
+          <span class="theme-swatch midnight"></span><span>Midnight</span>
+        </button>
+        <button class="theme-btn" data-theme-btn="electric" onclick="setTheme('electric')" title="Electric Graphite">
+          <span class="theme-swatch electric"></span><span>Electric</span>
+        </button>
       </div>
-      <button class="hbtn-icon" title="Toggle dark mode" onclick="toggleDark()">🌙</button>
+      <button class="hbtn-icon" title="Toggle dark mode" onclick="toggleMode()">🌙</button>
       <button class="hbtn-icon" title="Reload" onclick="loadTasks()">↻</button>
     </div>
   </div>
@@ -824,6 +993,33 @@ body {
     </div>
   </div>
 
+  
+  <!-- v4.0 tabs + sort -->
+  <div class="tabs-shell">
+    <div class="portfolio-tabs" id="portfolioTabs">
+      <button class="ptab active" data-tab="all" onclick="setPortfolio('all')">
+        <span class="tab-dot"></span>All <span class="tab-count" id="count-all">0</span>
+      </button>
+      <button class="ptab" data-tab="jhu" onclick="setPortfolio('jhu')">
+        <span class="tab-dot"></span>JHU <span class="tab-count" id="count-jhu">0</span>
+      </button>
+      <button class="ptab" data-tab="slp" onclick="setPortfolio('slp')">
+        <span class="tab-dot"></span>SLP <span class="tab-count" id="count-slp">0</span>
+      </button>
+      <button class="ptab" data-tab="dc" onclick="setPortfolio('dc')">
+        <span class="tab-dot"></span>DC <span class="tab-count" id="count-dc">0</span>
+      </button>
+    </div>
+    <div class="sort-shell">
+      <span>Sort</span>
+      <div class="sort-toggle">
+        <button class="sortbtn active" data-sort="urgency" onclick="setSort('urgency')">By Urgency</button>
+        <button class="sortbtn" data-sort="status" onclick="setSort('status')">By Status</button>
+      </div>
+    </div>
+  </div>
+  <div class="filter-context" id="filterContext"></div>
+
   <div id="taskList"></div>
 
   <div class="wins-section" id="winsSection" style="display:none">
@@ -888,7 +1084,12 @@ body {
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfbP3X9qC5iq4Sf8hZYjMCBdm6tjTBf-5e6FWBHmv56bBFjTgzjVT4gc-BzCkAC6fE/exec';
 const TOKEN           = 'bw2026dash';
 const SCHEDULE_URL    = 'https://scheduler.zoom.us/maya-miyazaki';
-let VIEW_MODE = localStorage.getItem('bw_view_v32') || 'urgency';
+let state = {
+  portfolio: localStorage.getItem('bw_v40_portfolio') || 'all',
+  sort:      localStorage.getItem('bw_v40_sort')      || 'urgency',
+};
+let THEME = localStorage.getItem('bw_theme') || 'claude';
+let MODE  = localStorage.getItem('bw_mode')  || 'light';
 let ALL_TASKS = [];
 let USER_NAME = localStorage.getItem('bw_actor') || '';
 
@@ -900,6 +1101,16 @@ function setIdentity(name) {
   const ind = document.getElementById('identityIndicator');
   ind.style.display = 'flex';
   document.getElementById('identityName').textContent = USER_NAME;
+  // Set default theme based on identity (only if user hasn't picked one yet)
+  const userHasPickedTheme = localStorage.getItem('bw_theme_locked') === '1';
+  if (!userHasPickedTheme) {
+    const defaultTheme = ({
+      'Dallas':   'midnight',
+      'Maya':     'claude',
+      'Marjorie': 'electric'
+    })[USER_NAME] || 'claude';
+    setTheme(defaultTheme);
+  }
   // Re-render so greeting + future bubbles use the new name
   if (ALL_TASKS.length > 0) renderAll();
 }
@@ -987,12 +1198,34 @@ function markRead(id) {
   }
 }
 
-function setView(mode) {
-  VIEW_MODE = mode;
-  localStorage.setItem('bw_view_v32', mode);
-  document.getElementById('vt-urgency').classList.toggle('active', mode === 'urgency');
-  document.getElementById('vt-portfolio').classList.toggle('active', mode === 'portfolio');
+function setPortfolio(p) {
+  state.portfolio = p;
+  localStorage.setItem('bw_v40_portfolio', p);
+  document.querySelectorAll('.ptab').forEach(b => b.classList.toggle('active', b.dataset.tab === p));
   renderAll();
+}
+function setSort(s) {
+  state.sort = s;
+  localStorage.setItem('bw_v40_sort', s);
+  document.querySelectorAll('.sortbtn').forEach(b => b.classList.toggle('active', b.dataset.sort === s));
+  renderAll();
+}
+function setTheme(name) {
+  THEME = name;
+  document.documentElement.setAttribute('data-theme', name);
+  localStorage.setItem('bw_theme', name);
+  localStorage.setItem('bw_theme_locked', '1');
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.themeBtn === name));
+}
+function setMode(m) {
+  MODE = m;
+  document.documentElement.setAttribute('data-mode', m);
+  localStorage.setItem('bw_mode', m);
+  const btn = document.querySelector('[title="Toggle dark mode"]');
+  if (btn) btn.textContent = m === 'dark' ? '☀️' : '🌙';
+}
+function toggleMode() {
+  setMode(MODE === 'dark' ? 'light' : 'dark');
 }
 
 const GREETINGS = {
@@ -1086,18 +1319,41 @@ function renderGreeting() {
 
 function renderAll() {
   renderGreeting();
+  // Update tab counts
+  document.getElementById('count-all').textContent = ALL_TASKS.length;
+  document.getElementById('count-jhu').textContent = ALL_TASKS.filter(t => t.portfolio === 'JHU').length;
+  document.getElementById('count-slp').textContent = ALL_TASKS.filter(t => t.portfolio === 'SLP').length;
+  document.getElementById('count-dc').textContent  = ALL_TASKS.filter(t => t.portfolio === 'DC').length;
+  // Apply portfolio filter (All shows everything including General; specific portfolio hides General)
+  let filtered = ALL_TASKS;
+  if (state.portfolio !== 'all') {
+    const port = state.portfolio.toUpperCase();
+    filtered = ALL_TASKS.filter(t => t.portfolio === port);
+  }
+  // Filter context line
+  const portLabel = ({all:'All portfolios', jhu:'JHU', slp:'SLP', dc:'DC'})[state.portfolio] || 'All';
+  const sortLabel = state.sort === 'urgency' ? 'urgency' : 'status';
+  const fc = document.getElementById('filterContext');
+  if (fc) {
+    fc.innerHTML = 'Showing <strong>' + filtered.length + '</strong> ' +
+      (filtered.length === 1 ? 'item' : 'items') + ' in <strong>' + portLabel +
+      '</strong>, grouped by <strong>' + sortLabel + '</strong>' +
+      (state.portfolio !== 'all' ? ' &middot; <em>(General/Ops items shown only in All)</em>' : '');
+  }
+  // Render
   const c = document.getElementById('taskList');
   c.innerHTML = '';
-  if (VIEW_MODE === 'urgency') renderByUrgency(c);
-  else renderByPortfolio(c);
+  if (state.sort === 'urgency') renderByUrgency(c, filtered);
+  else renderByStatus(c, filtered);
   document.getElementById('updateBar').textContent =
     'Live · updated ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
 }
 
-function renderByUrgency(container) {
-  const stuck = ALL_TASKS.filter(isStuck);
-  const yours = ALL_TASKS.filter(t => !isStuck(t) && (t.dallasRole === 'approval' || t.dallasRole === 'own'));
-  const fyi   = ALL_TASKS.filter(t => !isStuck(t) && t.dallasRole === 'fyi');
+function renderByUrgency(container, sourceTasks) {
+  const tasks = sourceTasks || ALL_TASKS;
+  const stuck = tasks.filter(isStuck);
+  const yours = tasks.filter(t => !isStuck(t) && (t.dallasRole === 'approval' || t.dallasRole === 'own'));
+  const fyi   = tasks.filter(t => !isStuck(t) && t.dallasRole === 'fyi');
   const sections = [
     {key:'stuck', icon:'🚨', title:'Stuck — Needs Unblocking', sub:'These are waiting on you to move', tasks:stuck},
     {key:'yours', icon:'🟣', title:'Yours — Action Needed',    sub:'Approvals + your to-dos',          tasks:yours},
@@ -1117,6 +1373,36 @@ function renderByUrgency(container) {
         '<div class="urgency-count">' + s.tasks.length + '</div>' +
       '</div>' +
       s.tasks.map(t => renderCard(t, t.dallasRole, true)).join('');
+    container.appendChild(sec);
+  });
+}
+
+
+function renderByStatus(container, sourceTasks) {
+  const tasks = sourceTasks || ALL_TASKS;
+  const groups = [
+    {key:['stuck','urgent'],    icon:'🚨', cls:'stuck', title:'Stuck — Needs Unblocking', sub:'Blocked items'},
+    {key:['pending','new'],     icon:'⏳', cls:'yours', title:'Pending', sub:'Awaiting your decision'},
+    {key:['in progress'],       icon:'🔧', cls:'yours', title:'In Progress', sub:'Active work'},
+    {key:['hold off'],          icon:'⏸',  cls:'fyi',   title:'Hold Off', sub:'Parked for now'},
+    {key:['scheduled'],         icon:'📅', cls:'fyi',   title:'Scheduled', sub:'On the calendar'},
+    {key:['fyi','completed'],   icon:'ℹ️', cls:'fyi',   title:'FYI / Completed', sub:'Heads up, no action'},
+  ];
+  groups.forEach(g => {
+    const items = tasks.filter(t => g.key.some(k => (t.status || '').toLowerCase().includes(k)));
+    if (!items.length) return;
+    const sec = document.createElement('section');
+    sec.className = 'urgency-section';
+    sec.innerHTML =
+      '<div class="urgency-header ' + g.cls + '">' +
+        '<div class="urgency-icon ' + g.cls + '">' + g.icon + '</div>' +
+        '<div>' +
+          '<div class="urgency-title ' + g.cls + '">' + g.title + '</div>' +
+          '<div class="urgency-sub">' + g.sub + '</div>' +
+        '</div>' +
+        '<div class="urgency-count">' + items.length + '</div>' +
+      '</div>' +
+      items.map(t => renderCard(t, t.dallasRole, true)).join('');
     container.appendChild(sec);
   });
 }
@@ -1563,10 +1849,7 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 });
 
 function toggleAddPanel() { document.getElementById('addTaskPanel').classList.toggle('open'); }
-function toggleDark() {
-  const on = document.body.classList.toggle('dark');
-  localStorage.setItem('bw_dark_v32', on ? '1' : '0');
-}
+// toggleDark replaced by toggleMode() in v4.0
 
 function renderWins(wins) {
   if (!wins || !wins.length) return;
@@ -1730,9 +2013,16 @@ function getDallasRole(assignment, status) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('bw_dark_v32') === '1') document.body.classList.add('dark');
-  document.getElementById('vt-urgency').classList.toggle('active', VIEW_MODE === 'urgency');
-  document.getElementById('vt-portfolio').classList.toggle('active', VIEW_MODE === 'portfolio');
+  // Apply theme + mode on boot
+  document.documentElement.setAttribute('data-theme', THEME);
+  document.documentElement.setAttribute('data-mode', MODE);
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.themeBtn === THEME));
+  // Apply tabs + sort state
+  document.querySelectorAll('.ptab').forEach(b => b.classList.toggle('active', b.dataset.tab === state.portfolio));
+  document.querySelectorAll('.sortbtn').forEach(b => b.classList.toggle('active', b.dataset.sort === state.sort));
+  // Set moon/sun icon
+  const modeBtn = document.querySelector('[title="Toggle dark mode"]');
+  if (modeBtn) modeBtn.textContent = MODE === 'dark' ? '☀️' : '🌙';
   // Identity check - prompt on first visit, otherwise show indicator
   if (!USER_NAME) {
     showIdentityPrompt();
