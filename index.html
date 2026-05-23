@@ -1132,6 +1132,8 @@ let ACTIVE_REACTION_TARGET = null;
 async function postAction(body) {
   body.token = TOKEN;
   body.actor = USER_NAME || 'Dallas';
+  // Strip "row-" prefix from taskId — Apps Script findTask expects numeric row
+  if (body.taskId != null) body.taskId = String(body.taskId).replace(/^row-/i, '');
   // Demo mode: no URL configured — simulate success
   if (!APPS_SCRIPT_URL) { await new Promise(r => setTimeout(r, 200)); return true; }
   try {
