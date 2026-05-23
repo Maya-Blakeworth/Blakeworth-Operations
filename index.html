@@ -413,6 +413,11 @@ body {
 .badge.completed   { background:rgba(16,185,129,.12); color:#065F46; }
 .badge.urgent      { background:rgba(239,68,68,.18);  color:#991B1B; }
 .badge.scheduled   { background:rgba(16,185,129,.12); color:#065F46; }
+.badge.dallas-to-do      { background:var(--dc-light); color:var(--dc); }
+.badge.dallas-approval   { background:var(--approval-bg); color:var(--approval); }
+.badge.dallas-decision   { background:var(--approval-bg); color:var(--approval); }
+.badge.fyi-only          { background:var(--gen-light); color:var(--gen); }
+.badge.approved          { background:rgba(16,185,129,.12); color:#065F46; }
 .card-meta {
   display:flex; gap:12px; flex-wrap:wrap;
   font-size:11px; color:var(--text-2); margin-top:3px;
@@ -889,7 +894,7 @@ body {
       </div>
     </div>
     <div class="header-right">
-      <div class="identity-indicator" id="identityIndicator" style="display:none">as: <strong id="identityName"></strong> &middot; <button class="identity-change" onclick="changeIdentity()">change</button></div>
+      <div class="identity-indicator" id="identityIndicator" style="display:none">Signed in as: <strong id="identityName"></strong> &middot; <button class="identity-change" onclick="changeIdentity()">change</button></div>
       <div class="theme-switcher">
         <button class="theme-btn active" data-theme-btn="claude" onclick="setTheme('claude')" title="Claude Clay">
           <span class="theme-swatch claude"></span><span>Claude</span>
@@ -2036,3 +2041,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+ 
