@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blakeworth — Dallas Command Center</title>
+<title>Blakeworth — Blakeworth Command Center</title>
 <style>
 :root {
   --navy:#0D1B2A; --navy-light:#162436;
@@ -630,6 +630,67 @@ body {
 .modal-submit.green { background:var(--success); }
 .datetime-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 
+
+/* Identity modal - first-time prompt */
+#identityModal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  z-index: 400; padding: 16px;
+}
+#identityModal.open { display: flex; }
+.identity-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 380px; width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+.identity-emoji { font-size: 38px; margin-bottom: 12px; }
+.identity-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.identity-sub { font-size: 13px; color: var(--text-2); margin-bottom: 22px; line-height: 1.45; }
+.identity-btn {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px; margin-bottom: 10px;
+  font-size: 14px; font-weight: 600;
+  color: var(--text);
+  cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.identity-btn:hover {
+  background: var(--info); color: #fff; border-color: var(--info);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59,130,246,.25);
+}
+.identity-note {
+  font-size: 11px; color: var(--text-3); margin-top: 14px; line-height: 1.4;
+}
+
+/* Header identity indicator */
+.identity-indicator {
+  font-size: 11px;
+  color: rgba(255,255,255,.6);
+  display: flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+.identity-indicator strong { color: rgba(255,255,255,.9); font-weight: 600; }
+.identity-change {
+  color: rgba(255,255,255,.5);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none; border: none; padding: 0;
+  font-size: 11px;
+  font-family: inherit;
+}
+.identity-change:hover { color: rgba(255,255,255,.9); }
+@media (max-width: 640px) {
+  .identity-indicator { display: none !important; }
+}
+
 #toast {
   position:fixed; bottom:24px; left:50%;
   transform:translateX(-50%) translateY(20px);
@@ -662,10 +723,11 @@ body {
       <div class="brand-logo">BW</div>
       <div>
         <div class="brand-name">Blakeworth</div>
-        <div class="brand-sub">Dallas Command Center</div>
+        <div class="brand-sub">Blakeworth Command Center</div>
       </div>
     </div>
     <div class="header-right">
+      <div class="identity-indicator" id="identityIndicator" style="display:none">as: <strong id="identityName"></strong> &middot; <button class="identity-change" onclick="changeIdentity()">change</button></div>
       <div class="view-toggle">
         <button id="vt-urgency" class="active" onclick="setView('urgency')">By Urgency</button>
         <button id="vt-portfolio" onclick="setView('portfolio')">By Portfolio</button>
@@ -804,6 +866,21 @@ body {
   <button class="epbtn" onclick="addReaction('🔥')">🔥</button>
 </div>
 
+<!-- Identity modal: first-time visit (saved to localStorage) -->
+<div id="identityModal">
+  <div class="identity-card">
+    <div class="identity-emoji">&#128075;</div>
+    <div class="identity-title">Who's making notes from this browser?</div>
+    <div class="identity-sub">Pick once - your browser will remember. Notes you add will be tagged with your name.</div>
+    <button class="identity-btn" onclick="setIdentity('Dallas')">&#128100; Dallas</button>
+    <button class="identity-btn" onclick="setIdentity('Maya')">&#128100; Maya</button>
+    <!-- ADD WHEN MARJORIE IS READY:
+    <button class="identity-btn" onclick="setIdentity('Marjorie')">&#128100; Marjorie</button>
+    -->
+    <div class="identity-note">Saved on this browser only.<br>Use the <em>change</em> link in the header to switch.</div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -813,12 +890,37 @@ const TOKEN           = 'bw2026dash';
 const SCHEDULE_URL    = 'https://scheduler.zoom.us/maya-miyazaki';
 let VIEW_MODE = localStorage.getItem('bw_view_v32') || 'urgency';
 let ALL_TASKS = [];
+let USER_NAME = localStorage.getItem('bw_actor') || '';
+
+function setIdentity(name) {
+  USER_NAME = (name || '').trim();
+  if (!USER_NAME) return;
+  localStorage.setItem('bw_actor', USER_NAME);
+  document.getElementById('identityModal').classList.remove('open');
+  const ind = document.getElementById('identityIndicator');
+  ind.style.display = 'flex';
+  document.getElementById('identityName').textContent = USER_NAME;
+  // Re-render so greeting + future bubbles use the new name
+  if (ALL_TASKS.length > 0) renderAll();
+}
+
+function changeIdentity() {
+  localStorage.removeItem('bw_actor');
+  USER_NAME = '';
+  document.getElementById('identityIndicator').style.display = 'none';
+  showIdentityPrompt();
+}
+
+function showIdentityPrompt() {
+  document.getElementById('identityModal').classList.add('open');
+}
 let ACTIVE_TASK = null;
 let ACTIVE_REACTION_TARGET = null;
 
 // ── BACKEND ─────────────────────────────────────────────
 async function postAction(body) {
   body.token = TOKEN;
+  body.actor = USER_NAME || 'Dallas';
   // Demo mode: no URL configured — simulate success
   if (!APPS_SCRIPT_URL) { await new Promise(r => setTimeout(r, 200)); return true; }
   try {
@@ -895,66 +997,67 @@ function setView(mode) {
 
 const GREETINGS = {
   Friday: [
-    'Happy Friday, Dallas.',
-    'TGIF, Dallas.',
-    'Made it to Friday, Dallas.',
-    'Friday vibes, Dallas.',
-    'One more push, Dallas.',
-    'Friday at last, Dallas.',
-    'Last lap of the week, Dallas.',
+    'Happy Friday, {name}.',
+    'TGIF, {name}.',
+    'Made it to Friday, {name}.',
+    'Friday vibes, {name}.',
+    'One more push, {name}.',
+    'Friday at last, {name}.',
+    'Last lap of the week, {name}.',
   ],
   Monday: [
-    'Good morning, Dallas. New week.',
-    'Welcome to Monday, Dallas.',
-    'Fresh start, Dallas.',
+    'Good morning, {name}. New week.',
+    'Welcome to Monday, {name}.',
+    'Fresh start, {name}.',
     'Hey Dallas, new week ahead.',
-    'Monday is here, Dallas.',
-    'Coffee up, Dallas - new week.',
-    'Hope you had a good weekend, Dallas.',
+    'Monday is here, {name}.',
+    'Coffee up, {name} - new week.',
+    'Hope you had a good weekend, {name}.',
   ],
   Saturday: [
-    'Happy Saturday, Dallas.',
-    'Weekend mode, Dallas.',
-    'Saturday vibes, Dallas.',
-    'Hope the weekend treats you well, Dallas.',
-    'Light list today, Dallas - enjoy Saturday.',
+    'Happy Saturday, {name}.',
+    'Weekend mode, {name}.',
+    'Saturday vibes, {name}.',
+    'Hope the weekend treats you well, {name}.',
+    'Light list today, {name} - enjoy Saturday.',
   ],
   Sunday: [
-    'Easy Sunday, Dallas.',
-    'Sunday check-in, Dallas.',
-    'Hope the weekend was good, Dallas.',
-    'Calm Sunday, Dallas.',
-    'Sunday wind-down, Dallas.',
+    'Easy Sunday, {name}.',
+    'Sunday check-in, {name}.',
+    'Hope the weekend was good, {name}.',
+    'Calm Sunday, {name}.',
+    'Sunday wind-down, {name}.',
   ],
   AMOther: [
-    'Good morning, Dallas.',
-    'Morning, Dallas.',
+    'Good morning, {name}.',
+    'Morning, {name}.',
     'Hey Dallas, good morning.',
-    'Rise and shine, Dallas.',
-    'How are you doing today, Dallas?',
-    'Hope the weather is great there today, Dallas.',
-    'Morning, Dallas - hope you slept well.',
+    'Rise and shine, {name}.',
+    'How are you doing today, {name}?',
+    'Hope the weather is great there today, {name}.',
+    'Morning, {name} - hope you slept well.',
     'Hey Dallas, hope today treats you right.',
-    'Fresh day, Dallas - what does it hold?',
-    'Coffee in hand, Dallas?',
+    'Fresh day, {name} - what does it hold?',
+    'Coffee in hand, {name}?',
   ],
   PMOther: [
     'Hey Dallas,',
-    'Afternoon, Dallas.',
-    'Hope your day is going well, Dallas.',
-    'Quick check-in, Dallas.',
-    'Let us finish off strong today, Dallas.',
-    'Afternoon push, Dallas.',
-    'Almost there, Dallas - back half of the day.',
-    'How is the day shaping up, Dallas?',
-    'Strong finish, Dallas - you got this.',
-    'Hope the afternoon is treating you well, Dallas.',
-    'Two-thirds of the way there, Dallas.',
+    'Afternoon, {name}.',
+    'Hope your day is going well, {name}.',
+    'Quick check-in, {name}.',
+    'Let us finish off strong today, {name}.',
+    'Afternoon push, {name}.',
+    'Almost there, {name} - back half of the day.',
+    'How is the day shaping up, {name}?',
+    'Strong finish, {name} - you got this.',
+    'Hope the afternoon is treating you well, {name}.',
+    'Two-thirds of the way there, {name}.',
   ],
 };
 function pickGreeting(key) {
   const pool = GREETINGS[key] || GREETINGS.PMOther;
-  return pool[Math.floor(Math.random() * pool.length)];
+  const template = pool[Math.floor(Math.random() * pool.length)];
+  return template.replace(/\{name\}/g, USER_NAME || 'Dallas');
 }
 
 function renderGreeting() {
@@ -1079,7 +1182,7 @@ function renderGroup(label, tasks) {
 // Parse notes into bubble objects (handles multi-line per bubble)
 function parseBubbles(raw) {
   if (!raw || !raw.trim()) return [];
-  const regex = /\[(Maya|Dallas)\s*[-]\s*([^\]]+)\]:\s*([\s\S]*?)(?=\n\[(?:Maya|Dallas)\s*[-]|$)/gi;
+  const regex = /\[([^\]]+?)\s*[-]\s*([^\]]+)\]:\s*([\s\S]*?)(?=\n\[[^\]]+?\s*[-]|$)/gi;
   const bubbles = [];
   let m;
   while ((m = regex.exec(raw)) !== null) {
@@ -1262,14 +1365,14 @@ async function callMaya(taskId) {
   // Drop a bubble + notify Maya backend-side
   if (taskId) {
     const noteText = 'Booking a Zoom with you about this - checking your scheduler now.';
-    appendBubble(taskId, 'Dallas', noteText);
+    appendBubble(taskId, USER_NAME || 'Dallas', noteText);
     await postAction({ action: 'addnote', taskId: taskId, note: noteText });
   }
 }
 
 async function pingMaya(taskId, dismissAfter) {
   const noteText = 'Need an update on this - what is going on?';
-  appendBubble(taskId, 'Dallas', noteText);  // optimistic
+  appendBubble(taskId, USER_NAME || 'Dallas', noteText);  // optimistic
   if (await postAction({ action: 'addnote', taskId: taskId, note: noteText })) {
     showToast('Pinged Maya for an update', 'success');
   }
@@ -1343,7 +1446,7 @@ async function dismissFyi(id, replyText) {
 }
 
 async function quickReply(id, text) {
-  appendBubble(id, 'Dallas', text);  // optimistic update
+  appendBubble(id, USER_NAME || 'Dallas', text);  // optimistic update
   if (await postAction({ action: 'addnote', taskId: id, note: text })) {
     showToast('Sent — Maya notified', 'success');
   }
@@ -1374,7 +1477,7 @@ async function submitRemindLater() {
 async function sendNote(id) {
   const note = document.getElementById('ni-' + id).value.trim();
   if (!note) return;
-  appendBubble(id, 'Dallas', note);  // optimistic
+  appendBubble(id, USER_NAME || 'Dallas', note);  // optimistic
   document.getElementById('ni-' + id).value = '';
   if (await postAction({ action: 'addnote', taskId: id, note: note })) {
     showToast('Note sent to Maya.', 'success');
@@ -1630,6 +1733,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('bw_dark_v32') === '1') document.body.classList.add('dark');
   document.getElementById('vt-urgency').classList.toggle('active', VIEW_MODE === 'urgency');
   document.getElementById('vt-portfolio').classList.toggle('active', VIEW_MODE === 'portfolio');
+  // Identity check - prompt on first visit, otherwise show indicator
+  if (!USER_NAME) {
+    showIdentityPrompt();
+  } else {
+    const ind = document.getElementById('identityIndicator');
+    ind.style.display = 'flex';
+    document.getElementById('identityName').textContent = USER_NAME;
+  }
   loadTasks();
 });
 </script>
