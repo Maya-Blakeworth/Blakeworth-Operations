@@ -982,8 +982,11 @@ body {
     <div class="action-card">
       <div class="card-icon">📋</div>
       <div class="card-title">Create Task</div>
-      <div class="card-sub">Drop a new task in our queue</div>
-      <button class="card-btn btn-task" onclick="toggleAddPanel()">+ Add a Task</button>
+      <div class="card-sub">Type it out or speak it 🎙️</div>
+      <div style="display:flex; gap:6px; width:100%;">
+        <button class="card-btn btn-task" style="flex:1;" onclick="toggleAddPanel()">+ Type</button>
+        <button class="card-btn btn-voice" style="flex:0 0 auto; width:48px; padding:0;" onclick="openVoiceModal()" title="Voice memo">🎙️</button>
+      </div>
     </div>
     <div class="action-card">
       <div class="card-icon">📅</div>
@@ -1130,6 +1133,60 @@ body {
     <button class="identity-btn" onclick="setIdentity('Marjorie')">&#128100; Marjorie</button>
     -->
     <div class="identity-note">Saved on this browser only.<br>Use the <em>change</em> link in the header to switch.</div>
+  </div>
+</div>
+
+<!-- Voice memo modal -->
+<div id="voiceModal" class="voice-modal-overlay">
+  <div class="voice-modal">
+    <button class="voice-modal-close" onclick="closeVoiceModal()">&times;</button>
+    <div id="voiceStage1">
+      <div class="voice-title">🎙️ Voice memo</div>
+      <div class="voice-sub">Tap and talk. I'll turn it into a task with the right property, category, and notes — you confirm before saving.</div>
+      <button id="voiceRecBtn" class="voice-record-btn" onclick="toggleRecording()" title="Tap to record">🎙️</button>
+      <div id="voiceStatus" class="voice-status">Tap the mic to start</div>
+      <div id="voiceTranscript" class="voice-transcript"></div>
+      <div class="voice-actions" id="voiceStage1Actions" style="display:none;">
+        <button class="voice-btn voice-btn-secondary" onclick="resetRecording()">🔄 Try again</button>
+        <button class="voice-btn voice-btn-primary" onclick="processTranscript()" id="voiceProcessBtn">✨ Process →</button>
+      </div>
+    </div>
+    <div id="voiceStage2" style="display:none;">
+      <div class="voice-title">Confirm task <span class="ai-pill">AI-extracted</span></div>
+      <div class="voice-sub">Review what I heard. Edit anything that's off, then save.</div>
+      <form class="voice-confirm-form" onsubmit="return false;">
+        <label class="voice-confirm-label">Task description</label>
+        <textarea id="vcDesc"></textarea>
+        <label class="voice-confirm-label">Property</label>
+        <input id="vcProp" type="text">
+        <label class="voice-confirm-label">Category</label>
+        <select id="vcCat">
+          <option value="">— Select —</option>
+          <option>Maintenance</option>
+          <option>Financial</option>
+          <option>Admin</option>
+          <option>Compliance</option>
+          <option>Vendor</option>
+          <option>Construction</option>
+        </select>
+        <label class="voice-confirm-label">Assign to</label>
+        <select id="vcAssign">
+          <option>Maya</option>
+          <option>Dallas</option>
+          <option>Marjorie</option>
+          <option>Bernard</option>
+          <option>Carlos</option>
+        </select>
+        <label class="voice-confirm-label">Deadline (optional)</label>
+        <input id="vcDeadline" type="date">
+        <label class="voice-confirm-label">Notes (optional)</label>
+        <textarea id="vcNotes"></textarea>
+      </form>
+      <div class="voice-actions" style="margin-top:18px;">
+        <button class="voice-btn voice-btn-secondary" onclick="backToTranscript()">← Back</button>
+        <button class="voice-btn voice-btn-primary" onclick="saveVoiceTask()">📋 Save Task</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1942,6 +1999,245 @@ async function submitTask() {
     toggleAddPanel();
     showToast('Task added: ' + desc.slice(0, 30) + '...', 'success');
     setTimeout(loadTasks, 600);
+  }
+}
+
+
+// ════════════════════════════════════════════════════════
+// VOICE MEMO — Web Speech API + AI extraction
+// ════════════════════════════════════════════════════════
+let voiceRecognition = null;
+let voiceTranscriptText = '';
+let voiceRecording = false;
+let voiceExtraction = null;
+
+function openVoiceModal() {
+  const modal = document.getElementById('voiceModal');
+  if (!modal) return;
+  // Check browser support
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    showToast('Voice recording not supported in this browser. Try Chrome or Safari.', 'error');
+    return;
+  }
+  resetRecording();
+  modal.classList.add('open');
+}
+
+function closeVoiceModal() {
+  if (voiceRecording) stopRecording();
+  document.getElementById('voiceModal').classList.remove('open');
+}
+
+function resetRecording() {
+  voiceTranscriptText = '';
+  voiceExtraction = null;
+  document.getElementById('voiceStage1').style.display = 'block';
+  document.getElementById('voiceStage2').style.display = 'none';
+  document.getElementById('voiceTranscript').classList.remove('show');
+  document.getElementById('voiceTranscript').textContent = '';
+  document.getElementById('voiceStage1Actions').style.display = 'none';
+  document.getElementById('voiceStatus').textContent = 'Tap the mic to start';
+  document.getElementById('voiceStatus').className = 'voice-status';
+  document.getElementById('voiceRecBtn').classList.remove('recording');
+  document.getElementById('voiceRecBtn').textContent = '🎙️';
+  document.getElementById('voiceRecBtn').disabled = false;
+}
+
+function toggleRecording() {
+  if (voiceRecording) stopRecording();
+  else startRecording();
+}
+
+function startRecording() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    showToast('Voice not supported in this browser', 'error');
+    return;
+  }
+  voiceRecognition = new SR();
+  voiceRecognition.lang = 'en-US';
+  voiceRecognition.continuous = true;
+  voiceRecognition.interimResults = true;
+  voiceTranscriptText = '';
+
+  let finalText = '';
+  voiceRecognition.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const r = event.results[i];
+      if (r.isFinal) finalText += r[0].transcript + ' ';
+      else interim += r[0].transcript;
+    }
+    voiceTranscriptText = (finalText + interim).trim();
+    const t = document.getElementById('voiceTranscript');
+    t.textContent = voiceTranscriptText || 'Listening...';
+    t.classList.add('show');
+    t.classList.toggle('empty', !voiceTranscriptText);
+  };
+
+  voiceRecognition.onerror = (event) => {
+    console.warn('Speech recognition error:', event.error);
+    if (event.error === 'no-speech') {
+      document.getElementById('voiceStatus').textContent = 'No speech detected. Try again.';
+    } else if (event.error === 'not-allowed') {
+      document.getElementById('voiceStatus').textContent = 'Microphone permission denied. Allow mic in browser settings.';
+      showToast('Mic permission needed', 'error');
+    } else {
+      document.getElementById('voiceStatus').textContent = 'Error: ' + event.error;
+    }
+    stopRecording();
+  };
+
+  voiceRecognition.onend = () => {
+    if (voiceRecording) {
+      // Auto-restart if user hasn't tapped stop (browser may end after silence)
+      voiceRecognition.start();
+    }
+  };
+
+  voiceRecognition.start();
+  voiceRecording = true;
+  document.getElementById('voiceRecBtn').classList.add('recording');
+  document.getElementById('voiceRecBtn').textContent = '⏹';
+  document.getElementById('voiceStatus').textContent = '🔴 Recording — tap to stop';
+  document.getElementById('voiceStatus').className = 'voice-status recording';
+}
+
+function stopRecording() {
+  if (voiceRecognition) {
+    voiceRecording = false;
+    try { voiceRecognition.stop(); } catch(e) {}
+    voiceRecognition = null;
+  }
+  document.getElementById('voiceRecBtn').classList.remove('recording');
+  document.getElementById('voiceRecBtn').textContent = '🎙️';
+  const hasText = voiceTranscriptText.trim().length > 0;
+  if (hasText) {
+    document.getElementById('voiceStatus').textContent = '✓ Ready to process';
+    document.getElementById('voiceStatus').className = 'voice-status ready';
+    document.getElementById('voiceStage1Actions').style.display = 'flex';
+  } else {
+    document.getElementById('voiceStatus').textContent = 'No speech captured. Try again.';
+    document.getElementById('voiceStatus').className = 'voice-status';
+  }
+}
+
+async function processTranscript() {
+  const transcript = voiceTranscriptText.trim();
+  if (!transcript) return;
+  document.getElementById('voiceProcessBtn').disabled = true;
+  document.getElementById('voiceStatus').textContent = '✨ Analyzing — extracting task details...';
+  document.getElementById('voiceStatus').className = 'voice-status processing';
+
+  // Send to Apps Script for AI/heuristic extraction
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        token: TOKEN,
+        actor: USER_NAME || 'Dallas',
+        action: 'voiceMemo',
+        transcript: transcript
+      })
+    });
+    const data = await res.json();
+    if (data.error) {
+      // Fall back to client-side heuristic
+      voiceExtraction = clientSideExtract(transcript);
+    } else {
+      voiceExtraction = data;
+    }
+  } catch (e) {
+    console.warn('Voice extraction backend failed, using client-side fallback:', e);
+    voiceExtraction = clientSideExtract(transcript);
+  }
+
+  // Show confirm form
+  showConfirmForm(voiceExtraction, transcript);
+}
+
+function clientSideExtract(transcript) {
+  // Simple heuristic fallback when backend extraction isn't available
+  const t = transcript.toLowerCase();
+  let property = '';
+  // Match known property names
+  for (const [key, vals] of Object.entries(PORTFOLIO_MAP)) {
+    for (const v of vals) {
+      if (t.includes(v.toLowerCase())) { property = v; break; }
+    }
+    if (property) break;
+  }
+  // Detect category
+  let category = '';
+  if (/repair|fix|broken|leak|hvac|plumb|boiler|appliance/.test(t)) category = 'Maintenance';
+  else if (/quote|bid|invoice|pay|payment|tax|budget/.test(t)) category = 'Financial';
+  else if (/lease|tenant|rent/.test(t)) category = 'Admin';
+  else if (/inspect|comply|permit|license|filing/.test(t)) category = 'Compliance';
+  else if (/contractor|vendor|bernard|carlos/.test(t)) category = 'Vendor';
+
+  // Detect assignment
+  let assignment = 'Maya';
+  if (/dallas/i.test(transcript)) assignment = 'Dallas';
+  else if (/marjorie|marj/i.test(transcript)) assignment = 'Marjorie';
+  else if (/bernard/i.test(transcript)) assignment = 'Bernard';
+  else if (/carlos/i.test(transcript)) assignment = 'Carlos';
+
+  // Detect deadline
+  let deadline = '';
+  const today = new Date();
+  if (/tomorrow/i.test(transcript)) {
+    today.setDate(today.getDate() + 1);
+    deadline = today.toISOString().slice(0, 10);
+  } else if (/next week/i.test(transcript)) {
+    today.setDate(today.getDate() + 7);
+    deadline = today.toISOString().slice(0, 10);
+  }
+
+  return {
+    description: transcript,
+    property: property || '',
+    category: category,
+    assignment: assignment,
+    deadline: deadline,
+    notes: '',
+    source: 'client-heuristic'
+  };
+}
+
+function showConfirmForm(extraction, transcript) {
+  document.getElementById('voiceStage1').style.display = 'none';
+  document.getElementById('voiceStage2').style.display = 'block';
+  document.getElementById('vcDesc').value = extraction.description || transcript;
+  document.getElementById('vcProp').value = extraction.property || '';
+  document.getElementById('vcCat').value = extraction.category || '';
+  document.getElementById('vcAssign').value = extraction.assignment || 'Maya';
+  document.getElementById('vcDeadline').value = extraction.deadline || '';
+  document.getElementById('vcNotes').value = extraction.notes || '';
+}
+
+function backToTranscript() {
+  document.getElementById('voiceStage2').style.display = 'none';
+  document.getElementById('voiceStage1').style.display = 'block';
+  document.getElementById('voiceProcessBtn').disabled = false;
+}
+
+async function saveVoiceTask() {
+  const desc = document.getElementById('vcDesc').value.trim();
+  if (!desc) { showToast('Description required', 'error'); return; }
+  const taskData = {
+    description: desc,
+    property:    document.getElementById('vcProp').value.trim() || 'General',
+    category:    document.getElementById('vcCat').value || 'Admin',
+    assignment:  document.getElementById('vcAssign').value,
+    deadline:    document.getElementById('vcDeadline').value || '',
+    note:        document.getElementById('vcNotes').value.trim()
+  };
+
+  if (await postAction({ action: 'addtask', newTask: taskData })) {
+    showToast('🎙️ Voice task saved!', 'success');
+    closeVoiceModal();
+    setTimeout(loadTasks, 700);
   }
 }
 
