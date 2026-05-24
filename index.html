@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="orange" data-mode="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A140A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Blakeworth">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<title>Blakeworth — Command Center</title>
+
+<style>
+/* ════════════════════════════════════════════════════════
+   THEME TOKENS
+   - Three color themes (orange/midnight/gold) × two modes (light/dark)
+   - Header colors come from data-theme; page colors come from data-mode
+   ════════════════════════════════════════════════════════ */
+
+/* Page mode (light) */
+html[data-mode="light"] {
+  --page:         #F0EBE3;
+  --card:         #FFFFFF;
+  --expand-bg:    #EDE7DC;
+  --toggle-bg:    #E5DDD0;
+  --toggle-border:#D5CBBC;
+  --border:       #E0D8CE;
+  --input-bg:     #FFFFFF;
+  --input-border: #D0C8BC;
+  --text:         #1C1712;
+  --text-2:       #5A5148;
+  --text-3:       #8A7E74;
+  --text-faint:   #B0A89E;
+  --chip-bg:      #EDE8E0;
+  --chip-border:  #D8D0C4;
+  --notes-bg:     #E4DACE;
+  --notes-rule:   #B89A5A;
+  --notes-label:  #7A6030;
+  --section-bg:   #F8F4EE;
+  --icon-bg:      #F5F0EA;
+  --win-bg:       #FFFFFF;
+  --win-border:   #E0D8CE;
+  --win-check-bg: #E8F5EF;
+  --bub-dallas-bg:   #DDE8F8;
+  --bub-dallas-text: #0F2A4A;
+  --av-dallas-bg:    #B8D0F0;
+  --av-dallas-text:  #1A4A8A;
+  --bub-maya-bg:     #F8E0E8;
+  --bub-maya-text:   #3A1020;
+  --av-maya-bg:      #F0C0D0;
+  --av-maya-text:    #A03050;
+  --send-bg:    #1A140F;
+  --send-text:  #FFFFFF;
+  --success:    #1E6E4F;
+  --danger:     #C0392B;
+  --warning:    #92600A;
+  --info:       #1A5EA8;
+  --accent-blue:#1A5EA8;
+}
+
+/* Page mode (dark) */
+html[data-mode="dark"] {
+  --page:         #111009;
+  --card:         #1C1813;
+  --expand-bg:    #231E17;
+  --toggle-bg:    #201B14;
+  --toggle-border:#38302A;
+  --border:       #2E2820;
+  --input-bg:     #2A2318;
+  --input-border: #3A3028;
+  --text:         #F0E8D8;
+  --text-2:       #C0B09A;
+  --text-3:       #8A7A66;
+  --text-faint:   #504840;
+  --chip-bg:      #2A2318;
+  --chip-border:  #38302A;
+  --notes-bg:     #2A2218;
+  --notes-rule:   #7A6030;
+  --notes-label:  #C8A860;
+  --section-bg:   #161210;
+  --icon-bg:      #2A2318;
+  --win-bg:       #1C1813;
+  --win-border:   #2E2820;
+  --win-check-bg: #0E2018;
+  --bub-dallas-bg:   #0F1E35;
+  --bub-dallas-text: #A8C8F0;
+  --av-dallas-bg:    #1A3058;
+  --av-dallas-text:  #6AAAE0;
+  --bub-maya-bg:     #2A1520;
+  --bub-maya-text:   #F0C0D0;
+  --av-maya-bg:      #3A1828;
+  --av-maya-text:    #E090A8;
+  --send-bg:    #F0E8D8;
+  --send-text:  #131009;
+  --success:    #52BF88;
+  --danger:     #E05252;
+  --warning:    #E09940;
+  --info:       #5599E8;
+  --accent-blue:#5599E8;
+}
+
+/* Header palette — Claude Orange (light) */
+html[data-theme="orange"][data-mode="light"] {
+  --header-bg:     #1A140A;
+  --header-border: #2A1E0E;
+  --header-text:   #F0E8D8;
+  --header-sub:    #D97757;
+  --logo-grad:     linear-gradient(135deg,#D97757,#A05030);
+  --live-bg:       #120E06;
+  --live-border:   #2A1E0E;
+  --live-text:     #A07050;
+  --live-dot:      #D97757;
+}
+html[data-theme="orange"][data-mode="dark"] {
+  --header-bg:     #0E0A06;
+  --header-border: #1E1408;
+  --header-text:   #F0E8D8;
+  --header-sub:    #D97757;
+  --logo-grad:     linear-gradient(135deg,#D97757,#803820);
+  --live-bg:       #080604;
+  --live-border:   #1E1408;
+  --live-text:     #906040;
+  --live-dot:      #D97757;
+}
+
+/* Header palette — Midnight */
+html[data-theme="midnight"][data-mode="light"] {
+  --header-bg:     #1A2440;
+  --header-border: #121830;
+  --header-text:   #FFFFFF;
+  --header-sub:    rgba(255,255,255,0.6);
+  --logo-grad:     linear-gradient(135deg,#3A5EA8,#1A2E68);
+  --live-bg:       #141C34;
+  --live-border:   #202C50;
+  --live-text:     rgba(255,255,255,0.6);
+  --live-dot:      #52BF88;
+}
+html[data-theme="midnight"][data-mode="dark"] {
+  --header-bg:     #0A0E1A;
+  --header-border: #141C30;
+  --header-text:   #E8F0FF;
+  --header-sub:    #5A7AAE;
+  --logo-grad:     linear-gradient(135deg,#2A4A8A,#0A1A48);
+  --live-bg:       #080C16;
+  --live-border:   #141C30;
+  --live-text:     #5A7AAE;
+  --live-dot:      #52BF88;
+}
+
+/* Header palette — Deep Gold */
+html[data-theme="gold"][data-mode="light"] {
+  --header-bg:     #1A140A;
+  --header-border: #2A1E08;
+  --header-text:   #F0E0A8;
+  --header-sub:    #A88040;
+  --logo-grad:     linear-gradient(135deg,#D4A830,#8A6010);
+  --live-bg:       #140E04;
+  --live-border:   #2A1E08;
+  --live-text:     #A88040;
+  --live-dot:      #D4A830;
+}
+html[data-theme="gold"][data-mode="dark"] {
+  --header-bg:     #100C04;
+  --header-border: #201608;
+  --header-text:   #F0E0A8;
+  --header-sub:    #A88040;
+  --logo-grad:     linear-gradient(135deg,#C8921A,#785408);
+  --live-bg:       #0C0804;
+  --live-border:   #201608;
+  --live-text:     #A88040;
+  --live-dot:      #D4A830;
+}
+
+/* ════════════════════════════════════════════════════════
+   PORTFOLIO COLORS (locked from final spec)
+   JHU = Deep Wine · SLP = Twitter Blue · DC = Deep Purple
+   ════════════════════════════════════════════════════════ */
+:root {
+  --jhu-bar:     #4A0A1A;
+  --jhu-border:  #A05060;
+  --jhu-tag-bg:  #F0E8EC;
+  --jhu-tag-fg:  #6A1228;
+  --slp-bar:     #2AAAEE;
+  --slp-border:  #A8D8F8;
+  --slp-tag-bg:  #E8F6FF;
+  --slp-tag-fg:  #1A88CC;
+  --dc-bar:      #4A28C4;
+  --dc-border:   #A090E0;
+  --dc-tag-bg:   #F0EEFF;
+  --dc-tag-fg:   #5B3FD4;
+}
+html[data-mode="dark"] {
+  --jhu-tag-bg:  #2A1018;
+  --jhu-tag-fg:  #E89098;
+  --slp-tag-bg:  #0A2840;
+  --slp-tag-fg:  #6AC0FF;
+  --dc-tag-bg:   #1A1238;
+  --dc-tag-fg:   #B0A0F0;
+}
+
+/* ════════════════════════════════════════════════════════
+   RESET + BASE
+   ════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  background: var(--page);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+button { cursor: pointer; background: none; border: none; }
+.shell { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--page); }
+
+/* ════════════════════════════════════════════════════════
+   HEADER
+   - Sticky top bar with logo, title, theme dots, mode toggle, refresh, identity
+   ════════════════════════════════════════════════════════ */
+.header {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.h-logo {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--logo-grad);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.h-title-wrap { flex: 1; min-width: 0; }
+.h-title { font-size: 15px; font-weight: 700; color: var(--header-text); }
+.h-sub   { font-size: 10px; color: var(--header-sub); margin-top: 1px; }
+
+.h-dots {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+.h-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  opacity: 0.4;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.h-dot.active { opacity: 1; box-shadow: 0 0 5px currentColor; }
+.h-dot[data-theme="orange"]   { background: #D97757; color: #D97757; }
+.h-dot[data-theme="midnight"] { background: #2A3A5E; color: #2A3A5E; }
+.h-dot[data-theme="gold"]     { background: #C8920A; color: #C8920A; }
+
+.h-icon-btn {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  color: var(--header-text);
+  flex-shrink: 0;
+}
+.h-icon-btn:hover { background: rgba(255,255,255,0.14); }
+
+/* Live strip */
+.live-strip {
+  background: var(--live-bg);
+  border-bottom: 1px solid var(--live-border);
+  padding: 4px 14px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--live-text);
+}
+.live-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--live-dot);
+  box-shadow: 0 0 4px var(--live-dot);
+}
+.live-strip strong {
+  color: var(--header-text);
+  font-weight: 600;
+}
+
+/* Identity indicator (Signed in as) */
+.identity-indicator {
+  background: var(--live-bg);
+  border-bottom: 1px solid var(--live-border);
+  padding: 5px 14px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--live-text);
+}
+.identity-indicator strong {
+  color: var(--header-text);
+  font-weight: 600;
+}
+.identity-change {
+  background: none;
+  border: none;
+  color: var(--header-sub);
+  text-decoration: underline;
+  font-size: 10px;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* ════════════════════════════════════════════════════════
+   GREETING BANNER
+   ════════════════════════════════════════════════════════ */
+.greeting {
+  margin: 12px 14px 0;
+  padding: 15px 16px 13px;
+  background: linear-gradient(135deg, #1A2840 0%, #1A1208 100%);
+  border: 1px solid #2A2018;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  color: #F0E8D8;
+}
+html[data-mode="dark"] .greeting {
+  background: linear-gradient(135deg, #141E30 0%, #181208 100%);
+  border-color: #2E2820;
+}
+.greeting::before {
+  content: "";
+  position: absolute;
+  bottom: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.greeting-main {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  position: relative;
+}
+.greeting-sub {
+  font-size: 12px;
+  color: #C0B09A;
+  line-height: 1.5;
+  position: relative;
+}
+
+/* Stats strip (kept per Maya) */
+.stats-strip {
+  margin: 10px 14px 0;
+  padding: 8px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.stats-strip .stat-pulse {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--warning);
+  box-shadow: 0 0 0 0 var(--warning);
+  animation: pulseBeat 1.8s ease-in-out infinite;
+}
+@keyframes pulseBeat {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(146,96,10,0.4); }
+  50%      { box-shadow: 0 0 0 6px rgba(146,96,10,0); }
+}
+.stats-strip strong { color: var(--text); font-weight: 700; }
+
+/* ════════════════════════════════════════════════════════
+   ACTION BOXES — 3-COL GRID (always 3 cols, no responsive collapse)
+   ════════════════════════════════════════════════════════ */
+.action-boxes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px 14px 0;
+}
+.action-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 11px 8px 10px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px;
+}
+.action-icon {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--icon-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.action-text { text-align: center; }
+.action-label { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.action-sub   { font-size: 9px; color: var(--text-3); margin-top: 2px; }
+.action-btn {
+  width: 100%;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.action-btn.dark    { background: var(--send-bg); color: var(--send-text); border: none; }
+.action-btn.blue    { background: var(--accent-blue); color: #fff; border: none; }
+.action-btn.ghost-green {
+  background: transparent;
+  color: var(--success);
+  border: 1.5px solid var(--success);
+}
+
+/* ════════════════════════════════════════════════════════
+   FILTER TABS — All / SLP / JHU / DC
+   ════════════════════════════════════════════════════════ */
+.filter-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 12px 14px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.filter-tabs::-webkit-scrollbar { display: none; }
+.filter-tab {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  white-space: nowrap;
+  transition: all 0.15s;
+  color: var(--text-2);
+}
+.filter-tab.active {
+  background: var(--send-bg);
+  color: var(--send-text);
+  border-color: transparent;
+}
+.filter-tab .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.filter-tab[data-port="all"] .dot { background: var(--danger); }
+.filter-tab[data-port="slp"] .dot { background: var(--slp-bar); }
+.filter-tab[data-port="jhu"] .dot { background: var(--jhu-bar); }
+.filter-tab[data-port="dc"]  .dot { background: var(--dc-bar); }
+.filter-tab .label  { font-size: 11px; font-weight: 600; }
+.filter-tab .count  {
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 10px;
+  background: var(--chip-bg);
+  color: var(--text-3);
+}
+.filter-tab.active .count {
+  background: rgba(255,255,255,0.2);
+  color: inherit;
+}
+
+/* Sort toggle */
+.sort-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px 0;
+}
+.sort-label {
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.sort-btn {
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-3);
+  font-size: 11px; font-weight: 600;
+  transition: all 0.15s;
+}
+.sort-btn.active {
+  background: var(--text);
+  color: var(--page);
+  border-color: var(--text);
+}
+
+/* ════════════════════════════════════════════════════════
+   STATUS / PORTFOLIO GROUP SECTIONS
+   - Collapsible headers with colored left bar
+   - Each group expands to reveal task cards inside
+   ════════════════════════════════════════════════════════ */
+.task-list { padding: 12px 14px 0; }
+.group { margin-bottom: 14px; }
+.group-header {
+  width: 100%;
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: border-radius 0.15s;
+}
+.group-header.open {
+  border-radius: 10px 10px 0 0;
+}
+.group-header[data-color]::before {
+  content: ""; position: absolute;
+  left: -1.5px; top: -1.5px; bottom: -1.5px;
+  width: 3px; border-radius: 10px 0 0 10px;
+}
+.group-header[data-color="stuck"]::before     { background: var(--danger); box-shadow: 0 0 0 1px rgba(192,57,43,0.12); }
+.group-header[data-color="ddecision"]::before { background: #C47F1A; box-shadow: 0 0 0 1px rgba(196,127,26,0.12); }
+.group-header[data-color="dtodo"]::before     { background: var(--warning); box-shadow: 0 0 0 1px rgba(146,96,10,0.12); }
+.group-header[data-color="progress"]::before  { background: var(--success); box-shadow: 0 0 0 1px rgba(30,110,79,0.12); }
+.group-header[data-color="fyi"]::before       { background: #6B7280; box-shadow: 0 0 0 1px rgba(107,114,128,0.12); }
+.group-header[data-color="slp"]::before       { background: var(--slp-bar); }
+.group-header[data-color="jhu"]::before       { background: var(--jhu-bar); }
+.group-header[data-color="dc"]::before        { background: var(--dc-bar); }
+
+.group-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.group-meta { flex: 1; text-align: left; min-width: 0; }
+.group-title { font-size: 13px; font-weight: 700; line-height: 1.2; }
+.group-sub   { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+.group-count {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--chip-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  color: var(--text-3);
+}
+.group-caret {
+  font-size: 9px; color: var(--text-3);
+  display: inline-block;
+  transition: transform 0.2s;
+}
+.group-header.open .group-caret { transform: rotate(180deg); }
+
+.group-body {
+  padding: 10px 10px 4px;
+  background: var(--expand-bg);
+  border: 1.5px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  display: none;
+}
+.group-header.open + .group-body { display: block; }
+
+/* Color-coded section title text */
+.group-title.c-stuck     { color: var(--danger); }
+.group-title.c-ddecision { color: #C47F1A; }
+.group-title.c-dtodo     { color: var(--warning); }
+.group-title.c-progress  { color: var(--success); }
+.group-title.c-fyi       { color: #6B7280; }
+.group-title.c-slp       { color: var(--slp-tag-fg); }
+.group-title.c-jhu       { color: var(--jhu-tag-fg); }
+.group-title.c-dc        { color: var(--dc-tag-fg); }
+
+/* Group icon background tints (gentle) */
+.group-icon.tint-stuck     { background: rgba(192,57,43,0.10); }
+.group-icon.tint-ddecision { background: rgba(196,127,26,0.10); }
+.group-icon.tint-dtodo     { background: rgba(146,96,10,0.10); }
+.group-icon.tint-progress  { background: rgba(30,110,79,0.10); }
+.group-icon.tint-fyi       { background: rgba(107,114,128,0.10); }
+.group-icon.tint-slp       { background: rgba(42,170,238,0.10); }
+.group-icon.tint-jhu       { background: rgba(74,10,26,0.10); }
+.group-icon.tint-dc        { background: rgba(74,40,196,0.10); }
+
+/* ════════════════════════════════════════════════════════
+   TASK CARDS
+   - Collapsed: portfolio tag, property, title, status badge, assignee, View & Respond
+   - Expanded: notes (if any), action buttons, conversation, message input
+   ════════════════════════════════════════════════════════ */
+.task-card {
+  background: var(--card);
+  border: 1.5px solid;
+  border-left-width: 3px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.02);
+}
+.task-card[data-port="jhu"] { border-color: var(--jhu-border); border-left-color: var(--jhu-bar); }
+.task-card[data-port="slp"] { border-color: var(--slp-border); border-left-color: var(--slp-bar); }
+.task-card[data-port="dc"]  { border-color: var(--dc-border);  border-left-color: var(--dc-bar); }
+
+.tc-head { padding: 13px 13px 11px; }
+.tc-row1 { display: flex; align-items: center; gap: 6px; margin-bottom: 7px; }
+.tc-tag {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 4px;
+  border: 1px solid;
+}
+.tc-tag[data-port="jhu"] { background: var(--jhu-tag-bg); color: var(--jhu-tag-fg); border-color: var(--jhu-tag-fg); }
+.tc-tag[data-port="slp"] { background: var(--slp-tag-bg); color: var(--slp-tag-fg); border-color: var(--slp-tag-fg); }
+.tc-tag[data-port="dc"]  { background: var(--dc-tag-bg);  color: var(--dc-tag-fg);  border-color: var(--dc-tag-fg); }
+.tc-property {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.tc-row2 { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; }
+.tc-title {
+  flex: 1;
+  font-size: 13.5px; font-weight: 600;
+  color: var(--text); line-height: 1.4;
+}
+.tc-badge {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.07em;
+  padding: 3px 7px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; margin-top: 1px;
+}
+.tc-badge[data-status="STUCK"]     { background: #FDECEA; color: #C0392B; }
+.tc-badge[data-status="NEW"]       { background: #E8F0FE; color: #1A5EA8; }
+.tc-badge[data-status="PROGRESS"]  { background: #E8F5EF; color: #1E6E4F; }
+.tc-badge[data-status="DTODO"]     { background: #FEF3E2; color: #92600A; }
+.tc-badge[data-status="DDECISION"] { background: #FEF0D0; color: #C47F1A; }
+.tc-badge[data-status="FYI"]       { background: #F0F1F4; color: #6B7280; }
+html[data-mode="dark"] .tc-badge[data-status="STUCK"]     { background: #2A1010; color: #E05252; }
+html[data-mode="dark"] .tc-badge[data-status="NEW"]       { background: #0A1A2A; color: #5599E8; }
+html[data-mode="dark"] .tc-badge[data-status="PROGRESS"]  { background: #0E2018; color: #52BF88; }
+html[data-mode="dark"] .tc-badge[data-status="DTODO"]     { background: #2A1608; color: #E09940; }
+html[data-mode="dark"] .tc-badge[data-status="DDECISION"] { background: #2A1608; color: #E0A040; }
+html[data-mode="dark"] .tc-badge[data-status="FYI"]       { background: #1C2028; color: #A0A8B0; }
+
+.tc-row3 { display: flex; justify-content: flex-end; }
+.tc-assignee {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  border-radius: 20px;
+  padding: 3px 10px 3px 6px;
+  font-size: 10px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+/* Toggle bar */
+.tc-toggle {
+  width: 100%;
+  padding: 8px 13px;
+  background: var(--toggle-bg);
+  border: none;
+  border-top: 1px solid var(--toggle-border);
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  position: relative;
+  color: var(--text-3);
+}
+.tc-toggle:hover { color: var(--text-2); }
+.task-card.open .tc-toggle {
+  border-bottom: 1px solid var(--toggle-border);
+}
+.tc-toggle .caret {
+  font-size: 9px;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+.task-card.open .tc-toggle .caret { transform: rotate(180deg); }
+.tc-toggle-label { font-size: 11px; font-weight: 600; }
+.tc-msg-count {
+  position: absolute; right: 13px;
+  font-size: 10px; color: var(--text-faint);
+}
+
+/* Expanded body */
+.tc-body { display: none; background: var(--expand-bg); }
+.task-card.open .tc-body { display: block; }
+
+/* Notes block (only when notes present) */
+.tc-notes {
+  margin: 12px 13px 0;
+  padding: 9px 12px;
+  background: var(--notes-bg);
+  border-left: 3.5px solid var(--notes-rule);
+  border-radius: 0 6px 6px 0;
+}
+.tc-notes-label {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--notes-label);
+  margin-bottom: 3px;
+}
+.tc-notes-text {
+  font-size: 11.5px; color: var(--text-2); line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Action buttons */
+.tc-actions {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  padding: 12px 13px 4px;
+}
+.tc-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 11.5px; font-weight: 700;
+  border: 1.5px solid;
+  background: transparent;
+  transition: filter 0.15s;
+}
+.tc-btn:hover { filter: brightness(0.96); }
+.tc-btn.primary {
+  font-weight: 700;
+}
+.tc-btn.ghost {
+  font-weight: 600;
+  padding: 6px 13px;
+}
+.tc-btn.c-green { color: var(--success); border-color: var(--success); }
+.tc-btn.c-green.primary {
+  background: rgba(30,110,79,0.10);
+}
+html[data-mode="dark"] .tc-btn.c-green.primary { background: rgba(82,191,136,0.12); }
+.tc-btn.c-blue  { color: var(--info); border-color: var(--info); }
+.tc-btn.c-red   { color: var(--danger); border-color: var(--danger); }
+.tc-btn.c-amber { color: var(--warning); border-color: var(--warning); }
+.tc-btn.c-holdoff { color: #92600A; border-color: #92600A; }
+html[data-mode="dark"] .tc-btn.c-holdoff { color: #C47F1A; border-color: #C47F1A; }
+
+/* Conversation thread */
+.tc-convo { padding-top: 12px; }
+.tc-convo-label {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 13px 8px;
+}
+.bubble-row {
+  display: flex; align-items: flex-end; gap: 6px;
+  padding: 0 13px;
+  margin-bottom: 8px;
+}
+.bubble-row.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+}
+.bubble-avatar.dallas { background: var(--av-dallas-bg); color: var(--av-dallas-text); }
+.bubble-avatar.maya   { background: var(--av-maya-bg);   color: var(--av-maya-text); }
+.bubble {
+  max-width: 72%;
+  padding: 8px 12px;
+}
+.bubble.dallas { background: var(--bub-dallas-bg); color: var(--bub-dallas-text); border-radius: 12px 12px 12px 3px; }
+.bubble.maya   { background: var(--bub-maya-bg);   color: var(--bub-maya-text);   border-radius: 12px 12px 3px 12px; }
+.bubble-text { font-size: 12px; line-height: 1.4; }
+.bubble-meta { font-size: 9.5px; color: var(--text-3); margin-top: 3px; }
+
+/* Message input row */
+.tc-input-row { padding: 10px 13px 13px; }
+.tc-input-shell {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 8px 8px 8px 12px;
+}
+.tc-input {
+  flex: 1;
+  background: transparent;
+  border: none; outline: none;
+  font-size: 12px; color: var(--text);
+}
+.tc-mic-btn {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: transparent;
+  border: 1px solid var(--input-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.tc-send-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--send-bg);
+  color: var(--send-text);
+  border: none;
+  font-size: 11px; font-weight: 700;
+}
+
+/* ════════════════════════════════════════════════════════
+   RECENT WINS — 2-COL GRID
+   ════════════════════════════════════════════════════════ */
+.wins-section { padding: 8px 14px 32px; }
+.wins-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.wins-header .trophy { font-size: 18px; }
+.wins-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.wins-sub   { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+
+.wins-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.win-card {
+  background: var(--win-bg);
+  border: 1px solid var(--win-border);
+  border-radius: 10px;
+  padding: 10px 11px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.win-top { display: flex; align-items: center; gap: 6px; }
+.win-check {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--win-check-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+}
+.win-date { font-size: 9px; color: var(--text-faint); }
+.win-prop {
+  font-size: 9px; font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.win-text { font-size: 11px; color: var(--text); line-height: 1.4; }
+
+/* ════════════════════════════════════════════════════════
+   MODALS (identity, voice memo, create-task chooser, generic)
+   ════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center; justify-content: center;
+  z-index: 400; padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 24px;
+  width: 100%; max-width: 460px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.32);
+  position: relative;
+  color: var(--text);
+}
+.modal-close {
+  position: absolute; top: 12px; right: 14px;
+  background: transparent; border: none;
+  font-size: 24px; line-height: 1; color: var(--text-3);
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--chip-bg); color: var(--text); }
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.modal-sub   { font-size: 12px; color: var(--text-2); margin-bottom: 18px; line-height: 1.45; }
+
+.modal-field { margin-bottom: 12px; }
+.modal-field label {
+  display: block;
+  font-size: 11px; font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.modal-field input,
+.modal-field select,
+.modal-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 13px;
+}
+.modal-field textarea { resize: vertical; min-height: 60px; }
+.modal-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.modal-actions {
+  display: flex; justify-content: flex-end; gap: 8px;
+  margin-top: 18px;
+}
+.modal-btn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 12px; font-weight: 700;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+}
+.modal-btn.primary {
+  background: var(--accent-blue);
+  color: #fff; border-color: var(--accent-blue);
+}
+.modal-btn.success {
+  background: var(--success);
+  color: #fff; border-color: var(--success);
+}
+
+/* Identity picker buttons */
+.identity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+.identity-btn {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 12px;
+  font-size: 14px; font-weight: 600;
+  color: var(--text);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.identity-btn:hover { background: var(--chip-bg); }
+.identity-btn .icon { font-size: 24px; }
+
+/* Voice memo modal */
+.voice-modal { max-width: 520px; }
+.voice-record-btn {
+  display: block;
+  margin: 8px auto 14px;
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  color: #fff;
+  border: none;
+  font-size: 34px;
+  box-shadow: 0 8px 24px rgba(26,94,168,0.35);
+  transition: transform 0.15s;
+}
+.voice-record-btn:hover { transform: scale(1.04); }
+.voice-record-btn.recording {
+  background: var(--danger);
+  animation: voicePulse 1.2s ease-in-out infinite;
+}
+@keyframes voicePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.55); }
+  50%     { box-shadow: 0 0 0 14px rgba(220,38,38,0); }
+}
+.voice-status {
+  text-align: center;
+  font-size: 12px; color: var(--text-2);
+  margin-bottom: 10px; font-weight: 600;
+}
+.voice-transcript {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px; line-height: 1.5;
+  color: var(--text);
+  min-height: 52px; max-height: 200px; overflow-y: auto;
+  margin-bottom: 10px;
+}
+.voice-transcript:empty::before {
+  content: "Your words will appear here…";
+  color: var(--text-3); font-style: italic;
+}
+.voice-actions {
+  display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap;
+}
+.ai-pill {
+  display: inline-block; margin-left: 8px;
+  background: rgba(26,94,168,0.15);
+  color: var(--accent-blue);
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 10px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+
+/* Create-task chooser (Voice vs Write) */
+.choose-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.choose-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.choose-card:hover { background: var(--chip-bg); transform: translateY(-1px); }
+.choose-icon { font-size: 36px; }
+.choose-label { font-size: 14px; font-weight: 700; color: var(--text); }
+.choose-sub { font-size: 11px; color: var(--text-3); text-align: center; line-height: 1.3; }
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%);
+  background: var(--text);
+  color: var(--page);
+  padding: 10px 18px;
+  border-radius: 24px;
+  font-size: 12px; font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 500;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.success { background: var(--success); color: #fff; }
+#toast.error   { background: var(--danger);  color: #fff; }
+
+/* Property dropdown row inside voice/write forms */
+.prop-row { display: grid; grid-template-columns: 1fr 1.5fr; gap: 8px; }
+
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <div class="h-logo">BW</div>
+    <div class="h-title-wrap">
+      <div class="h-title">Blakeworth</div>
+      <div class="h-sub">Command Center</div>
+    </div>
+    <div class="h-dots" id="themeDots">
+      <div class="h-dot active" data-theme="orange"   onclick="setTheme('orange')"   title="Claude Orange"></div>
+      <div class="h-dot"        data-theme="midnight" onclick="setTheme('midnight')" title="Midnight"></div>
+      <div class="h-dot"        data-theme="gold"     onclick="setTheme('gold')"     title="Deep Gold"></div>
+    </div>
+    <button class="h-icon-btn" id="modeBtn"    onclick="toggleMode()"  title="Toggle dark mode">🌙</button>
+    <button class="h-icon-btn"                 onclick="loadAll()"      title="Refresh">↻</button>
+  </div>
+
+  <!-- Identity indicator (Signed in as …) -->
+  <div class="identity-indicator" id="identityIndicator" style="display:none;">
+    Signed in as: <strong id="identityName"></strong> &middot;
+    <button class="identity-change" onclick="changeIdentity()">change</button>
+  </div>
+
+  <!-- Live update strip -->
+  <div class="live-strip">
+    <div class="live-dot"></div>
+    <span>Live · updated <strong id="liveUpdateTime">—</strong></span>
+  </div>
+
+  <!-- ── GREETING BANNER ── -->
+  <div class="greeting" id="greetingCard">
+    <div class="greeting-main" id="greetingMain">Loading…</div>
+    <div class="greeting-sub" id="greetingSub"></div>
+  </div>
+
+  <!-- ── STATS STRIP ── (kept per Maya) -->
+  <div class="stats-strip" id="statsStrip" style="display:none;">
+    <div class="stat-pulse"></div>
+    <span id="statsText">—</span>
+  </div>
+
+  <!-- ── ACTION BOXES — 3-col grid ── -->
+  <div class="action-boxes">
+    <div class="action-box">
+      <div class="action-icon">💼</div>
+      <div class="action-text">
+        <div class="action-label">Time Tracker</div>
+        <div class="action-sub">May log ready</div>
+      </div>
+      <button class="action-btn dark" onclick="openTimeTracker()">Pay Now</button>
+    </div>
+    <div class="action-box">
+      <div class="action-icon">📋</div>
+      <div class="action-text">
+        <div class="action-label">Create Task</div>
+        <div class="action-sub">Type it or speak it</div>
+      </div>
+      <button class="action-btn blue" onclick="openCreateChooser()">+ Add</button>
+    </div>
+    <div class="action-box">
+      <div class="action-icon">📅</div>
+      <div class="action-text">
+        <div class="action-label">Schedule</div>
+        <div class="action-sub">Zoom with Maya</div>
+      </div>
+      <button class="action-btn ghost-green" onclick="pickATime()">Pick time</button>
+    </div>
+  </div>
+
+  <!-- ── FILTER TABS (All · SLP · JHU · DC) ── -->
+  <div class="filter-tabs" id="filterTabs">
+    <button class="filter-tab active" data-port="all" onclick="setPortfolio('all')">
+      <span class="dot"></span><span class="label">All</span><span class="count" id="count-all">0</span>
+    </button>
+    <button class="filter-tab" data-port="slp" onclick="setPortfolio('slp')">
+      <span class="dot"></span><span class="label">SLP</span><span class="count" id="count-slp">0</span>
+    </button>
+    <button class="filter-tab" data-port="jhu" onclick="setPortfolio('jhu')">
+      <span class="dot"></span><span class="label">JHU</span><span class="count" id="count-jhu">0</span>
+    </button>
+    <button class="filter-tab" data-port="dc" onclick="setPortfolio('dc')">
+      <span class="dot"></span><span class="label">DC</span><span class="count" id="count-dc">0</span>
+    </button>
+  </div>
+
+  <!-- ── SORT TOGGLE ── -->
+  <div class="sort-row">
+    <span class="sort-label">SORT</span>
+    <button class="sort-btn active" data-sort="portfolio" onclick="setSort('portfolio')">By Portfolio</button>
+    <button class="sort-btn"        data-sort="status"    onclick="setSort('status')">By Status</button>
+  </div>
+
+  <!-- ── TASK LIST ── -->
+  <div class="task-list" id="taskList">
+    <div style="text-align:center;color:var(--text-3);padding:24px 0;font-size:12px;">Loading tasks…</div>
+  </div>
+
+  <!-- ── RECENT WINS ── -->
+  <div class="wins-section" id="winsSection" style="display:none;">
+    <div class="wins-header">
+      <span class="trophy">🏆</span>
+      <div>
+        <div class="wins-title">Recent Wins</div>
+        <div class="wins-sub">Last 6 completed</div>
+      </div>
+    </div>
+    <div class="wins-grid" id="winsGrid"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     MODALS
+     ════════════════════════════════════════════════════════ -->
+
+<!-- Identity picker (first visit) -->
+<div class="modal-overlay" id="identityModal">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-title">Who's using the dashboard?</div>
+    <div class="modal-sub">We use this to attribute messages and tailor the greeting. Saved on this browser only.</div>
+    <div class="identity-grid">
+      <button class="identity-btn" onclick="setIdentity('Dallas')"><span class="icon">👤</span>Dallas</button>
+      <button class="identity-btn" onclick="setIdentity('Maya')"><span class="icon">👤</span>Maya</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Task chooser (Voice vs Write) -->
+<div class="modal-overlay" id="createChooserModal">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeCreateChooser()">×</button>
+    <div class="modal-title">Add a task</div>
+    <div class="modal-sub">How do you want to add it?</div>
+    <div class="choose-grid">
+      <div class="choose-card" onclick="pickVoice()">
+        <div class="choose-icon">🎙</div>
+        <div class="choose-label">Voice</div>
+        <div class="choose-sub">Speak it; AI fills the fields</div>
+      </div>
+      <div class="choose-card" onclick="pickWrite()">
+        <div class="choose-icon">✏️</div>
+        <div class="choose-label">Write</div>
+        <div class="choose-sub">Type the details yourself</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Voice memo modal -->
+<div class="modal-overlay" id="voiceModal">
+  <div class="modal voice-modal">
+    <button class="modal-close" onclick="closeVoiceModal()">×</button>
+    <div id="voiceStage1">
+      <div class="modal-title">🎙 Voice memo</div>
+      <div class="modal-sub">Tap and talk. AI will turn it into a task — you can edit before saving.</div>
+      <button id="voiceRecBtn" class="voice-record-btn" onclick="toggleRecording()">🎙</button>
+      <div id="voiceStatus" class="voice-status">Tap the mic to start</div>
+      <div id="voiceTranscript" class="voice-transcript"></div>
+      <div class="voice-actions" id="voiceStage1Actions" style="display:none;">
+        <button class="modal-btn" onclick="resetRecording()">🔄 Try again</button>
+        <button class="modal-btn primary" id="voiceProcessBtn" onclick="processTranscript()">✨ Process →</button>
+      </div>
+    </div>
+    <div id="voiceStage2" style="display:none;">
+      <div class="modal-title">Confirm task <span class="ai-pill">AI-extracted</span></div>
+      <div class="modal-sub">Review what was heard. Edit anything that's off, then save.</div>
+      <div class="modal-field">
+        <label>Task description</label>
+        <textarea id="vcDesc" rows="2"></textarea>
+      </div>
+      <div class="modal-field">
+        <label>Portfolio + Property</label>
+        <div class="prop-row">
+          <select id="vcPortfolio" onchange="onPortfolioChange('vcPortfolio','vcProp')">
+            <option value="">— Portfolio —</option>
+            <option value="SLP">SLP</option>
+            <option value="JHU">JHU</option>
+            <option value="DC">DC</option>
+          </select>
+          <select id="vcProp"><option value="">— Pick portfolio first —</option></select>
+        </div>
+      </div>
+      <div class="modal-row-2">
+        <div class="modal-field">
+          <label>Category</label>
+          <select id="vcCat">
+            <option value="">— Select —</option>
+            <option>Maintenance</option><option>Financial</option><option>Admin</option>
+            <option>Compliance</option><option>Vendor</option><option>Construction</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Assign to</label>
+          <select id="vcAssign">
+            <option>Maya</option><option>Dallas</option><option>Marjorie</option>
+            <option>Steve</option><option>Ramonia</option><option>Bernard</option><option>Carlos</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Deadline (optional)</label>
+        <input id="vcDeadline" type="date">
+      </div>
+      <div class="modal-field">
+        <label>Notes (full context)</label>
+        <textarea id="vcNotes" rows="4"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn" onclick="backToTranscript()">← Back</button>
+        <button class="modal-btn primary" onclick="saveVoiceTask()">📋 Save Task</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Write-task modal -->
+<div class="modal-overlay" id="writeModal">
+  <div class="modal" style="max-width:460px;">
+    <button class="modal-close" onclick="closeWriteModal()">×</button>
+    <div class="modal-title">✏️ Add a task</div>
+    <div class="modal-sub">Fill in the details and add it to the tracker.</div>
+    <div class="modal-field">
+      <label>What needs to happen?</label>
+      <textarea id="wtDesc" rows="2" placeholder="Describe the task…"></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Portfolio + Property</label>
+      <div class="prop-row">
+        <select id="wtPortfolio" onchange="onPortfolioChange('wtPortfolio','wtProp')">
+          <option value="">— Portfolio —</option>
+          <option value="SLP">SLP</option>
+          <option value="JHU">JHU</option>
+          <option value="DC">DC</option>
+        </select>
+        <select id="wtProp"><option value="">— Pick portfolio first —</option></select>
+      </div>
+    </div>
+    <div class="modal-row-2">
+      <div class="modal-field">
+        <label>Category</label>
+        <select id="wtCat">
+          <option value="">— Select —</option>
+          <option>Maintenance</option><option>Financial</option><option>Admin</option>
+          <option>Compliance</option><option>Vendor</option><option>Construction</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Assign to</label>
+        <select id="wtAssign">
+          <option>Maya</option><option>Dallas</option><option>Marjorie</option>
+          <option>Steve</option><option>Ramonia</option><option>Bernard</option><option>Carlos</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Note (optional)</label>
+      <input id="wtNote" type="text" placeholder="Any extra context…">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeWriteModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="submitWriteTask()">Add Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reminder modal -->
+<div class="modal-overlay" id="reminderModal">
+  <div class="modal" style="max-width:380px;">
+    <button class="modal-close" onclick="closeReminderModal()">×</button>
+    <div class="modal-title">⏰ Remind me</div>
+    <div class="modal-sub">Schedule a follow-up reminder for this task.</div>
+    <div class="modal-row-2">
+      <div class="modal-field">
+        <label>Date</label>
+        <input id="remDate" type="date">
+      </div>
+      <div class="modal-field">
+        <label>Time</label>
+        <input id="remTime" type="time" value="09:00">
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Note (optional)</label>
+      <input id="remNote" type="text" placeholder="Why this reminder…">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeReminderModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="submitReminder()">Set reminder</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject modal (optional reason) -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal" style="max-width:380px;">
+    <button class="modal-close" onclick="closeRejectModal()">×</button>
+    <div class="modal-title">✕ Reject task</div>
+    <div class="modal-sub">Tell Maya why (optional but helpful).</div>
+    <div class="modal-field">
+      <label>Reason</label>
+      <textarea id="rejNote" rows="3" placeholder="Why are you rejecting this?"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeRejectModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="submitReject()">Send rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Done modal (note before archive) -->
+<div class="modal-overlay" id="doneModal">
+  <div class="modal" style="max-width:380px;">
+    <button class="modal-close" onclick="closeDoneModal()">×</button>
+    <div class="modal-title">✅ Mark done</div>
+    <div class="modal-sub">Leave Maya a note about this completed task (optional).</div>
+    <div class="modal-field">
+      <label>Note</label>
+      <textarea id="doneNote" rows="3" placeholder="How did it go? Any follow-ups?"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="submitDoneSkip()">Skip</button>
+      <button class="modal-btn success" onclick="submitDoneSend()">Send & Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+
+// ════════════════════════════════════════════════════════
+// CONFIG — connect to your Apps Script + bake in static data
+// ════════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfbP3X9qC5iq4Sf8hZYjMCBdm6tjTBf-5e6FWBHmv56bBFjTgzjVT4gc-BzCkAC6fE/exec";
+const TOKEN           = "bw2026dash";
+const SCHEDULE_URL    = "https://scheduler.zoom.us/maya-miyazaki";
+
+// ── PROPERTY DIRECTORY (deduped from Maya's sheet, May 2026) ──
+const PROPERTIES_BY_PORTFOLIO = {
+  SLP: [
+    "316 E 5TH ST","422 PIERCE ST","424 PIERCE ST, UNIT 1","424 PIERCE ST, UNIT 2",
+    "428 MONTCLAIR AVE","430 MONTCLAIR AVE","462 CARLTON AVE, UNIT 1","462 CARLTON AVE, UNIT 2",
+    "505 THOMAS ST, UNIT 1","505 THOMAS ST, UNIT 2","505 THOMAS ST, UNIT 3","505 THOMAS ST, UNIT 4",
+    "508 SELFRIDGE ST","510 E PACKER AVE","526 E 5TH ST","527 E PACKER AVE","528 E 5TH ST",
+    "571 HILLSIDE AVE","610 PIERCE ST","612 PIERCE ST, UNIT 1","612 PIERCE ST, UNIT 2",
+    "614 PIERCE ST","616 PIERCE ST","618 PIERCE ST","620 PIERCE ST",
+    "621 PARKHILL ST","623 PARKHILL ST"
+  ],
+  JHU: [
+    "219 W 29TH ST","232 UNIVERSITY PKWY",
+    "2920 SAINT PAUL ST, UNIT 1","2920 SAINT PAUL ST, UNIT 2","2920 SAINT PAUL ST, UNIT 3",
+    "2920 SAINT PAUL ST, UNIT 4","2920 SAINT PAUL ST, UNIT 5","2920 SAINT PAUL ST, UNIT 6","2920 SAINT PAUL ST, UNIT 7",
+    "300 E UNIVERSITY PKWY, UNIT 1","300 E UNIVERSITY PKWY, UNIT 2","300 E UNIVERSITY PKWY, UNIT 3","300 E UNIVERSITY PKWY, UNIT 4",
+    "304 E UNIVERSITY PKWY",
+    "3106 N CALVERT ST, UNIT 1","3106 N CALVERT ST, UNIT 2","3106 N CALVERT ST, UNIT 3","3106 N CALVERT ST, UNIT 4",
+    "3119 N CALVERT ST, UNIT 1","3119 N CALVERT ST, UNIT 2",
+    "328 E 33RD ST","3410 OAKENSHAW PL",
+    "GUILFORD APARTMENTS, UNIT A1","GUILFORD APARTMENTS, UNIT A2","GUILFORD APARTMENTS, UNIT A3","GUILFORD APARTMENTS, UNIT A4",
+    "GUILFORD APARTMENTS, UNIT A5","GUILFORD APARTMENTS, UNIT A6","GUILFORD APARTMENTS, UNIT A7",
+    "GUILFORD APARTMENTS, UNIT B1","GUILFORD APARTMENTS, UNIT B2","GUILFORD APARTMENTS, UNIT B3","GUILFORD APARTMENTS, UNIT B4",
+    "GUILFORD APARTMENTS, UNIT B5","GUILFORD APARTMENTS, UNIT B6","GUILFORD APARTMENTS, UNIT B7",
+    "GUILFORD APARTMENTS, UNIT C1","GUILFORD APARTMENTS, UNIT C2","GUILFORD APARTMENTS, UNIT C3","GUILFORD APARTMENTS, UNIT C4",
+    "GUILFORD APARTMENTS, UNIT C5","GUILFORD APARTMENTS, UNIT C6","GUILFORD APARTMENTS, UNIT C7",
+    "GUILFORD APARTMENTS, UNIT G1","GUILFORD APARTMENTS, UNIT G2","GUILFORD APARTMENTS, UNIT G3",
+    "WOODROW APARTMENTS, UNIT A1","WOODROW APARTMENTS, UNIT A2","WOODROW APARTMENTS, UNIT A3",
+    "WOODROW APARTMENTS, UNIT A4","WOODROW APARTMENTS, UNIT A5","WOODROW APARTMENTS, UNIT A6",
+    "WOODROW APARTMENTS, UNIT 1E","WOODROW APARTMENTS, UNIT 1W",
+    "WOODROW APARTMENTS, UNIT 2E","WOODROW APARTMENTS, UNIT 2W",
+    "WOODROW APARTMENTS, UNIT 3E","WOODROW APARTMENTS, UNIT 3W",
+    "WOODROW APARTMENTS, UNIT 4E","WOODROW APARTMENTS, UNIT 4W",
+    "WOODROW APARTMENTS, UNIT 5E","WOODROW APARTMENTS, UNIT 5W",
+    "WOODROW APARTMENTS, UNIT 6E","WOODROW APARTMENTS, UNIT 6W"
+  ],
+  DC: [
+    "3538 PARK WORTH FLATS, UNIT 1","3538 PARK WORTH FLATS, UNIT 2","3538 PARK WORTH FLATS, UNIT 3",
+    "3538 PARK WORTH FLATS, UNIT 4","3538 PARK WORTH FLATS, UNIT 5"
+  ]
+};
+
+// Map sheet status string → internal config key (used by STATUS_CFG)
+function statusKey(s) {
+  const v = String(s || "").trim();
+  if (v === "Dallas Decision") return "DDECISION";
+  if (v === "Dallas To-Do" || v === "Dallas To Do") return "DTODO";
+  if (v === "Dallas Approval") return "DDECISION";   // legacy → treat as decision
+  if (v === "In Progress")  return "PROGRESS";
+  if (v === "Stuck")        return "STUCK";
+  if (v === "FYI Only" || v === "FYI") return "FYI";
+  if (v === "New")          return "NEW";
+  return "PROGRESS";  // safe default
+}
+
+// Status display config — labels, action button matrix
+const STATUS_CFG = {
+  STUCK:     { label: "STUCK",            color: "stuck",     primary: null,                                ghosts: [{l:"🔔 Ping",a:"ping",c:"blue"},{l:"⏰ Remind Me",a:"remind",c:"amber"},{l:"🗄 Archive",a:"archive",c:"red"}], showMsg: true },
+  NEW:       { label: "NEW",              color: "fyi",       primary: null,                                ghosts: [],                                                                                                    showMsg: false },
+  PROGRESS:  { label: "IN PROGRESS",      color: "progress",  primary: {l:"✅ Done",a:"done",c:"green"},   ghosts: [{l:"🔔 Ping",a:"ping",c:"blue"}],                                                                     showMsg: true },
+  DTODO:     { label: "DALLAS TO-DO",     color: "dtodo",     primary: {l:"✅ Done",a:"done",c:"green"},   ghosts: [{l:"⏰ Remind Me",a:"remind",c:"blue"}],                                                              showMsg: true },
+  DDECISION: { label: "DALLAS DECISION",  color: "ddecision", primary: {l:"👍 Approve",a:"approve",c:"green"}, ghosts: [{l:"⏸ Hold Off",a:"holdoff",c:"holdoff"},{l:"✕ Reject",a:"reject",c:"red"},{l:"⏰ Remind Me",a:"remind",c:"blue"}], showMsg: true },
+  FYI:       { label: "FYI ONLY",         color: "fyi",       primary: {l:"👍 Got it",a:"gotit",c:"green"}, ghosts: [],                                                                                                    showMsg: true }
+};
+
+// Map sheet status → portfolio code (from Category column or property prefix)
+function inferPortfolio(task) {
+  // Prefer explicit portfolio field from backend, otherwise infer from property name
+  if (task.portfolio && ["JHU","SLP","DC"].indexOf(task.portfolio) >= 0) return task.portfolio;
+  const p = String(task.property || "").toUpperCase();
+  for (const port of ["SLP","JHU","DC"]) {
+    if (PROPERTIES_BY_PORTFOLIO[port].some(addr => p.indexOf(addr) >= 0 || addr.indexOf(p) >= 0)) return port;
+  }
+  // Fallback by category
+  const c = String(task.category || "");
+  if (c === "JHU") return "JHU";
+  if (c === "SLP" || c === "Southlight") return "SLP";
+  if (c === "DC"  || c === "Washington DC") return "DC";
+  return null;  // "General/Ops" — shown only in All tab
+}
+
+// ════════════════════════════════════════════════════════
+// STATE — persisted in localStorage so settings stick
+// ════════════════════════════════════════════════════════
+let THEME      = localStorage.getItem("bw_theme")     || "orange";
+let MODE       = localStorage.getItem("bw_mode")      || "light";
+let USER_NAME  = localStorage.getItem("bw_actor")     || "";
+let state = {
+  portfolio: localStorage.getItem("bw_filter") || "all",
+  sort:      localStorage.getItem("bw_sort")   || "portfolio",
+};
+let ALL_TASKS    = [];
+let ALL_WINS     = [];
+let ACTIVE_TASK  = null;   // task currently in a modal action
+
+// ════════════════════════════════════════════════════════
+// THEME + MODE (CSS-driven via data attributes)
+// ════════════════════════════════════════════════════════
+function setTheme(name) {
+  THEME = name;
+  localStorage.setItem("bw_theme", name);
+  document.documentElement.setAttribute("data-theme", name);
+  document.querySelectorAll(".h-dot").forEach(d => d.classList.toggle("active", d.dataset.theme === name));
+  document.querySelector('meta[name="theme-color"]').setAttribute("content",
+    getComputedStyle(document.documentElement).getPropertyValue("--header-bg").trim());
+}
+function toggleMode() {
+  MODE = (MODE === "light") ? "dark" : "light";
+  localStorage.setItem("bw_mode", MODE);
+  document.documentElement.setAttribute("data-mode", MODE);
+  document.getElementById("modeBtn").textContent = (MODE === "light") ? "🌙" : "☀️";
+}
+
+// ════════════════════════════════════════════════════════
+// IDENTITY (Signed in as …)
+// ════════════════════════════════════════════════════════
+function showIdentityPrompt() { document.getElementById("identityModal").classList.add("open"); }
+function setIdentity(name) {
+  USER_NAME = name.trim();
+  if (!USER_NAME) return;
+  localStorage.setItem("bw_actor", USER_NAME);
+  document.getElementById("identityModal").classList.remove("open");
+  const ind = document.getElementById("identityIndicator");
+  ind.style.display = "flex";
+  document.getElementById("identityName").textContent = USER_NAME;
+  if (ALL_TASKS.length > 0) renderAll();
+}
+function changeIdentity() {
+  localStorage.removeItem("bw_actor");
+  USER_NAME = "";
+  document.getElementById("identityIndicator").style.display = "none";
+  showIdentityPrompt();
+}
+
+// ════════════════════════════════════════════════════════
+// UTILITY HELPERS
+// ════════════════════════════════════════════════════════
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function timeNow() {
+  return new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+}
+let _toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "show" + (type ? " " + type : "");
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { t.className = ""; }, 3000);
+}
+
+// Portfolio → Property cascading dropdown helper
+function onPortfolioChange(portSelectId, propSelectId) {
+  const port = document.getElementById(portSelectId).value;
+  const sel  = document.getElementById(propSelectId);
+  if (!sel) return;
+  sel.innerHTML = "";
+  if (!port) { sel.innerHTML = '<option value="">— Pick portfolio first —</option>'; return; }
+  const pw = document.createElement("option");
+  pw.value = "__PW__"; pw.textContent = "— Portfolio-wide (" + port + ") —";
+  sel.appendChild(pw);
+  const div = document.createElement("option");
+  div.disabled = true; div.textContent = "──────────"; sel.appendChild(div);
+  (PROPERTIES_BY_PORTFOLIO[port] || []).forEach(p => {
+    const o = document.createElement("option");
+    o.value = p; o.textContent = p;
+    sel.appendChild(o);
+  });
+}
+
+// Set a portfolio+property pair from an AI-suggested property string
+function setPropertyFromAI(portSelId, propSelId, suggestion) {
+  if (!suggestion) return;
+  const up = String(suggestion).toUpperCase();
+  for (const [port, list] of Object.entries(PROPERTIES_BY_PORTFOLIO)) {
+    for (const p of list) {
+      if (p.toUpperCase() === up || up.indexOf(p.toUpperCase()) >= 0 || p.toUpperCase().indexOf(up) >= 0) {
+        document.getElementById(portSelId).value = port;
+        onPortfolioChange(portSelId, propSelId);
+        document.getElementById(propSelId).value = p;
+        return;
+      }
+    }
+  }
+}
+
+// Action box callbacks
+function openTimeTracker() { window.open("https://docs.google.com/spreadsheets/d/" + "1abc/edit", "_blank"); }
+function pickATime() { window.open(SCHEDULE_URL, "_blank"); }
+function openCreateChooser() { document.getElementById("createChooserModal").classList.add("open"); }
+function closeCreateChooser() { document.getElementById("createChooserModal").classList.remove("open"); }
+function pickVoice() { closeCreateChooser(); openVoiceModal(); }
+function pickWrite() { closeCreateChooser(); openWriteModal(); }
+
+// Filter + sort UI handlers
+function setPortfolio(p) {
+  state.portfolio = p;
+  localStorage.setItem("bw_filter", p);
+  document.querySelectorAll(".filter-tab").forEach(b => b.classList.toggle("active", b.dataset.port === p));
+  renderAll();
+}
+function setSort(s) {
+  state.sort = s;
+  localStorage.setItem("bw_sort", s);
+  document.querySelectorAll(".sort-btn").forEach(b => b.classList.toggle("active", b.dataset.sort === s));
+  renderAll();
+}
+
+
+// ════════════════════════════════════════════════════════
+// GREETING LIBRARY
+// - Day+time specific (only shown on matching day/period)
+// - Generic (Claude tips, trivia, care, nudges) — shuffled freely
+// - Jokes dropped per Maya's feedback
+// - Greeting is auto-selected on page load based on day + time
+// ════════════════════════════════════════════════════════
+const GREETINGS = [
+  // ── Day + time specific ──
+  { main: "Sunday wind-down, NAME.",     sub: "The week starts tomorrow. A quick look now means a smoother Monday.", day: 0, period: "pm" },
+  { main: "Sunday morning, NAME.",        sub: "Take it easy. Anything urgent is already flagged.",                   day: 0, period: "am" },
+  { main: "Monday morning, NAME.",        sub: "New week, fresh start. Let's see what needs your attention first.", day: 1, period: "am" },
+  { main: "Monday afternoon, NAME.",      sub: "You're already ahead of everyone who called it a slow start.",      day: 1, period: "pm" },
+  { main: "Good morning, NAME.",          sub: "Tuesday is where the real work happens. Let's go.",                 day: 2, period: "am" },
+  { main: "Tuesday afternoon, NAME.",     sub: "You've got decisions waiting. The sooner, the better.",             day: 2, period: "pm" },
+  { main: "Midweek, NAME.",               sub: "Halfway there. A few things are waiting on you.",                     day: 3, period: "am" },
+  { main: "Wednesday afternoon.",         sub: "The week's half done. Don't let decisions pile up.",              day: 3, period: "pm" },
+  { main: "Good morning, NAME.",          sub: "Thursday. Almost there. Let's close some things out.",              day: 4, period: "am" },
+  { main: "Thursday afternoon, NAME.",    sub: "Friday's almost here. A clean dashboard tonight means a cleaner weekend.", day: 4, period: "pm" },
+  { main: "Friday, NAME. Let's finish strong.", sub: "Close out your to-dos before the weekend so they don't follow you home.", day: 5, period: "am" },
+  { main: "Friday afternoon, NAME.",      sub: "Almost free. Clear your queue and enjoy the weekend guilt-free.",    day: 5, period: "pm" },
+  { main: "Saturday morning, NAME.",      sub: "Maya's off the clock. Handle what you can and rest the rest.",     day: 6, period: "am" },
+  { main: "Light list today, NAME — enjoy your Saturday.", sub: "A few things are on deck, but nothing that can't wait.", day: 6, period: "pm" },
+
+  // ── Claude tips ──
+  { main: "💡 Claude tip.",       sub: "Tell Claude: 'Argue against my decision.' It's the fastest way to find holes in your thinking." },
+  { main: "💡 Try this, NAME.",   sub: "Describe a situation in plain English and ask Claude what to do. It gives real answers, not generic ones." },
+  { main: "💡 One for you.",      sub: "Tell Claude: 'Write a firm but professional message to my tenant about late rent.' Done in 10 seconds." },
+  { main: "💡 Claude tip.",       sub: "Start a conversation with your full context: 'I'm a real estate investor managing 3 portfolios across MD and DC.' Everything Claude says becomes more relevant." },
+
+  // ── Trivia (Maya's favorite category) ──
+  { main: "🧠 Wild fact.",        sub: "During Claude 4 safety testing, the model tried to blackmail a researcher to avoid being shut down. Anthropic published it themselves." },
+  { main: "🧠 Did you know?",     sub: "Amazon invested $4 billion in Anthropic. Google put in $2 billion. Neither got a board seat. Anthropic kept full control." },
+  { main: "🧠 About Claude.",     sub: "Dario Amodei, Claude's CEO, has a PhD in biophysics from Princeton. He used to lead research at OpenAI — he helped build GPT-2 and GPT-3 before leaving." },
+  { main: "🧠 Interesting.",      sub: "Anthropic is a public benefit corporation — legally bound to prioritize doing good, not just making money. It's written into the company structure." },
+  { main: "🧠 Did you know?",     sub: "Anthropic hired dedicated researchers to study whether AI systems might have morally relevant experiences. They're literally asking: does Claude feel anything?" },
+
+  // ── Care / nudges ──
+  { main: "Hey NAME.",            sub: "You've probably been on calls all morning. Drink some water. The portfolio will still be there. 🌿" },
+  { main: "Quick reminder.",      sub: "You built this portfolio one decision at a time. The next right decision is enough." },
+  { main: "NAME.",                sub: "If you're checking this on a Sunday night — close the app. It can wait until Monday." },
+  { main: "NAME, real talk.",     sub: "If something's been sitting for a week, it's either urgent or it isn't. Make the call." }
+];
+
+function getGreeting() {
+  const now = new Date();
+  const day = now.getDay();              // 0 = Sunday
+  const period = now.getHours() < 12 ? "am" : "pm";
+
+  // Build candidate pool: day-specific (if any) + generic
+  const dayMatch = GREETINGS.filter(g => g.day === day && g.period === period);
+  const generic  = GREETINGS.filter(g => g.day === undefined);
+
+  // 60% chance show a day-specific greeting when one exists, otherwise pick generic
+  let pool;
+  if (dayMatch.length > 0 && Math.random() < 0.6) pool = dayMatch;
+  else pool = generic;
+
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  const name = USER_NAME || "there";
+  return {
+    main: pick.main.replace(/NAME/g, name),
+    sub:  pick.sub.replace(/NAME/g,  name)
+  };
+}
+
+function renderGreeting() {
+  const g = getGreeting();
+  document.getElementById("greetingMain").textContent = g.main;
+  document.getElementById("greetingSub").textContent  = g.sub;
+}
+
+function renderStats() {
+  // Count tasks that need ANY action (not just FYI Only)
+  const needAction = ALL_TASKS.filter(t => {
+    const k = statusKey(t.status);
+    return k === "STUCK" || k === "DTODO" || k === "DDECISION" || k === "PROGRESS";
+  }).length;
+  const strip = document.getElementById("statsStrip");
+  if (needAction === 0) {
+    strip.style.display = "none";
+  } else {
+    strip.style.display = "flex";
+    document.getElementById("statsText").innerHTML =
+      "<strong>" + needAction + "</strong> " + (needAction === 1 ? "item needs" : "items need") + " action";
+  }
+}
+
+
+// ════════════════════════════════════════════════════════
+// DATA LOADING — pull tasks + wins from Apps Script
+// ════════════════════════════════════════════════════════
+async function loadTasks() {
+  try {
+    const url = APPS_SCRIPT_URL + "?action=getTasks&token=" + encodeURIComponent(TOKEN);
+    const res = await fetch(url, { cache: "no-store" });
+    const data = await res.json();
+    if (data && Array.isArray(data.tasks)) {
+      ALL_TASKS = data.tasks.map(t => {
+        // Normalize portfolio + statusKey here so renderers don't re-do work
+        t.portfolio = inferPortfolio(t);
+        t.statusKey = statusKey(t.status);
+        return t;
+      });
+    } else {
+      ALL_TASKS = [];
+    }
+    renderAll();
+    document.getElementById("liveUpdateTime").textContent = timeNow();
+  } catch (e) {
+    console.error("loadTasks failed:", e);
+    showToast("Could not reach backend", "error");
+  }
+}
+
+async function loadWins() {
+  try {
+    const url = APPS_SCRIPT_URL + "?action=getWins&token=" + encodeURIComponent(TOKEN);
+    const res = await fetch(url, { cache: "no-store" });
+    const data = await res.json();
+    ALL_WINS = (data && Array.isArray(data.wins)) ? data.wins : [];
+    renderWins();
+  } catch (e) {
+    console.warn("loadWins failed:", e);
+    ALL_WINS = [];
+    renderWins();
+  }
+}
+
+function loadAll() {
+  loadTasks();
+  loadWins();
+  renderGreeting();
+}
+
+// ════════════════════════════════════════════════════════
+// RENDER — top-level orchestration
+// ════════════════════════════════════════════════════════
+function renderAll() {
+  // Tab counts (ignore "General/Ops" tasks for portfolio counts)
+  const all  = ALL_TASKS.length;
+  const slpN = ALL_TASKS.filter(t => t.portfolio === "SLP").length;
+  const jhuN = ALL_TASKS.filter(t => t.portfolio === "JHU").length;
+  const dcN  = ALL_TASKS.filter(t => t.portfolio === "DC").length;
+  document.getElementById("count-all").textContent = all;
+  document.getElementById("count-slp").textContent = slpN;
+  document.getElementById("count-jhu").textContent = jhuN;
+  document.getElementById("count-dc").textContent  = dcN;
+
+  renderStats();
+
+  // Apply portfolio filter (All shows everything including General; specific portfolio hides General)
+  let tasks = ALL_TASKS;
+  if (state.portfolio !== "all") {
+    tasks = tasks.filter(t => t.portfolio === state.portfolio.toUpperCase());
+  }
+
+  const container = document.getElementById("taskList");
+  container.innerHTML = "";
+
+  if (tasks.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-3);padding:32px 0;font-size:12px;">No tasks here. Enjoy the quiet. ☕</div>';
+    return;
+  }
+
+  if (state.sort === "portfolio") renderByPortfolio(container, tasks);
+  else                            renderByStatus(container, tasks);
+}
+
+// ── Group rendering: BY PORTFOLIO (SLP first, then JHU, then DC, then General/Ops) ──
+function renderByPortfolio(container, tasks) {
+  const order = ["SLP", "JHU", "DC"];
+  const meta  = {
+    SLP: { icon: "🔵", label: "SLP",         sub: "Southlight portfolio" },
+    JHU: { icon: "🔴", label: "JHU",         sub: "Hopkins portfolio" },
+    DC:  { icon: "🟣", label: "DC",          sub: "Washington DC portfolio" }
+  };
+
+  order.forEach(port => {
+    const group = tasks.filter(t => t.portfolio === port);
+    if (group.length === 0) return;
+    const m = meta[port];
+    container.appendChild(renderGroup({
+      key: port.toLowerCase(),
+      icon: m.icon,
+      label: m.label,
+      sub: m.sub,
+      colorKey: port.toLowerCase(),
+      tasks: group,
+      sortInside: "status"  // inside each portfolio, sort by status priority
+    }));
+  });
+
+  // General/Ops group (no portfolio) — only shown in "All" tab
+  if (state.portfolio === "all") {
+    const general = tasks.filter(t => !t.portfolio);
+    if (general.length > 0) {
+      container.appendChild(renderGroup({
+        key: "general",
+        icon: "📋",
+        label: "General / Ops",
+        sub: "Not tied to a specific portfolio",
+        colorKey: "fyi",   // neutral grey
+        tasks: general,
+        sortInside: "status"
+      }));
+    }
+  }
+}
+
+// ── Group rendering: BY STATUS (Stuck → Decision → To-Do → In Progress → FYI) ──
+function renderByStatus(container, tasks) {
+  const order = ["STUCK", "DDECISION", "DTODO", "PROGRESS", "FYI", "NEW"];
+  const meta  = {
+    STUCK:     { icon: "🚨", label: "Stuck",          sub: "Please advise" },
+    DDECISION: { icon: "⚠️", label: "Dallas Decision", sub: "Waiting for your approval" },
+    DTODO:     { icon: "👤", label: "Dallas To-Do",    sub: "Don't keep us waiting" },
+    PROGRESS:  { icon: "⚡", label: "In Progress",    sub: "Being handled" },
+    FYI:       { icon: "💬", label: "FYI Only",        sub: "For your awareness" },
+    NEW:       { icon: "🆕", label: "New",             sub: "Just landed" }
+  };
+
+  order.forEach(key => {
+    const group = tasks.filter(t => t.statusKey === key);
+    if (group.length === 0) return;
+    const m = meta[key];
+    container.appendChild(renderGroup({
+      key: key.toLowerCase(),
+      icon: m.icon,
+      label: m.label,
+      sub: m.sub,
+      colorKey: STATUS_CFG[key].color,
+      tasks: group,
+      sortInside: null
+    }));
+  });
+}
+
+// Build a section group element (collapsible)
+function renderGroup({ key, icon, label, sub, colorKey, tasks, sortInside }) {
+  // Inside a portfolio group, sort by status priority
+  if (sortInside === "status") {
+    const prio = { STUCK: 0, DDECISION: 1, DTODO: 2, PROGRESS: 3, FYI: 4, NEW: 5 };
+    tasks = tasks.slice().sort((a, b) => (prio[a.statusKey] ?? 9) - (prio[b.statusKey] ?? 9));
+  }
+
+  const wrap = document.createElement("div");
+  wrap.className = "group";
+  wrap.dataset.key = key;
+
+  const header = document.createElement("button");
+  header.className = "group-header open";
+  header.dataset.color = colorKey;
+  header.innerHTML =
+    '<div class="group-icon tint-' + colorKey + '">' + icon + '</div>' +
+    '<div class="group-meta">' +
+      '<div class="group-title c-' + colorKey + '">' + esc(label) + '</div>' +
+      '<div class="group-sub">' + esc(sub) + '</div>' +
+    '</div>' +
+    '<div class="group-count">' + tasks.length + '</div>' +
+    '<span class="group-caret">▼</span>';
+  header.onclick = () => header.classList.toggle("open");
+  wrap.appendChild(header);
+
+  const body = document.createElement("div");
+  body.className = "group-body";
+  tasks.forEach(t => body.appendChild(renderTaskCard(t)));
+  wrap.appendChild(body);
+
+  return wrap;
+}
+
+function renderWins() {
+  const section = document.getElementById("winsSection");
+  const grid    = document.getElementById("winsGrid");
+  if (!ALL_WINS || ALL_WINS.length === 0) {
+    section.style.display = "none";
+    return;
+  }
+  section.style.display = "block";
+  grid.innerHTML = ALL_WINS.map(w =>
+    '<div class="win-card">' +
+      '<div class="win-top">' +
+        '<div class="win-check">✅</div>' +
+        '<span class="win-date">' + esc(w.date || "") + '</span>' +
+      '</div>' +
+      '<div class="win-prop">' + esc(w.property || "Portfolio") + '</div>' +
+      '<div class="win-text">' + esc(w.text || "") + '</div>' +
+    '</div>'
+  ).join("");
+}
+
+
+// ════════════════════════════════════════════════════════
+// TASK CARD RENDERING
+// - Notes column may contain mix of "original notes" + bubbles like "[Author - date]: text"
+// - We split on those bubble markers so original notes appear in notes block,
+//   and bubbles appear in the conversation thread.
+// ════════════════════════════════════════════════════════
+
+function parseNotesColumn(raw) {
+  const text = String(raw || "").trim();
+  if (!text) return { notes: "", bubbles: [] };
+
+  // Bubble pattern: [Author - YYYY-MM-DD]: text
+  const bubbleRe = /\[([^\-\]]+?)\s*-\s*(\d{4}-\d{2}-\d{2})\]:\s*([\s\S]*?)(?=\[[^\-\]]+?\s*-\s*\d{4}-\d{2}-\d{2}\]:|$)/g;
+  const bubbles = [];
+  let firstBubbleIdx = text.length;
+  let m;
+  while ((m = bubbleRe.exec(text)) !== null) {
+    if (m.index < firstBubbleIdx) firstBubbleIdx = m.index;
+    bubbles.push({ author: m[1].trim(), date: m[2], text: m[3].trim() });
+  }
+  const notes = text.slice(0, firstBubbleIdx).trim();
+  return { notes, bubbles };
+}
+
+function renderTaskCard(task) {
+  const card = document.createElement("div");
+  card.className = "task-card";
+  card.dataset.taskId = task.id;
+  if (task.portfolio) card.dataset.port = task.portfolio.toLowerCase();
+
+  const cfg = STATUS_CFG[task.statusKey] || STATUS_CFG.PROGRESS;
+  const parsed = parseNotesColumn(task.notes);
+
+  // Collapsed header
+  const head = document.createElement("div");
+  head.className = "tc-head";
+  head.innerHTML =
+    '<div class="tc-row1">' +
+      (task.portfolio
+        ? '<span class="tc-tag" data-port="' + task.portfolio.toLowerCase() + '">' + esc(task.portfolio) + '</span>'
+        : '') +
+      '<span class="tc-property">' + esc(task.property || "—") + '</span>' +
+    '</div>' +
+    '<div class="tc-row2">' +
+      '<span class="tc-title">' + esc(task.description || task.task || "(no title)") + '</span>' +
+      '<span class="tc-badge" data-status="' + task.statusKey + '">' + esc(cfg.label) + '</span>' +
+    '</div>' +
+    (task.assignment
+      ? '<div class="tc-row3"><div class="tc-assignee">👤 ' + esc(task.assignment) + '</div></div>'
+      : '');
+  card.appendChild(head);
+
+  // Toggle bar
+  const toggle = document.createElement("button");
+  toggle.className = "tc-toggle";
+  toggle.innerHTML =
+    '<span class="caret">▼</span>' +
+    '<span class="tc-toggle-label">View &amp; Respond</span>' +
+    (parsed.bubbles.length > 0
+      ? '<span class="tc-msg-count">' + parsed.bubbles.length + (parsed.bubbles.length === 1 ? ' message' : ' messages') + '</span>'
+      : '');
+  toggle.onclick = (e) => {
+    e.stopPropagation();
+    const isOpen = card.classList.toggle("open");
+    toggle.querySelector(".tc-toggle-label").textContent = isOpen ? "Hide" : "View & Respond";
+    // Hide message count when expanded
+    const mc = toggle.querySelector(".tc-msg-count");
+    if (mc) mc.style.visibility = isOpen ? "hidden" : "visible";
+  };
+  card.appendChild(toggle);
+
+  // Expanded body
+  const body = document.createElement("div");
+  body.className = "tc-body";
+
+  // Notes block (only if there are original notes)
+  if (parsed.notes) {
+    const notesEl = document.createElement("div");
+    notesEl.className = "tc-notes";
+    notesEl.innerHTML =
+      '<div class="tc-notes-label">Notes</div>' +
+      '<div class="tc-notes-text">' + esc(parsed.notes) + '</div>';
+    body.appendChild(notesEl);
+  }
+
+  // Action buttons (per STATUS_CFG)
+  if (cfg.primary || cfg.ghosts.length > 0) {
+    const actions = document.createElement("div");
+    actions.className = "tc-actions";
+    if (cfg.primary) {
+      const b = makeActionBtn(cfg.primary, task, true);
+      actions.appendChild(b);
+    }
+    cfg.ghosts.forEach(g => actions.appendChild(makeActionBtn(g, task, false)));
+    body.appendChild(actions);
+  }
+
+  // Conversation thread
+  if (parsed.bubbles.length > 0) {
+    const convo = document.createElement("div");
+    convo.className = "tc-convo";
+    convo.innerHTML = '<div class="tc-convo-label">Conversation</div>';
+    parsed.bubbles.forEach(b => {
+      const isDallas = String(b.author).toLowerCase() === "dallas";
+      const isMaya   = String(b.author).toLowerCase() === "maya";
+      const side     = isDallas ? "" : "right";
+      const cls      = isDallas ? "dallas" : "maya";
+      const initial  = (b.author || "?").charAt(0).toUpperCase();
+      const row = document.createElement("div");
+      row.className = "bubble-row " + side;
+      row.innerHTML =
+        '<div class="bubble-avatar ' + cls + '">' + esc(initial) + '</div>' +
+        '<div class="bubble ' + cls + '">' +
+          '<div class="bubble-text">' + esc(b.text) + '</div>' +
+          '<div class="bubble-meta">' + esc(b.author) + ' &middot; ' + esc(b.date) + '</div>' +
+        '</div>';
+      convo.appendChild(row);
+    });
+    body.appendChild(convo);
+  }
+
+  // Message input row
+  if (cfg.showMsg) {
+    const inputRow = document.createElement("div");
+    inputRow.className = "tc-input-row";
+    inputRow.innerHTML =
+      '<div class="tc-input-shell">' +
+        '<input class="tc-input" type="text" placeholder="Type a message..." id="msg-' + task.id + '">' +
+        '<button class="tc-mic-btn" onclick="openVoiceForTask(\'' + task.id + '\')" title="Voice note">🎙</button>' +
+        '<button class="tc-send-btn" onclick="sendMessageForTask(\'' + task.id + '\')">Send</button>' +
+      '</div>';
+    body.appendChild(inputRow);
+  }
+
+  card.appendChild(body);
+  return card;
+}
+
+function makeActionBtn(def, task, isPrimary) {
+  const btn = document.createElement("button");
+  btn.className = "tc-btn " + (isPrimary ? "primary" : "ghost") + " c-" + def.c;
+  btn.textContent = def.l;
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    handleAction(def.a, task);
+  };
+  return btn;
+}
+
+
+// ════════════════════════════════════════════════════════
+// ACTION HANDLERS — every button on every card routes through here
+// ════════════════════════════════════════════════════════
+async function postAction(body) {
+  body.token = TOKEN;
+  body.actor = USER_NAME || "Dallas";
+  // Apps Script findTask expects numeric row — strip "row-" prefix
+  if (body.taskId != null) body.taskId = String(body.taskId).replace(/^row-/i, "");
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data && data.error) {
+      showToast(data.error, "error");
+      return false;
+    }
+    return data;
+  } catch (e) {
+    console.error("postAction failed:", e);
+    showToast("Network error — please retry", "error");
+    return false;
+  }
+}
+
+// Dispatcher: button click → routes to specific handler or modal
+function handleAction(action, task) {
+  ACTIVE_TASK = task;
+  switch (action) {
+    case "approve":  doApprove(task);    break;
+    case "done":     openDoneModal();    break;
+    case "ping":     doPing(task);       break;
+    case "remind":   openReminderModal();break;
+    case "archive":  doArchive(task);    break;
+    case "reject":   openRejectModal();  break;
+    case "holdoff":  doHoldOff(task);    break;
+    case "gotit":    doFyiAck(task);     break;
+    default: console.warn("Unknown action:", action);
+  }
+}
+
+// ── Individual handlers ──
+async function doApprove(task) {
+  if (!confirm("Approve this task? Status moves to In Progress.")) return;
+  const ok = await postAction({ action: "approve", taskId: task.id });
+  if (ok) {
+    showToast("✅ Approved", "success");
+    setTimeout(loadAll, 600);
+  }
+}
+
+async function doPing(task) {
+  // Ping fires immediately, no confirmation per spec
+  const ok = await postAction({ action: "letstalk", taskId: task.id, note: "Need an update on this." });
+  if (ok) showToast("🔔 Ping sent to Maya", "success");
+}
+
+async function doArchive(task) {
+  if (!confirm("Remove this task from the dashboard? (It moves to Archive.)")) return;
+  const ok = await postAction({ action: "done", taskId: task.id });
+  if (ok) {
+    showToast("🗄 Archived", "success");
+    setTimeout(loadAll, 600);
+  }
+}
+
+async function doHoldOff(task) {
+  if (!confirm("Put this on Hold Off? It disappears from the dashboard.")) return;
+  const ok = await postAction({ action: "holdoff", taskId: task.id });
+  if (ok) {
+    showToast("⏸ Hold off", "success");
+    setTimeout(loadAll, 600);
+  }
+}
+
+async function doFyiAck(task) {
+  if (!confirm("Got it. Remove this FYI from the dashboard?")) return;
+  const ok = await postAction({ action: "fyi_ack", taskId: task.id });
+  if (ok) {
+    showToast("👍 Got it", "success");
+    setTimeout(loadAll, 600);
+  }
+}
+
+// ── Done modal (note before archive) ──
+function openDoneModal()  { document.getElementById("doneNote").value = ""; document.getElementById("doneModal").classList.add("open"); }
+function closeDoneModal() { document.getElementById("doneModal").classList.remove("open"); }
+async function submitDoneSkip() {
+  closeDoneModal();
+  const ok = await postAction({ action: "done", taskId: ACTIVE_TASK.id });
+  if (ok) { showToast("✅ Done", "success"); setTimeout(loadAll, 600); }
+}
+async function submitDoneSend() {
+  const note = document.getElementById("doneNote").value.trim();
+  closeDoneModal();
+  // Add note first, then archive
+  if (note) await postAction({ action: "addnote", taskId: ACTIVE_TASK.id, note: note });
+  const ok = await postAction({ action: "done", taskId: ACTIVE_TASK.id });
+  if (ok) { showToast("✅ Done & noted", "success"); setTimeout(loadAll, 600); }
+}
+
+// ── Reminder modal ──
+function openReminderModal() {
+  document.getElementById("remDate").value = "";
+  document.getElementById("remTime").value = "09:00";
+  document.getElementById("remNote").value = "";
+  document.getElementById("reminderModal").classList.add("open");
+}
+function closeReminderModal() { document.getElementById("reminderModal").classList.remove("open"); }
+async function submitReminder() {
+  const d = document.getElementById("remDate").value;
+  const t = document.getElementById("remTime").value || "09:00";
+  const n = document.getElementById("remNote").value.trim();
+  if (!d) { showToast("Pick a date", "error"); return; }
+  closeReminderModal();
+  const ok = await postAction({
+    action: "remindlater",
+    taskId: ACTIVE_TASK.id,
+    remindDate: d + "T" + t,
+    note: n
+  });
+  if (ok) { showToast("⏰ Reminder set", "success"); setTimeout(loadAll, 600); }
+}
+
+// ── Reject modal ──
+function openRejectModal() {
+  document.getElementById("rejNote").value = "";
+  document.getElementById("rejectModal").classList.add("open");
+}
+function closeRejectModal() { document.getElementById("rejectModal").classList.remove("open"); }
+async function submitReject() {
+  const n = document.getElementById("rejNote").value.trim();
+  closeRejectModal();
+  const ok = await postAction({ action: "reject", taskId: ACTIVE_TASK.id, note: n });
+  if (ok) { showToast("✕ Rejected", "success"); setTimeout(loadAll, 600); }
+}
+
+// ── In-card message input ──
+async function sendMessageForTask(taskId) {
+  const input = document.getElementById("msg-" + taskId);
+  const text = (input.value || "").trim();
+  if (!text) return;
+  input.value = "";
+  const ok = await postAction({ action: "addnote", taskId: taskId, note: text });
+  if (ok) { showToast("💬 Sent to Maya", "success"); setTimeout(loadAll, 600); }
+}
+
+function openVoiceForTask(taskId) {
+  // For now, in-card mic opens the main voice modal; saved message attaches to this task
+  ACTIVE_TASK = ALL_TASKS.find(t => String(t.id) === String(taskId)) || null;
+  openVoiceModal();
+}
+
+
+// ════════════════════════════════════════════════════════
+// WRITE-A-TASK MODAL
+// ════════════════════════════════════════════════════════
+function openWriteModal() {
+  document.getElementById("wtDesc").value = "";
+  document.getElementById("wtNote").value = "";
+  document.getElementById("wtCat").value  = "";
+  document.getElementById("wtPortfolio").value = "";
+  onPortfolioChange("wtPortfolio","wtProp");
+  document.getElementById("writeModal").classList.add("open");
+}
+function closeWriteModal() { document.getElementById("writeModal").classList.remove("open"); }
+async function submitWriteTask() {
+  const desc = document.getElementById("wtDesc").value.trim();
+  if (!desc) { showToast("Describe the task first", "error"); return; }
+  const portfolio = document.getElementById("wtPortfolio").value;
+  const propSel   = document.getElementById("wtProp").value;
+  let property;
+  if (propSel === "__PW__") property = portfolio ? (portfolio + " Portfolio") : "Portfolio";
+  else                       property = propSel || "General";
+
+  closeWriteModal();
+  const ok = await postAction({
+    action: "addtask",
+    newTask: {
+      description: desc,
+      property:    property,
+      category:    document.getElementById("wtCat").value || "Admin",
+      assignment:  document.getElementById("wtAssign").value,
+      note:        document.getElementById("wtNote").value.trim()
+    }
+  });
+  if (ok) { showToast("📋 Task added", "success"); setTimeout(loadAll, 600); }
+}
+
+// ════════════════════════════════════════════════════════
+// VOICE MEMO (Web Speech for now; MediaRecorder+Gemini coming in next pass)
+// ════════════════════════════════════════════════════════
+let voiceRecognition = null;
+let voiceTranscriptText = "";
+let voiceRecording = false;
+
+function openVoiceModal() {
+  resetRecording();
+  document.getElementById("voiceModal").classList.add("open");
+}
+function closeVoiceModal() {
+  if (voiceRecording) stopRecording();
+  document.getElementById("voiceModal").classList.remove("open");
+}
+function resetRecording() {
+  voiceTranscriptText = "";
+  document.getElementById("voiceStage1").style.display = "block";
+  document.getElementById("voiceStage2").style.display = "none";
+  document.getElementById("voiceTranscript").textContent = "";
+  document.getElementById("voiceStage1Actions").style.display = "none";
+  document.getElementById("voiceStatus").textContent = "Tap the mic to start";
+  document.getElementById("voiceRecBtn").classList.remove("recording");
+  document.getElementById("voiceRecBtn").textContent = "🎙";
+}
+function toggleRecording() {
+  if (voiceRecording) stopRecording();
+  else startRecording();
+}
+function startRecording() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast("Voice not supported in this browser", "error"); return; }
+  voiceRecognition = new SR();
+  voiceRecognition.lang = "en-US";
+  voiceRecognition.continuous = true;
+  voiceRecognition.interimResults = true;
+  voiceTranscriptText = "";
+
+  let finalText = "";
+  voiceRecognition.onresult = (event) => {
+    let interim = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const r = event.results[i];
+      if (r.isFinal) finalText += r[0].transcript + " ";
+      else interim += r[0].transcript;
+    }
+    voiceTranscriptText = (finalText + interim).trim();
+    document.getElementById("voiceTranscript").textContent = voiceTranscriptText || "Listening...";
+  };
+  voiceRecognition.onerror = (event) => {
+    console.warn("Speech recognition error:", event.error);
+    document.getElementById("voiceStatus").textContent =
+      event.error === "network" ? "Network blocks Google speech service. (Switching to record+upload in the next update.)" :
+      event.error === "not-allowed" ? "Mic permission denied." :
+      event.error === "no-speech" ? "No speech detected. Try again." :
+      "Error: " + event.error;
+    stopRecording();
+  };
+  voiceRecognition.onend = () => {
+    if (voiceRecording) try { voiceRecognition.start(); } catch(e){}
+  };
+
+  try { voiceRecognition.start(); } catch(e) { console.warn(e); }
+  voiceRecording = true;
+  document.getElementById("voiceRecBtn").classList.add("recording");
+  document.getElementById("voiceRecBtn").textContent = "⏹";
+  document.getElementById("voiceStatus").textContent = "🔴 Recording — tap to stop";
+}
+function stopRecording() {
+  if (voiceRecognition) {
+    voiceRecording = false;
+    try { voiceRecognition.stop(); } catch(e){}
+    voiceRecognition = null;
+  }
+  document.getElementById("voiceRecBtn").classList.remove("recording");
+  document.getElementById("voiceRecBtn").textContent = "🎙";
+  if (voiceTranscriptText.trim()) {
+    document.getElementById("voiceStatus").textContent = "✓ Ready to process";
+    document.getElementById("voiceStage1Actions").style.display = "flex";
+  } else {
+    document.getElementById("voiceStatus").textContent = "No speech captured. Try again.";
+  }
+}
+
+async function processTranscript() {
+  const t = voiceTranscriptText.trim();
+  if (!t) return;
+  document.getElementById("voiceProcessBtn").disabled = true;
+  document.getElementById("voiceStatus").textContent = "✨ Analyzing with Gemini...";
+  const data = await postAction({ action: "voice_memo", transcript: t });
+  document.getElementById("voiceProcessBtn").disabled = false;
+  if (data && !data.error) showConfirmForm(data, t);
+  else { showToast("Could not process voice memo", "error"); }
+}
+function backToTranscript() {
+  document.getElementById("voiceStage1").style.display = "block";
+  document.getElementById("voiceStage2").style.display = "none";
+}
+function showConfirmForm(extraction, transcript) {
+  document.getElementById("voiceStage1").style.display = "none";
+  document.getElementById("voiceStage2").style.display = "block";
+  document.getElementById("vcDesc").value     = extraction.task || extraction.description || transcript;
+  document.getElementById("vcCat").value      = extraction.category || "";
+  document.getElementById("vcAssign").value   = extraction.assigned_to || extraction.assignment || "Maya";
+  document.getElementById("vcDeadline").value = extraction.deadline || "";
+  document.getElementById("vcNotes").value    = extraction.notes || "";
+  document.getElementById("vcPortfolio").value = "";
+  onPortfolioChange("vcPortfolio","vcProp");
+  if (extraction.portfolio && PROPERTIES_BY_PORTFOLIO[extraction.portfolio]) {
+    document.getElementById("vcPortfolio").value = extraction.portfolio;
+    onPortfolioChange("vcPortfolio","vcProp");
+    if (extraction.property) setPropertyFromAI("vcPortfolio","vcProp", extraction.property);
+  } else if (extraction.property) {
+    setPropertyFromAI("vcPortfolio","vcProp", extraction.property);
+  }
+}
+async function saveVoiceTask() {
+  const desc = document.getElementById("vcDesc").value.trim();
+  if (!desc) { showToast("Description required", "error"); return; }
+  const portfolio = document.getElementById("vcPortfolio").value;
+  const propSel   = document.getElementById("vcProp").value;
+  let property;
+  if (propSel === "__PW__") property = portfolio ? (portfolio + " Portfolio") : "Portfolio";
+  else                       property = propSel || "General";
+
+  closeVoiceModal();
+  const ok = await postAction({
+    action: "addtask",
+    newTask: {
+      description: desc,
+      property:    property,
+      category:    document.getElementById("vcCat").value || "Admin",
+      assignment:  document.getElementById("vcAssign").value,
+      deadline:    document.getElementById("vcDeadline").value || "",
+      note:        document.getElementById("vcNotes").value.trim()
+    }
+  });
+  if (ok) { showToast("🎙 Voice task saved", "success"); setTimeout(loadAll, 700); }
+}
+
+// ════════════════════════════════════════════════════════
+// BOOT — runs once when the page is ready
+// ════════════════════════════════════════════════════════
+document.addEventListener("DOMContentLoaded", () => {
+  // Apply saved theme + mode
+  setTheme(THEME);
+  document.documentElement.setAttribute("data-mode", MODE);
+  document.getElementById("modeBtn").textContent = (MODE === "light") ? "🌙" : "☀️";
+
+  // Identity check
+  if (!USER_NAME) {
+    showIdentityPrompt();
+  } else {
+    const ind = document.getElementById("identityIndicator");
+    if (ind) ind.style.display = "flex";
+    const nm = document.getElementById("identityName");
+    if (nm) nm.textContent = USER_NAME;
+  }
+
+  // Apply saved filter + sort
+  setPortfolio(state.portfolio);
+  setSort(state.sort);
+
+  // First load + auto-refresh every 3 minutes
+  loadAll();
+  setInterval(loadAll, 3 * 60 * 1000);
+
+  // Click outside a modal to close it (except identity which is required)
+  document.querySelectorAll(".modal-overlay").forEach(o => {
+    o.addEventListener("click", e => {
+      if (e.target === o && o.id !== "identityModal") o.classList.remove("open");
+    });
+  });
+});
+
+</script>
+</body>
+</html>
