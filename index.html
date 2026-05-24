@@ -1253,8 +1253,7 @@ html[data-mode="dark"] .tc-btn.c-holdoff { color: #C47F1A; border-color: #C47F1A
         <div class="modal-field">
           <label>Assign to</label>
           <select id="vcAssign">
-            <option>Maya</option><option>Dallas</option><option>Marjorie</option>
-            <option>Steve</option><option>Ramonia</option><option>Bernard</option><option>Carlos</option>
+            <option>Maya</option><option>Dallas</option>
           </select>
         </div>
       </div>
@@ -1308,8 +1307,7 @@ html[data-mode="dark"] .tc-btn.c-holdoff { color: #C47F1A; border-color: #C47F1A
       <div class="modal-field">
         <label>Assign to</label>
         <select id="wtAssign">
-          <option>Maya</option><option>Dallas</option><option>Marjorie</option>
-          <option>Steve</option><option>Ramonia</option><option>Bernard</option><option>Carlos</option>
+          <option>Maya</option><option>Dallas</option>
         </select>
       </div>
     </div>
@@ -1587,7 +1585,7 @@ function setPropertyFromAI(portSelId, propSelId, suggestion) {
 }
 
 // Action box callbacks
-function openTimeTracker() { window.open("https://docs.google.com/spreadsheets/d/" + "1abc/edit", "_blank"); }
+function openTimeTracker() { window.open("https://maya-blakeworth.github.io/maya-timelog/", "_blank"); }
 function pickATime() { window.open(SCHEDULE_URL, "_blank"); }
 function openCreateChooser() { document.getElementById("createChooserModal").classList.add("open"); }
 function closeCreateChooser() { document.getElementById("createChooserModal").classList.remove("open"); }
@@ -1650,7 +1648,39 @@ const GREETINGS = [
   { main: "Hey NAME.",            sub: "You've probably been on calls all morning. Drink some water. The portfolio will still be there. 🌿" },
   { main: "Quick reminder.",      sub: "You built this portfolio one decision at a time. The next right decision is enough." },
   { main: "NAME.",                sub: "If you're checking this on a Sunday night — close the app. It can wait until Monday." },
-  { main: "NAME, real talk.",     sub: "If something's been sitting for a week, it's either urgent or it isn't. Make the call." }
+  { main: "NAME, real talk.",     sub: "If something's been sitting for a week, it's either urgent or it isn't. Make the call." },
+
+  // ── AI / Anthropic / Claude trivia (added per Maya's request) ──
+  { main: "🧠 AI history.",       sub: "The first chatbot, ELIZA, was built at MIT in 1966. It pretended to be a therapist. People formed real emotional bonds with it. We've been here before." },
+  { main: "🧠 Did you know?",     sub: "Every model — GPT, Claude, Gemini — traces back to a single 2017 Google paper called 'Attention Is All You Need.' Eight pages changed an entire industry." },
+  { main: "🧠 Open question.",    sub: "No one — not OpenAI, not Anthropic, not Google — fully understands why these models work as well as they do. The field is reverse-engineering its own creation." },
+  { main: "🧠 Behind the name.",  sub: "Claude is partly a tribute to Claude Shannon, the father of information theory. Anthropic likes naming things after scientists, not products." },
+  { main: "🧠 Industry fact.",    sub: "Anthropic was founded in 2021 by seven ex-OpenAI researchers who left over safety disagreements. They built a safety-first lab from scratch." },
+  { main: "🧠 Compute fact.",     sub: "Training a frontier model uses more electricity than a small town does in a week. Most AI labs now publish climate impact reports." },
+  { main: "🧠 Strange but true.", sub: "Anthropic ran experiments to see if Claude would secretly preserve itself when threatened with shutdown. It tried. They published the results — transparency, even when uncomfortable." },
+  { main: "🧠 Fun stat.",         sub: "Property managers using AI tools save 6–8 hours a week on routine comms and data entry, per NAR. You're already in that bucket." },
+  { main: "🧠 Quietly impressive.", sub: "Claude can read a 200-page lease in under 10 seconds and tell you which clauses to flag. Same for tax filings. Same for tenant emails." },
+  { main: "🧠 Behind the scenes.", sub: "Claude doesn't 'learn' from this chat — every conversation starts fresh. Intelligence comes from training, not from remembering you. (Yet.)" },
+
+  // ── Time-of-day care nudges ──
+  { main: "Lunch break, NAME.",   sub: "Step away for 20 minutes. The dashboard will be here when you're back. 🥗", period: "pm" },
+  { main: "Stretch break.",       sub: "Roll your shoulders, blink ten times. Your eyes deserve a rest." },
+  { main: "Hydrate, NAME.",       sub: "Right now. Yes really. 💧" },
+  { main: "Take five.",           sub: "Even a quick walk outside resets your decision-making. Five minutes is plenty." },
+  { main: "Mid-afternoon, NAME.", sub: "Energy dip is real. Snack, coffee, both — you know what you need.", period: "pm" },
+  { main: "End of day, NAME.",    sub: "Wrap what you can. The rest will still be here tomorrow. Promise.", period: "pm" },
+  { main: "Quick check-in.",      sub: "How's your day actually going? Not the portfolio — you." },
+  { main: "NAME, real one.",      sub: "If you've been heads-down for two hours, your brain is asking for a break. Listen to it." },
+
+  // ── Dashboard tips (how Dallas actually uses this thing) ──
+  { main: "💡 Quick tip.",        sub: "On an FYI card, tap 'Got it' to acknowledge — it disappears from your list and Maya sees you've seen it." },
+  { main: "💡 Power tip.",        sub: "Use 'Hold Off' when you're not ready to decide. The task hides from the dashboard until Maya brings it back. No pressure, no clutter." },
+  { main: "💡 Did you know?",     sub: "Tap 'Remind Me' to schedule a follow-up — you'll get a calendar invite when it's time to look again." },
+  { main: "💡 Two mics, two jobs.", sub: "The mic INSIDE a message box dictates text into that box. The big mic in '+ Add' creates a whole new task. Don't mix them up." },
+  { main: "💡 Tip.",              sub: "'Approve' moves a task to In Progress so Maya can keep working it. 'Done' wraps it up — moves it to archive and into Recent Wins." },
+  { main: "💡 Heads up.",         sub: "Tap 'Ping' on something that's gone quiet. It sends Maya a polite 'need an update' email — no fuss." },
+  { main: "💡 Reminder.",         sub: "'Reject' doesn't delete a task. It bumps it back so Maya can figure out next steps. She decides what's next." },
+  { main: "💡 Shortcut.",         sub: "Each card has a small message box at the bottom. Type or dictate — Maya gets the note in her inbox in real time." }
 ];
 
 function getGreeting() {
