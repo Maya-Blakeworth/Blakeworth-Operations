@@ -37,7 +37,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .port-badge{margin-left:auto;background:#fef2f2;color:#b91c1c;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700}
 .cat-item{padding:5px 10px 5px 18px;cursor:pointer;border-radius:6px;font-size:12px;color:#475569;display:flex;align-items:center;justify-content:space-between;margin:1px 4px}
 .cat-item:hover,.cat-item.active{background:#f1f5f9;color:#0f172a}
-.cat-badge{background:#fef2f2;color:#b91c1c;border-radius:10px;padding:1px 5px;font-size:10px;font-weight:600}
+.cat-badge{background:#fef2f2;color:#b91c1c;border-radius:10px;padding:1px 5px;font-size:10px;font-weight:600}.cat-badge-ok{background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:9px;margin-left:auto;flex-shrink:0}
 .sidebar-bottom{margin-top:auto;padding:10px 8px;border-top:1px solid #f1f5f9}
 .instr-btn{width:100%;padding:7px 10px;border-radius:6px;border:1px solid #e2e8f0;background:#f8fafc;color:#475569;font-size:11px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:6px}
 .instr-btn:hover{background:#f1f5f9;color:#1e293b}
@@ -245,25 +245,25 @@ td.col-entity{text-align:left}
       </div>
       <div class="ov-cards">
 
-  <div class="ov-card ov-card-jhu" onclick="filterBy('JHU',null)">
+  <div class="ov-card ov-card-jhu" id="ovc-JHU" onclick="filterBy('JHU',null)">
     <div class="ov-port">JHU</div>
     <div class="ov-flagged">29 <span>flagged</span></div>
     <div class="ov-amt">$47,869</div>
     <div class="ov-total">91 total items</div>
   </div>
-  <div class="ov-card ov-card-slp" onclick="filterBy('SLP',null)">
+  <div class="ov-card ov-card-slp" id="ovc-SLP" onclick="filterBy('SLP',null)">
     <div class="ov-port">SLP</div>
     <div class="ov-flagged">19 <span>flagged</span></div>
     <div class="ov-amt">$1,476</div>
     <div class="ov-total">36 total items</div>
   </div>
-  <div class="ov-card ov-card-holding" onclick="filterBy('HOLDING',null)">
+  <div class="ov-card ov-card-holding" id="ovc-HOLDING" onclick="filterBy('HOLDING',null)">
     <div class="ov-port">Holding</div>
     <div class="ov-flagged">9 <span>flagged</span></div>
     <div class="ov-amt">$5,208</div>
     <div class="ov-total">9 total items</div>
   </div>
-  <div class="ov-card ov-card-dc" onclick="filterBy('DC',null)">
+  <div class="ov-card ov-card-dc" id="ovc-DC" onclick="filterBy('DC',null)">
     <div class="ov-port">DC</div>
     <div class="ov-flagged">2 <span>flagged</span></div>
     <div class="ov-amt">$300</div>
@@ -4253,6 +4253,63 @@ function visibleRows() {
     return true;
   });
 }
+
+// ── dynamic sidebar ──────────────────────────────────────────────────────────
+function renderSidebar() {
+  // Preferred display order for categories
+  const CAT_ORDER = ['LLC Filing','Rental License','Property Tax','Lead Certification','Utility','MDE','Inspection'];
+  const byPortCat = {};
+  const byPort = {};
+  DATA.forEach(r => {
+    const port = r.portfolio;
+    const cat = r.category;
+    if (!byPortCat[port]) byPortCat[port] = {};
+    if (!byPortCat[port][cat]) byPortCat[port][cat] = {total:0,flagged:0};
+    byPortCat[port][cat].total++;
+    if (isFlagged(r)) byPortCat[port][cat].flagged++;
+    if (!byPort[port]) byPort[port] = {total:0,flagged:0};
+    byPort[port].total++;
+    if (isFlagged(r)) byPort[port].flagged++;
+  });
+  ['JHU','SLP','HOLDING','DC'].forEach(port => {
+    const pg = document.getElementById('pg-'+port);
+    if (!pg) return;
+    const pd = byPort[port]||{total:0,flagged:0};
+    const badge = pg.querySelector('.port-badge');
+    if (badge) badge.textContent = pd.flagged > 0 ? pd.flagged : '✓';
+    const catContainer = pg.querySelector('.port-cats');
+    if (!catContainer) return;
+    const cats = byPortCat[port]||{};
+    // Sort categories in preferred order
+    const sortedCats = Object.keys(cats).sort((a,b) => {
+      const ai = CAT_ORDER.indexOf(a); const bi = CAT_ORDER.indexOf(b);
+      return (ai===-1?99:ai) - (bi===-1?99:bi);
+    });
+    catContainer.innerHTML = sortedCats.map(cat => {
+      const c = cats[cat];
+      const allOk = c.flagged === 0;
+      const badgeText = allOk ? '✓' : c.flagged;
+      const badgeClass = allOk ? 'cat-badge-ok' : 'cat-badge';
+      return `<div class="cat-item" data-portfolio="${port}" data-category="${cat}" onclick="filterBy('${port}','${cat}')">${cat}<span class="${badgeClass}">${badgeText}</span></div>`;
+    }).join('');
+  });
+}
+  // Update ov-card summary counts
+  ['JHU','SLP','HOLDING','DC'].forEach(port => {
+    const el = document.getElementById('ovc-' + port);
+    if (!el) return;
+    const pd = byPort[port]||{total:0,flagged:0};
+    const amtTotal = DATA.filter(r=>r.portfolio===port&&r.amount&&isFlagged(r))
+      .reduce((s,r)=>s+parseFloat(r.amount||0),0);
+    const fEl = el.querySelector('.ov-flagged');
+    if (fEl) fEl.innerHTML = (pd.flagged > 0 ? pd.flagged : '<span style="color:#16a34a">✓</span>') + ' <span>' + (pd.flagged > 0 ? 'flagged' : 'all clear') + '</span>';
+    const tEl = el.querySelector('.ov-total');
+    if (tEl) tEl.textContent = pd.total + ' total items';
+    const aEl = el.querySelector('.ov-amt');
+    if (aEl) aEl.textContent = amtTotal > 0 ? '$' + amtTotal.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0}) : '';
+  });
+}
+
 function renderTable() {
   const rows=visibleRows();
   document.getElementById('row-count').textContent=rows.length+' items';
@@ -4281,6 +4338,7 @@ function filterBy(port,cat) {
     const el=document.querySelector(`.cat-item[data-portfolio="${port}"][data-category="${cat}"]`);
     if (el) el.classList.add('active');
   }
+  renderSidebar();
   renderTable();
 }
 function togglePort(p) { document.getElementById('pg-'+p).classList.toggle('expanded'); }
