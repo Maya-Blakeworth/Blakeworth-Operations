@@ -1,0 +1,4406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blakeworth Compliance</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;background:#f1f5f9;color:#0f172a;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOP BAR */
+.topbar{background:#1e293b;color:#fff;height:48px;display:flex;align-items:center;padding:0 20px;gap:24px;flex-shrink:0;z-index:100}
+.topbar .logo{font-size:15px;font-weight:700;letter-spacing:.3px;color:#f8fafc;margin-right:auto}
+.stat{display:flex;align-items:center;gap:6px;font-size:12px;color:#cbd5e1;cursor:default}
+.stat .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.stat .val{color:#f8fafc;font-weight:600}
+.dot-red{background:#ef4444}.dot-amber{background:#f59e0b}.dot-blue{background:#3b82f6}
+.topbar-btn{padding:5px 12px;border-radius:5px;border:1px solid #334155;background:transparent;color:#94a3b8;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;margin-left:8px}
+.topbar-btn:hover{background:#334155;color:#f8fafc}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:168px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.sidebar-top{padding:10px 8px 6px}
+.all-items{padding:7px 10px;border-radius:6px;cursor:pointer;font-weight:600;font-size:12px;color:#475569;display:flex;align-items:center;justify-content:space-between}
+.all-items.active,.all-items:hover{background:#f1f5f9;color:#0f172a}
+.all-badge{background:#ef4444;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700}
+.sidebar-divider{height:1px;background:#f1f5f9;margin:4px 0}
+.port-group{}
+.port-header{padding:7px 10px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;cursor:pointer;display:flex;align-items:center;gap:4px;user-select:none}
+.port-header:hover{color:#64748b}
+.port-chevron{font-size:10px;transition:transform .15s;display:inline-block}
+.port-group:not(.expanded) .port-chevron{transform:rotate(-90deg)}
+.port-group:not(.expanded) .port-cats{display:none}
+.port-badge{margin-left:auto;background:#fef2f2;color:#b91c1c;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700}
+.cat-item{padding:5px 10px 5px 18px;cursor:pointer;border-radius:6px;font-size:12px;color:#475569;display:flex;align-items:center;justify-content:space-between;margin:1px 4px}
+.cat-item:hover,.cat-item.active{background:#f1f5f9;color:#0f172a}
+.cat-badge{background:#fef2f2;color:#b91c1c;border-radius:10px;padding:1px 5px;font-size:10px;font-weight:600}
+.sidebar-bottom{margin-top:auto;padding:10px 8px;border-top:1px solid #f1f5f9}
+.instr-btn{width:100%;padding:7px 10px;border-radius:6px;border:1px solid #e2e8f0;background:#f8fafc;color:#475569;font-size:11px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:6px}
+.instr-btn:hover{background:#f1f5f9;color:#1e293b}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* OVERVIEW */
+.overview{background:#fff;border-bottom:1px solid #e2e8f0;padding:12px 16px;flex-shrink:0}
+.ov-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;margin-bottom:0}
+.ov-toggle-label{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.ov-chevron{font-size:10px;transition:transform .2s;display:inline-block;color:#94a3b8}
+.ov-cards{display:flex;gap:10px;margin-top:10px}
+.ov-card{flex:1;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;cursor:pointer;transition:border-color .15s,background .15s;min-width:0}
+.ov-card:hover{border-color:#cbd5e1;background:#f8fafc}
+.ov-port{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.ov-flagged{font-size:18px;font-weight:700;color:#0f172a;line-height:1}
+.ov-flagged span{font-size:11px;font-weight:500;color:#94a3b8}
+.ov-amt{font-size:12px;font-weight:600;color:#b91c1c;margin-top:2px}
+.ov-total{font-size:10px;color:#cbd5e1;margin-top:2px}
+.overview.collapsed .ov-cards{display:none}
+.overview.collapsed .ov-chevron{transform:rotate(-90deg)}
+
+/* TOOLBAR */
+.toolbar{padding:8px 16px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.toolbar-label{font-size:12px;color:#94a3b8;margin-right:4px}
+.pill{padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;background:#fff;font-size:12px;color:#64748b;cursor:pointer;font-weight:500;transition:all .15s}
+.pill:hover{border-color:#cbd5e1;color:#334155}
+.pill.active{background:#1e293b;color:#fff;border-color:#1e293b}
+.row-count{margin-left:auto;font-size:11px;color:#94a3b8}
+
+/* TABLE */
+.table-wrap{flex:1;overflow-y:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:9px 12px;text-align:center;font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0;background:#f8fafc;position:sticky;top:0;z-index:10;border-top:1px solid #e2e8f0}
+th.col-entity{text-align:left}
+tr.data-row{border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .1s}
+tr.data-row:hover{background:#f8fafc}
+tr.data-row.active{background:#eff6ff}
+tr.data-row.muted{opacity:.72}
+tr.data-row.critical{background:#fff8f8}
+tr.data-row.warning{background:#fffdf0}
+td{padding:9px 12px;vertical-align:middle;text-align:center}
+td.col-entity{text-align:left}
+
+/* priority dot */
+.pri-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block}
+.pri-red{background:#ef4444}.pri-yellow{background:#f59e0b}.pri-purple{background:#9333ea}
+.pri-blue{background:#3b82f6}.pri-green{background:#22c55e}.pri-gray{background:#cbd5e1}
+
+/* entity cell */
+.entity-name{font-weight:600;color:#0f172a;font-size:13px}
+.entity-sub{font-size:11px;color:#94a3b8;margin-top:1px}
+
+/* badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:#fef2f2;color:#b91c1c}.badge-yellow{background:#fefce8;color:#854d0e}
+.badge-purple{background:#faf5ff;color:#6b21a8}.badge-blue{background:#eff6ff;color:#1d4ed8}
+.badge-green{background:#f0fdf4;color:#15803d}.badge-gray{background:#f8fafc;color:#64748b}
+
+/* comm badge */
+.comm-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;border:1px solid;white-space:nowrap}
+.comm-unstarted{background:#f8fafc;color:#94a3b8;border-color:#e2e8f0}
+.comm-notified{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+.comm-acknowledged{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0}
+.comm-pending{background:#fefce8;color:#92400e;border-color:#fde68a}
+.comm-cleared{background:#f0fdf4;color:#15803d;border-color:#86efac}
+
+/* days badge */
+.days-badge{font-size:11px;font-weight:600;white-space:nowrap;display:block;margin-top:2px}
+.days-overdue{color:#b91c1c}.days-urgent{color:#d97706}.days-ok{color:#94a3b8}
+
+/* DETAIL PANEL */
+.detail-panel{width:0;background:#fff;border-left:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;transition:width .2s ease;flex-shrink:0}
+.detail-panel.open{width:292px}
+.dp-header{background:#1e293b;color:#fff;padding:14px 16px;flex-shrink:0}
+.dp-close{float:right;cursor:pointer;color:#94a3b8;font-size:16px;line-height:1;margin-left:8px}
+.dp-close:hover{color:#fff}
+.dp-entity{font-size:15px;font-weight:700;color:#f8fafc;margin-bottom:3px;padding-right:20px}
+.dp-sub{font-size:11px;color:#94a3b8}
+.dp-body{flex:1;overflow-y:auto;padding:14px 16px}
+.dp-section{margin-bottom:16px}
+.dp-section-title{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.dp-field{margin-bottom:8px}
+.dp-label{font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.dp-value{font-size:12px;color:#1e293b;font-weight:500;line-height:1.4}
+.dp-value.amount{font-size:15px;font-weight:700;color:#b91c1c}
+.dp-value a{color:#2563eb;text-decoration:none;font-size:11px}
+.dp-value a:hover{text-decoration:underline}
+.dp-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px;font-size:12px;color:#334155;line-height:1.5}
+.dp-btn{display:block;width:100%;padding:7px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;text-align:center;margin-bottom:6px;border:none;transition:background .15s}
+.dp-btn-primary{background:#1e293b;color:#fff}.dp-btn-primary:hover{background:#0f172a}
+.dp-btn-secondary{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}.dp-btn-secondary:hover{background:#e2e8f0}
+
+/* comm flow */
+.comm-flow{display:flex;gap:0;margin-bottom:4px}
+.cf-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;position:relative}
+.cf-step:not(:last-child)::after{content:'';position:absolute;top:9px;left:50%;width:100%;height:2px;background:#e2e8f0;z-index:0}
+.cf-dot{width:18px;height:18px;border-radius:50%;border:2px solid #e2e8f0;background:#fff;z-index:1;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff}
+.cf-dot.done{background:#22c55e;border-color:#22c55e}.cf-dot.current{background:#3b82f6;border-color:#3b82f6}
+.cf-label{font-size:9px;color:#94a3b8;text-align:center;line-height:1.2}
+.cf-step.done .cf-label{color:#15803d}.cf-step.current .cf-label{color:#1d4ed8;font-weight:600}
+
+/* log */
+.activity-log{margin-top:8px}
+.log-entry{font-size:11px;color:#64748b;padding:4px 0;border-bottom:1px solid #f1f5f9}
+.log-entry:last-child{border-bottom:none}
+.log-date{color:#94a3b8;font-size:10px}
+.log-form{margin-top:8px;display:flex;gap:6px}
+.log-input{flex:1;padding:5px 8px;border:1px solid #e2e8f0;border-radius:5px;font-size:11px;color:#334155}
+.log-submit{padding:5px 10px;background:#1e293b;color:#fff;border:none;border-radius:5px;font-size:11px;cursor:pointer;font-weight:600}
+
+/* portal links */
+.portal-link{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:4px;text-decoration:none;color:#334155;font-size:12px;font-weight:500;transition:background .1s}
+.portal-link:hover{background:#f8fafc}.portal-link .pl-icon{font-size:14px}
+
+/* RA rows */
+.ra-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid #f8fafc}
+.ra-key{color:#94a3b8}.ra-val{color:#334155;font-weight:500;text-align:right;max-width:160px;word-break:break-word}
+
+/* INSTRUCTIONS MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:10px;width:680px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-header{background:#1e293b;color:#fff;padding:16px 20px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:15px;font-weight:700;color:#f8fafc}
+.modal-close{cursor:pointer;color:#94a3b8;font-size:20px;line-height:1}.modal-close:hover{color:#fff}
+.modal-body{flex:1;overflow-y:auto;padding:20px;font-size:12px;line-height:1.7;color:#334155}
+.modal-body br{display:block;margin:1px 0}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="logo">Blakeworth Compliance</div>
+  <div class="stat"><span class="dot dot-red"></span><span class="val" id="stat-flagged">—</span>&nbsp;flagged</div>
+  <div class="stat"><span class="dot dot-amber"></span>$<span class="val" id="stat-outstanding">—</span>&nbsp;outstanding</div>
+  <div class="stat"><span class="dot dot-blue"></span><span class="val" id="stat-awaiting">—</span>&nbsp;awaiting reply</div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="all-items active" id="nav-all" onclick="filterBy(null,null)">
+        All items <span class="all-badge" id="all-badge">—</span>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    
+        <div class="port-group expanded" id="pg-JHU">
+          <div class="port-header" onclick="togglePort('JHU')">
+            <span class="port-chevron">▾</span>JHU<span class="port-badge">29</span>
+          </div>
+          <div class="port-cats"><div class="cat-item" data-portfolio="JHU" data-category="Lead Certification" onclick="filterBy('JHU','Lead Certification')">Lead Certification<span class="cat-badge">19</span></div><div class="cat-item" data-portfolio="JHU" data-category="LLC Filing" onclick="filterBy('JHU','LLC Filing')">LLC Filing<span class="cat-badge">5</span></div><div class="cat-item" data-portfolio="JHU" data-category="Rental License" onclick="filterBy('JHU','Rental License')">Rental License<span class="cat-badge">4</span></div><div class="cat-item" data-portfolio="JHU" data-category="Property Tax" onclick="filterBy('JHU','Property Tax')">Property Tax<span class="cat-badge">1</span></div></div>
+        </div>
+        <div class="port-group expanded" id="pg-SLP">
+          <div class="port-header" onclick="togglePort('SLP')">
+            <span class="port-chevron">▾</span>SLP<span class="port-badge">19</span>
+          </div>
+          <div class="port-cats"><div class="cat-item" data-portfolio="SLP" data-category="Rental License" onclick="filterBy('SLP','Rental License')">Rental License<span class="cat-badge">10</span></div><div class="cat-item" data-portfolio="SLP" data-category="LLC Filing" onclick="filterBy('SLP','LLC Filing')">LLC Filing<span class="cat-badge">8</span></div><div class="cat-item" data-portfolio="SLP" data-category="Utility" onclick="filterBy('SLP','Utility')">Utility<span class="cat-badge">1</span></div></div>
+        </div>
+        <div class="port-group expanded" id="pg-HOLDING">
+          <div class="port-header" onclick="togglePort('HOLDING')">
+            <span class="port-chevron">▾</span>HOLDING<span class="port-badge">9</span>
+          </div>
+          <div class="port-cats"><div class="cat-item" data-portfolio="HOLDING" data-category="LLC Filing" onclick="filterBy('HOLDING','LLC Filing')">LLC Filing<span class="cat-badge">8</span></div><div class="cat-item" data-portfolio="HOLDING" data-category="Registered Agent" onclick="filterBy('HOLDING','Registered Agent')">Registered Agent<span class="cat-badge">1</span></div></div>
+        </div>
+        <div class="port-group expanded" id="pg-DC">
+          <div class="port-header" onclick="togglePort('DC')">
+            <span class="port-chevron">▾</span>DC<span class="port-badge">2</span>
+          </div>
+          <div class="port-cats"><div class="cat-item" data-portfolio="DC" data-category="LLC Filing" onclick="filterBy('DC','LLC Filing')">LLC Filing<span class="cat-badge">1</span></div><div class="cat-item" data-portfolio="DC" data-category="Rental License" onclick="filterBy('DC','Rental License')">Rental License<span class="cat-badge">1</span></div></div>
+        </div>
+    <div class="sidebar-bottom">
+      <button class="instr-btn" onclick="openInstructions()">📋 Instructions</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="overview" id="overview-section">
+      <div class="ov-toggle" onclick="toggleOverview()">
+        <span class="ov-toggle-label">
+          <span class="ov-chevron" id="ov-chevron">▾</span>
+          Overview
+        </span>
+        <span style="font-size:11px;color:#94a3b8">59 flagged · $54,854 outstanding</span>
+      </div>
+      <div class="ov-cards">
+        
+  <div class="ov-card" onclick="filterBy('JHU',null)">
+    <div class="ov-port">JHU</div>
+    <div class="ov-flagged">29 <span>flagged</span></div>
+    <div class="ov-amt">$47,869</div>
+    <div class="ov-total">91 total items</div>
+  </div>
+  <div class="ov-card" onclick="filterBy('SLP',null)">
+    <div class="ov-port">SLP</div>
+    <div class="ov-flagged">19 <span>flagged</span></div>
+    <div class="ov-amt">$1,476</div>
+    <div class="ov-total">36 total items</div>
+  </div>
+  <div class="ov-card" onclick="filterBy('HOLDING',null)">
+    <div class="ov-port">HOLDING</div>
+    <div class="ov-flagged">9 <span>flagged</span></div>
+    <div class="ov-amt">$5,208</div>
+    <div class="ov-total">9 total items</div>
+  </div>
+  <div class="ov-card" onclick="filterBy('DC',null)">
+    <div class="ov-port">DC</div>
+    <div class="ov-flagged">2 <span>flagged</span></div>
+    <div class="ov-amt">$300</div>
+    <div class="ov-total">3 total items</div>
+  </div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <span class="toolbar-label">Show:</span>
+      <button class="pill active" onclick="setFilter('all',this)">All</button>
+      <button class="pill" onclick="setFilter('flagged',this)">Flagged</button>
+      <button class="pill" onclick="setFilter('current',this)">Current / Active</button>
+      <button class="pill" onclick="setFilter('cleared',this)">Cleared</button>
+      <span class="row-count" id="row-count"></span>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:22px"></th>
+            <th class="col-entity">Entity / Property</th>
+            <th style="width:52px">Unit</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Due</th>
+            <th>Amount</th>
+            <th>Comm</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- DETAIL PANEL -->
+  <aside class="detail-panel" id="detail-panel">
+    <div class="dp-header">
+      <span class="dp-close" onclick="closePanel()">×</span>
+      <div class="dp-entity" id="dp-entity">—</div>
+      <div class="dp-sub" id="dp-sub">—</div>
+    </div>
+    <div class="dp-body">
+      <div class="dp-section">
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <span id="dp-status-badge" class="badge">—</span>
+          <span id="dp-days-badge" class="days-badge" style="display:inline-block;margin-top:3px">—</span>
+        </div>
+        <div class="dp-field"><div class="dp-label">Portal says</div><div class="dp-value" id="dp-source"></div></div>
+        <div class="dp-field"><div class="dp-label">Amount due</div><div class="dp-value amount" id="dp-amount"></div></div>
+        <div class="dp-field"><div class="dp-label">Responsible</div><div class="dp-value" id="dp-responsible"></div></div>
+      </div>
+      <div class="dp-section" id="dp-portals-section">
+        <div class="dp-section-title">Where to act</div>
+        <div id="dp-portals"></div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">Action required</div>
+        <div class="dp-box" id="dp-action">—</div>
+      </div>
+      <div class="dp-section">
+        <button class="dp-btn dp-btn-primary" onclick="cycleCommStatus()">Update status →</button>
+        <button class="dp-btn dp-btn-secondary" onclick="draftEmail()">✉ Draft email</button>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">Comm flow</div>
+        <div class="comm-flow" id="dp-comm-flow"></div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">Notes</div>
+        <div class="dp-box" id="dp-notes">—</div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">Activity log</div>
+        <div class="activity-log" id="dp-log"></div>
+        <div class="log-form">
+          <input class="log-input" id="log-input" placeholder="Add note…" onkeydown="if(event.key==='Enter')addLog()">
+          <button class="log-submit" onclick="addLog()">Log</button>
+        </div>
+      </div>
+      <div class="dp-section" id="dp-ra-section">
+        <div class="dp-section-title">RA data</div>
+        <div id="dp-ra"></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- INSTRUCTIONS MODAL -->
+<div class="modal-overlay" id="instr-modal" onclick="closeInstructions(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">📋 Blakeworth Compliance — Instructions</span>
+      <span class="modal-close" onclick="closeInstructions(null)">×</span>
+    </div>
+    <div class="modal-body" id="instr-body">
+      BLAKEWORTH COMPLIANCE TRACKER — STEP-BY-STEP INSTRUCTIONS<br>Each section below gives EXACT steps verified live in the portal. URLs in BLUE are active links. Items in ORANGE require credentials — confirm with Maya before use. Items in RED are urgent/critical.<br>STEP — ACTION (what to do) — DETAIL / WHAT YOU SEE<br>① MARYLAND LLC ANNUAL REPORT FILINGS (MD SDAT) — JHU PORTFOLIO<br>Entities: Guilford GP · Woodrow Apts · Calvert St · 3119 N Calvert · University Pkwy · Woodrow GP · University GP · Guilford Apts · 3106 N Calvert · Soteira Partners · Abell St · Saint Paul St · 3000 N Calvert · HWood Ventures | Due: April 15 each year | Fee: $300/entity<br>Step 1 — Go to: https://egov.maryland.gov/BusinessExpress/EntitySearch — No login needed to CHECK status. The page shows a 'Business Name' search field with two radio buttons below it: ○ Business Name  ○ Department ID<br>Step 2 — Click the 'Department ID' radio button. Type the Dept ID into the Business Name field. Click Search. — Dept IDs — use MASTER tab Notes column:<br>Guilford GP=W23302540 | Woodrow Apts=W25002825 | Calvert St=W22838031 | 3119 N Calvert=W25002841 | University Pkwy=W24982449 | Woodrow GP=W25003013 | University GP=W24982431 | Guilford Apts=W23150261 | 3106 N Calvert=W23764772 | Soteira=W24687469 | Abell St=W22347819 | Saint Paul St=W22812804 | 3000 N Calvert=W23712821<br>Step 3 — Click the entity name in search results. On the detail page, read: (a) Standing status at the top, (b) 'Annual Reports' section lower on the page. — Good Standing = current. 'Not in Good Standing' or 'Forfeited' = action needed.<br>Annual Reports section lists each year filed. If the current year is missing → report needs to be filed.<br>Step 4 — Screenshot the full entity page. Save to Google Drive: Blakeworth / Compliance / LLC Filings / JHU / [Entity Name]. — Screenshot must show entity name, Dept ID, standing status, and annual report history. Date your filename: e.g. Guilford_GP_2026-07-05.png<br>Step 5 — To FILE a missing annual report: go to https://egov.maryland.gov/BusinessExpress/Account/LogOn — Login page shows:<br>  Username: hwoodventures<br>  Password:drgkQpsbv28!<br>  Log In button<br>Links: » Forgot Username? | » Forgot Password? | Create User Account<br>Step 6 — After logging in, use the top menu to find your entity → click 'File Annual Report' next to the entity name. — Complete the form: verify principal office address and registered agent (should be CSC). Pay the $300 fee by credit card when prompted. Download the confirmation page as PDF.<br>Step 7 — ⚠️ FORFEITED entities (Guilford GP — JHU-LLC-001): click 'File for Reinstatement' instead of annual report. — Reinstatement requires ALL missed years (2023+2024+2025+2026) filed at once. Confirm total fees with Dallas before paying — can be $1,200+.<br>Step 8 — Update MASTER tab: Health → 'Current', Source_Status → 'In good standing — [YEAR] report filed [DATE]', Status → 'Done', Cleared_At → today's date. — Also add a note in the Notes column: 'Verified on SDAT [DATE] — [your initials]'<br>② PENNSYLVANIA LLC ANNUAL REPORT FILINGS (PA DOS) — SLP PORTFOLIO<br>Entities: Fairview St · Montclair Ave · 101 S 3rd St · 114 W 4th St · 13 W Morton St · 2529 E 4th St · 505 Thomas St · Packer Ave · Pierce St | Due: September 30 each year | Fee: $7/entity | Auto-approved when filed online<br>Step 1 — Go to: https://file.dos.pa.gov/search/business — This is the PA Department of State business search portal (updated 2024 — replaces the old corporations.pa.gov URL). No login needed to check status.<br>Step 2 — In the search bar, type the entity name (e.g. 'Fairview St') or the PA ID number. Press Enter or click Search. — PA IDs from MASTER Notes column:<br>Fairview St=7321903 | Montclair Ave=6804523 | 101 S 3rd St=6899379 | 114 W 4th St=6871029 | 13 W Morton St=6992504 | 2529 E 4th St=6974707 | 505 Thomas St=7075894 | Packer Ave=3568217 | Pierce St=7315868<br>Step 3 — Click the entity name in results. Check: Status field (should say 'Active') and Annual Report history. — Active-Dissolved = filing overdue. 'Active' with no current year listed = report needs to be filed.<br>Fairview St (SLP-LLC-001) is currently Active-Dissolved — needs filing.<br>Step 4 — Screenshot the entity page. Save to Google Drive: Blakeworth / Compliance / LLC Filings / SLP / [Entity Name].<br>Step 5 — To FILE the annual report: go to https://file.dos.pa.gov and click 'File Annual Report' at the top. — You need a PA myPennsylvania.gov account to file.<br>  Username: [ASK MAYA]<br>  Password: [ASK MAYA]<br>If no account exists, click 'Create Account' on the login page.<br>Step 6 — On the filing form: confirm entity name, registered agent (CSC), and principal office address. Pay the $7 fee by credit card. Click Submit. — PA online filings are auto-approved instantly. Download the confirmation immediately after submitting — it appears on screen right after payment.<br>Step 7 — Update MASTER tab: Health → 'Current', Source_Status → 'Active — [YEAR] annual report filed [DATE]', Status → 'Done'. — If entity was 'Active-Dissolved', re-check status on portal after filing to confirm it has returned to 'Active'.<br>③ DC LLC BIENNIAL REPORT & REINSTATEMENT (DC DLCP/CorpOnline) — DC PORTFOLIO<br>Entity: 3538 6th St Nw, LLC (File L00007787255) | Status: REVOKED 06/18/2026 — reinstatement required BEFORE any new biennial | Due every 2 years on April 1 | Fee: ~$300 + penalties<br>Step 1 — Go to: https://corponline.dlcp.dc.gov/homepage — This is the DC DLCP CorpOnline portal for LLC filings and biennial reports. The page has a language selector and two buttons: one for the 4-step BBL guide PDF and one for services.<br>Step 2 — Click the Login/Sign In button. You will be redirected to the AccessDC SSO login page (accessdc.dcra.dc.gov). —   Username (email): [ASK MAYA]<br>  Password: [ASK MAYA]<br>If no account: click 'Register' on the AccessDC page. Use the same email Maya uses for DC government services.<br>Step 3 — After login, search for '3538 6th St Nw, LLC' or File Number L00007787255. — ⚠️ Entity is currently REVOKED. You will see a 'File Reinstatement' option — not the standard biennial report option. Do NOT try to file a biennial report — it will be rejected. Must reinstate first.<br>Step 4 — Click 'File Reinstatement'. Complete the reinstatement application form. — You will be asked to: confirm entity address, confirm registered agent, pay all overdue biennial report fees + a reinstatement penalty. Pay by credit card. Print/save the receipt.<br>Step 5 — After reinstatement, verify new status by searching the entity again on the portal. Confirm it shows 'Active'. — Also check at: https://mybusiness.dc.gov — search for '3538 6th St Nw' to confirm Active status is reflected in the BBL system.<br>Step 6 — ⚠️ ESCALATE TO DALLAS before filing — confirm entity name, confirm ownership, get payment approval. — Also flag: the DC Basic Business License (rental, DC-LIC-001) cannot be renewed until the LLC is reinstated.<br>Step 7 — Update MASTER tab: DC-LLC-001 → Health='Current', Source_Status='Reinstated [DATE]', Status='Done'.<br>④ DELAWARE FRANCHISE TAX & REINSTATEMENT (DE DIVISION OF CORPORATIONS) — HOLDING ENTITIES<br>Entities: Basha Enterprises · Basha Real Estate · Blakeworth Management · Blakeworth Properties · Blakeworth LLC · DCSK GP · THG Portland · Pinedale LP | ⚠️ Blakeworth Management + THG Portland are CANCELLED — reinstatement required<br>Step 1 — CHECK status — go to: https://icis.corp.delaware.gov/eCorp/EntitySearch/NameSearch.aspx — Search page has two fields: 'Entity Name' (left) and 'File Number' (right) with a Search button below. No login needed to check status.<br>Step 2 — Enter the File Number in the right field (more reliable than name search). Click Search. — File numbers:<br>Basha Enterprises=7157623 | Basha Real Estate=7157433 | Blakeworth Mgmt=5653981<br>Blakeworth Properties=3138393 | Blakeworth LLC=3073248 | DCSK GP=7585818<br>THG Portland=7565891 | Pinedale LP=[confirm 
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {
+    "id": "JHU-LLC-001",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Guilford GP, LLC",
+    "category": "LLC Filing",
+    "due_date": "2026-04-15 00:00:00",
+    "status": "Reinstatement Required",
+    "source_status": "FORFEITED \u2014 MD SDAT (verified 07/06/2026)",
+    "cleared_at": "",
+    "state": "Maryland",
+    "entity_id": "W23302540",
+    "registered_agent": "Douglas Schmidt (non-CSC)",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "Entity forfeited. Reinstatement required for all back years. Do not file online.",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "FORFEITED \u2014 requires formal SDAT revival, not a simple annual report. RA is Douglas Schmidt (differs from all other JHU entities).",
+    "source_doc": "https://drive.google.com/file/d/1_S818MtT5ICLFQDjL36M1rlPr5Vh5h-s/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-002",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-15",
+    "status": "Current",
+    "source_status": "Active \u2014 IN GOOD STANDING (SDAT verified 07/06/2026)",
+    "cleared_at": "06/23/2026",
+    "state": "Maryland",
+    "entity_id": "W25002825",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "06/01/2026",
+    "ra_invoice_status": "\u26a0\ufe0f Outstanding $108.90 (inv 84863305, due 02/14/2026)",
+    "action_required": "\u2713 In good standing \u2014 no filing needed | \u26a0\ufe0f CSC RA invoice overdue \u2014 pay on CSC portal",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "2026 AR filed 06/23/2026. RA: CSC.",
+    "source_doc": "https://drive.google.com/file/d/124jc6P2h78FAjJlFxZ5LGldz8VZuStqb/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-003",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Calvert St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-15",
+    "status": "Current",
+    "source_status": "Active \u2014 IN GOOD STANDING (SDAT verified 07/06/2026)",
+    "cleared_at": "",
+    "state": "Maryland",
+    "entity_id": "W22838031",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "06/01/2026",
+    "ra_invoice_status": "N/A",
+    "action_required": "\u2713 In good standing \u2014 no filing needed",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "2026 AR not yet filed. RA: CSC. maryland.gov.",
+    "source_doc": "https://drive.google.com/file/d/1Av21AP0jFQXNiGJXV-5MkUCR09_U6FVW/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-004",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "3119 N Calvert, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-15",
+    "status": "Current",
+    "source_status": "Active \u2014 IN GOOD STANDING (SDAT verified 07/06/2026)",
+    "cleared_at": "06/23/2026",
+    "state": "Maryland",
+    "entity_id": "W25002841",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "06/01/2026",
+    "ra_invoice_status": "\u26a0\ufe0f Outstanding $108.90 (inv 84862328, due 02/14/2026)",
+    "action_required": "\u2713 In good standing \u2014 no filing needed | \u26a0\ufe0f CSC RA invoice overdue \u2014 pay on CSC portal",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "2026 AR filed 06/23/2026. RA: CSC.",
+    "source_doc": "https://drive.google.com/file/d/1ppHevyOUWkrPTZA0H2ysDQ8ObAtCsHmu/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-005",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "University Pkwy, LLC",
+    "category": "LLC Filing",
+    "due_date": "2026-04-15 00:00:00",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 NOT IN GOOD STANDING \u2014 2026 AR due (SDAT verified 07/06/2026)",
+    "cleared_at": "",
+    "state": "Maryland",
+    "entity_id": "W24982449",
+    "registered_agent": "CSC (account 8362966)",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "06/01/2026",
+    "ra_invoice_status": "N/A",
+    "action_required": "File 2026 annual report on MD SDAT \u2014 $300. Log in \u2192 egov.maryland.gov/BusinessExpress \u2192 search Dept ID W24982449 \u2192 File Annual Report.",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "NOT IN GOOD STANDING \u2014 2026 AR due. RA: CSC. maryland.gov.",
+    "source_doc": "https://drive.google.com/file/d/1l9jXUU3dvKx7ggjAOYRS6KHXFUgflb_1/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-006",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Woodrow GP, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-15",
+    "status": "Current",
+    "source_status": "Active \u2014 IN GOOD STANDING (SDAT verified 07/06/2026)",
+    "cleared_at": "04/22/2026",
+    "state": "Maryland",
+    "entity_id": "W25003013",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "06/01/2026",
+    "ra_invoice_status": "\u26a0\ufe0f Outstanding $108.90 (inv 84864316, due 02/14/2026)",
+    "action_required": "\u2713 In good standing \u2014 no filing needed | \u26a0\ufe0f CSC RA invoice overdue \u2014 pay on CSC portal",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "IN GOOD STANDING. 2025 + 2026 ARs filed 04/22/2026. GP holding entity. RA: CSC.",
+    "source_doc": "https://drive.google.com/file/d/17DuSA9596z9WSM8NLM01EKAV9Lx0FJXq/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-007",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "University GP, LLC",
+    "category": "LLC Filing",
+    "due_date": "2026-04-15 00:00:00",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 NOT IN GOOD STANDING \u2014 2025 + 2026 ARs due (SDAT verified 07/06/2026)",
+    "cleared_at": "",
+    "state": "Maryland",
+    "entity_id": "W24982431",
+    "registered_agent": "CSC (account 8362966)",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "06/01/2026",
+    "ra_invoice_status": "\u26a0\ufe0f Outstanding $108.90 (inv 84863349, due 02/14/2026)",
+    "action_required": "File BOTH 2025 + 2026 annual reports on MD SDAT \u2014 $600 total ($300 each). Log in \u2192 search Dept ID W24982431 \u2192 file for each missing year. \u26a0\ufe0f Higher penalty risk \u2014 2 years overdue.",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "NOT IN GOOD STANDING \u2014 2 years overdue (2025 + 2026). Higher penalty risk. RA: CSC. maryland.gov.",
+    "source_doc": "https://drive.google.com/file/d/15ZMS_CQZ2ViwI_01AyAYa7VnOMkhZvBN/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-008",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Guilford Apartments, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-15",
+    "status": "Current",
+    "source_status": "Active \u2014 IN GOOD STANDING (SDAT verified 07/06/2026)",
+    "cleared_at": "06/23/2026",
+    "state": "Maryland",
+    "entity_id": "W23150261",
+    "registered_agent": "Unknown \u2014 confirm",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "\u2713 In good standing \u2014 no filing needed",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "2026 AR filed 06/23/2026. RA: Jacob Rappaport. Separate property tax issue \u2014 $49,654.44 balance (see JHU-TAX-007).",
+    "source_doc": "https://drive.google.com/file/d/143HS_9aumeE5EYI67vAEBTmxfwNEuFSq/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-010",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Soteira Partners, LLC",
+    "category": "LLC Filing",
+    "due_date": "2026-04-15 00:00:00",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 NOT IN GOOD STANDING \u2014 2025 + 2026 ARs due (SDAT verified 07/06/2026)",
+    "cleared_at": "",
+    "state": "Maryland",
+    "entity_id": "W24687469",
+    "registered_agent": "Jacob Rappaport (non-CSC) \u2014 confirm still active",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "File BOTH 2025 + 2026 annual reports on MD SDAT \u2014 $600 total. Dept ID W24687469. \u26a0\ufe0f Note: RA is Jacob Rappaport (NOT CSC) \u2014 confirm RA still valid before filing.",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "300.0",
+    "responsible": "Dallas",
+    "notes": "NOT IN GOOD STANDING \u2014 2 years overdue (2025 + 2026). Higher penalty risk. RA: Jacob Rappaport. maryland.gov.",
+    "source_doc": "https://drive.google.com/file/d/1gm8AfgTCXZfrqMEpJ1kPTITsPgUYvTit/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-011",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-15",
+    "status": "Current",
+    "source_status": "Active \u2014 IN GOOD STANDING (SDAT verified 07/06/2026)",
+    "cleared_at": "06/23/2026",
+    "state": "Maryland",
+    "entity_id": "W22347819",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "06/01/2026",
+    "ra_invoice_status": "N/A",
+    "action_required": "\u2713 In good standing \u2014 no filing needed",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "2026 AR filed 06/23/2026. RA: CSC. Owns 3 properties: 219 W 29th St, 300 E University Pkwy, 328 E 33rd St.",
+    "source_doc": "https://drive.google.com/file/d/1v_hAgER_bYr6DRTRJJrRbN5-cN2drGnF/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-012",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Saint Paul St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-15",
+    "status": "Current",
+    "source_status": "Active \u2014 IN GOOD STANDING (SDAT verified 07/06/2026)",
+    "cleared_at": "06/23/2026",
+    "state": "Maryland",
+    "entity_id": "W22812804",
+    "registered_agent": "Unknown \u2014 confirm",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "\u2713 In good standing \u2014 no filing needed",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "IN GOOD STANDING. 2026 AR filed 06/23/2026. RA: Jacob Rappaport. $150 gross \u2014 likely holding entity.",
+    "source_doc": "https://drive.google.com/file/d/1WJkLUXE3g0uguW5d9FgMwdvNHqFEyQ4G/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-013",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "3000 N Calvert St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-15",
+    "status": "Current",
+    "source_status": "Active \u2014 IN GOOD STANDING (SDAT verified 07/06/2026)",
+    "cleared_at": "06/23/2026",
+    "state": "Maryland",
+    "entity_id": "W23712821",
+    "registered_agent": "Unknown \u2014 confirm",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "\u2713 In good standing \u2014 no filing needed",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "2026 AR filed 06/23/2026. RA: Jacob Rappaport. FEIN: 923357439.",
+    "source_doc": "https://drive.google.com/file/d/1Xlb_GrOgEJ5eNjI3sft9K4jRvdhNvwnM/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LLC-014",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "HWood Ventures, LLC",
+    "category": "LLC Filing",
+    "due_date": "2026-04-15 00:00:00",
+    "status": "Verify with Dallas",
+    "source_status": "Status unverified \u2014 not in SDAT screenshot set",
+    "cleared_at": "",
+    "state": "Maryland",
+    "entity_id": "",
+    "registered_agent": "Unknown \u2014 confirm",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "No state ID on file. Confirm entity exists and check SDAT.",
+    "action_url": "https://egov.maryland.gov/BusinessExpress/",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "No documents found \u2014 status unverified. maryland.gov and add to folder.",
+    "source_doc": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-001",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Fairview St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2026-09-30 00:00:00",
+    "status": "Reinstatement Required",
+    "source_status": "Dissolved \u2014 annual report overdue",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "7321903",
+    "registered_agent": "Unknown",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "Needs action \u2014 review Notes and file as appropriate.",
+    "action_url": "https://drive.google.com/file/d/1fPU43iisur5y7C5o2XZNUZShSH9i2Tt-/view",
+    "amount": "7.0",
+    "responsible": "Dallas",
+    "notes": "Active-Dissolved on PA Corps; annual report overdue. PA ID 7321903. Not on CSC list.",
+    "source_doc": "https://drive.google.com/file/d/1fPU43iisur5y7C5o2XZNUZShSH9i2Tt-/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-002",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Montclair Ave, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-12-31",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 Annual Report Due Date: Over Due (PA DOS 07/07/2026)",
+    "cleared_at": "",
+    "state": "Pennsylvania",
+    "entity_id": "6804523",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "05/30/2026",
+    "ra_invoice_status": "\u2705 Paid $123.75 ACH 07/01/2026",
+    "action_required": "File PA Annual Report at file.dos.pa.gov",
+    "action_url": "https://drive.google.com/file/d/1sWVtA4uCnwrtsiJrmw4_FEUmlKYmxP20/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "Active on PA Corps (CSC confirmed); annual report past due. PA ID 6804523. CSC_Thru_Date 05/30/2025 is PA state database sync date shared across all SLP entities \u2014 NOT an individual renewal or expiration deadline. All entities confirmed Active on CSC portal 07/07/2026. PA Annual Report OVERDUE per file.dos.pa.gov as of 07/07/2026. File at file.dos.pa.gov. Dallas action required.",
+    "source_doc": "https://drive.google.com/file/d/1sWVtA4uCnwrtsiJrmw4_FEUmlKYmxP20/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-003",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "101 S 3rd St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2026-09-30 00:00:00",
+    "status": "Current",
+    "source_status": "Active \u2014 Annual Report filed (was Overdue 05/29/2026, now Current per PA DOS 07/07/2026)",
+    "cleared_at": "",
+    "state": "Pennsylvania",
+    "entity_id": "6899379",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "06/05/2026",
+    "ra_invoice_status": "\u2705 Paid $123.75 ACH 07/01/2026",
+    "action_required": "\u2713 In good standing \u2014 no filing needed",
+    "action_url": "https://drive.google.com/file/d/16tRfw6PO0XVmWniXMj7EJTnFRC96V2ta/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "Active on PA Corps (CSC confirmed); no overdue report. PA ID 6899379. CSC_Thru_Date 05/30/2025 is PA state database sync date shared across all SLP entities \u2014 NOT an individual renewal or expiration deadline. All entities confirmed Active on CSC portal 07/07/2026.",
+    "source_doc": "https://drive.google.com/file/d/16tRfw6PO0XVmWniXMj7EJTnFRC96V2ta/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-004",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "114 W 4th St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-12-31",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 Annual Report Due Date: Over Due (PA DOS 07/07/2026)",
+    "cleared_at": "",
+    "state": "Pennsylvania",
+    "entity_id": "6871029",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "05/30/2026",
+    "ra_invoice_status": "\u2705 Paid $123.75 ACH 07/01/2026",
+    "action_required": "File PA Annual Report at file.dos.pa.gov",
+    "action_url": "https://drive.google.com/file/d/1VsK4zHWiAJWxAlAbKa04W1me7VSlP6ud/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "Active on PA Corps (CSC confirmed); annual report past due. PA ID 6871029. CSC_Thru_Date 05/30/2025 is PA state database sync date shared across all SLP entities \u2014 NOT an individual renewal or expiration deadline. All entities confirmed Active on CSC portal 07/07/2026. PA Annual Report OVERDUE per file.dos.pa.gov as of 07/07/2026. File at file.dos.pa.gov. Dallas action required.",
+    "source_doc": "https://drive.google.com/file/d/1VsK4zHWiAJWxAlAbKa04W1me7VSlP6ud/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-005",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "13 W Morton St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-12-31",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 Annual Report Due Date: Over Due (PA DOS 07/07/2026)",
+    "cleared_at": "",
+    "state": "Pennsylvania",
+    "entity_id": "6992504",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "05/30/2026",
+    "ra_invoice_status": "\u2705 Paid $123.75 ACH 07/01/2026",
+    "action_required": "File PA Annual Report at file.dos.pa.gov",
+    "action_url": "https://drive.google.com/file/d/1gqTEmhfq522CFFeTGw7m84oeS4f4Vhjj/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "Active on PA Corps (CSC confirmed); annual report past due. PA ID 6992504. CSC_Thru_Date 05/30/2025 is PA state database sync date shared across all SLP entities \u2014 NOT an individual renewal or expiration deadline. All entities confirmed Active on CSC portal 07/07/2026. PA Annual Report OVERDUE per file.dos.pa.gov as of 07/07/2026. File at file.dos.pa.gov. Dallas action required.",
+    "source_doc": "https://drive.google.com/file/d/1gqTEmhfq522CFFeTGw7m84oeS4f4Vhjj/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-006",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-12-31",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 Annual Report Due Date: Over Due (PA DOS 07/07/2026)",
+    "cleared_at": "",
+    "state": "Pennsylvania",
+    "entity_id": "0006974707",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "05/30/2026",
+    "ra_invoice_status": "\u2705 Paid $123.75 ACH 07/01/2026",
+    "action_required": "File PA Annual Report at file.dos.pa.gov",
+    "action_url": "https://drive.google.com/file/d/1eWNcTrYEFJV0tv1Riy5KInCwvYGGbr-T/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "Active on PA Corps (CSC confirmed); annual report past due. PA ID 6974707 (corrected from prior typo 6874207). CSC_Thru_Date 05/30/2025 is PA state database sync date shared across all SLP entities \u2014 NOT an individual renewal or expiration deadline. All entities confirmed Active on CSC portal 07/07/2026. PA Annual Report OVERDUE per file.dos.pa.gov as of 07/07/2026. File at file.dos.pa.gov. Dallas action required.",
+    "source_doc": "https://drive.google.com/file/d/1eWNcTrYEFJV0tv1Riy5KInCwvYGGbr-T/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-007",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "505 Thomas St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-12-31",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 Annual Report Due Date: Over Due (PA DOS 07/07/2026)",
+    "cleared_at": "",
+    "state": "Pennsylvania",
+    "entity_id": "7075894",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "05/30/2026",
+    "ra_invoice_status": "\u2705 Paid $123.75 ACH 07/01/2026",
+    "action_required": "File PA Annual Report at file.dos.pa.gov",
+    "action_url": "https://drive.google.com/file/d/18ryZLCW4rQAKWe-iHZ7pyhYIQYya7_bT/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "Active on PA Corps (CSC confirmed); annual report past due. PA ID 7075894. CSC_Thru_Date 05/30/2025 is PA state database sync date shared across all SLP entities \u2014 NOT an individual renewal or expiration deadline. All entities confirmed Active on CSC portal 07/07/2026. PA Annual Report OVERDUE per file.dos.pa.gov as of 07/07/2026. File at file.dos.pa.gov. Dallas action required.",
+    "source_doc": "https://drive.google.com/file/d/18ryZLCW4rQAKWe-iHZ7pyhYIQYya7_bT/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-008",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Packer Ave, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-12-31",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 Annual Report Due Date: Over Due (PA DOS 07/07/2026)",
+    "cleared_at": "",
+    "state": "Pennsylvania",
+    "entity_id": "3568217",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "05/30/2026",
+    "ra_invoice_status": "N/A",
+    "action_required": "File PA Annual Report at file.dos.pa.gov",
+    "action_url": "https://drive.google.com/file/d/1L9MDiQvsMubQBVr08khO4HNWDLxjMLkT/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "Active on PA Corps (CSC confirmed); annual report past due. PA ID 3568217 (corrected from prior typo 5586127). CSC_Thru_Date 05/30/2025 is PA state database sync date shared across all SLP entities \u2014 NOT an individual renewal or expiration deadline. All entities confirmed Active on CSC portal 07/07/2026. PA Annual Report OVERDUE per file.dos.pa.gov as of 07/07/2026. File at file.dos.pa.gov. Dallas action required.",
+    "source_doc": "https://drive.google.com/file/d/1L9MDiQvsMubQBVr08khO4HNWDLxjMLkT/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LLC-009",
+    "portfolio": "SLP",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-12-31",
+    "status": "Filing Needed",
+    "source_status": "Active \u2014 Annual Report Due Date: Over Due (PA DOS 07/07/2026)",
+    "cleared_at": "",
+    "state": "Pennsylvania",
+    "entity_id": "7315868",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Active",
+    "csc_thru": "05/30/2026",
+    "ra_invoice_status": "\u2705 Paid $123.75 ACH 07/01/2026",
+    "action_required": "File PA Annual Report at file.dos.pa.gov",
+    "action_url": "https://drive.google.com/file/d/1WWHfD52ttz08F9UHqRKdqVG5lJGsDYcs/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "Active on PA Corps (CSC confirmed); annual report past due. PA ID 7315868. CSC_Thru_Date 05/30/2025 is PA state database sync date shared across all SLP entities \u2014 NOT an individual renewal or expiration deadline. All entities confirmed Active on CSC portal 07/07/2026. PA Annual Report OVERDUE per file.dos.pa.gov as of 07/07/2026. File at file.dos.pa.gov. Dallas action required.",
+    "source_doc": "https://drive.google.com/file/d/1WWHfD52ttz08F9UHqRKdqVG5lJGsDYcs/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "DC-LLC-001",
+    "portfolio": "DC",
+    "address": "3538 Parkwood Flats",
+    "unit": "",
+    "entity": "3538 6th St Nw, LLC",
+    "category": "LLC Filing",
+    "due_date": "2027-04-01 00:00:00",
+    "status": "Reinstatement Required",
+    "source_status": "CSC: Revoked (thru 07/01/2026)",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "Unknown",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "DC LLC revoked. Confirm entity name + ownership before reinstatement.",
+    "action_url": "https://drive.google.com/file/d/1-HoF5dkPBVpSaSQqCCLLiikSbfHkVbT1/view",
+    "amount": "300.0",
+    "responsible": "Dallas",
+    "notes": "REVOKED (CSC: revoked 06/18/2026, prior ACTIVE). DC biennial report not filed since 04/01/2024. File L00007787255. Reinstatement required. Name normalized to CSC form '3538 6th St Nw, LLC'.",
+    "source_doc": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "DC-TAX-001",
+    "portfolio": "DC",
+    "address": "3538 Parkwood Flats",
+    "unit": "",
+    "entity": "3538 6th St Nw, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-09-15 00:00:00",
+    "status": "Current",
+    "source_status": "DC semi-annual property tax \u2014 current",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Ramonia \u2014 Bluejay Property Management",
+    "notes": "DC semi-annual property tax due Mar 31 + Sep 15. Confirm entity name with Dallas.",
+    "source_doc": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "DC-LIC-001",
+    "portfolio": "DC",
+    "address": "3538 Parkwood Flats",
+    "unit": "",
+    "entity": "3538 6th St Nw, LLC",
+    "category": "Rental License",
+    "due_date": "2026-12-31 00:00:00",
+    "status": "License Renewal Needed",
+    "source_status": "DC Basic Business License (rental) \u2014 renews Dec 31",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Ramonia \u2014 Bluejay Property Management",
+    "notes": "DC Basic Business License (rental), DLCP, biennial. Renew by Dec 31, 2026.",
+    "source_doc": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-001",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "",
+    "entity": "Saint Paul St, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Current",
+    "source_status": "Paid \u2014 $0 due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Paid \u2014 $0 due. Source: Baltimore City tax bill 05/29/2026.",
+    "source_doc": "https://drive.google.com/file/d/1OHcII79PEXtuaol1lfiL-LEmGKi7LjYz/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-003",
+    "portfolio": "JHU",
+    "address": "3119 N Calvert St",
+    "unit": "",
+    "entity": "3119 N Calvert, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Current",
+    "source_status": "Paid \u2014 $0 due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Paid 10/30/2025 \u2014 $0 due.",
+    "source_doc": "https://drive.google.com/file/d/1K2by0iBYaLGt0St4P1axv5wpDpU0gsdE/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-004",
+    "portfolio": "JHU",
+    "address": "232 E University Pkwy",
+    "unit": "",
+    "entity": "University Pkwy, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Current",
+    "source_status": "Paid \u2014 $0 due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Paid 09/22/2025 \u2014 $0 due.",
+    "source_doc": "https://drive.google.com/file/d/1MzVI6NcT4CFy0v58XmDfa7cqWDN2iRUC/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-005",
+    "portfolio": "JHU",
+    "address": "300 E University Pkwy",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Current",
+    "source_status": "Paid \u2014 Baltimore City",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Paid 12/10/2025 \u2014 $0 due. One of 3 properties under Abell St LLC.",
+    "source_doc": "https://drive.google.com/file/d/1xDgT74Z0wPBiUro9uYmri6AIp4AAolY4/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-006",
+    "portfolio": "JHU",
+    "address": "304 E University Pkwy",
+    "unit": "",
+    "entity": "3000 N Calvert St, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Current",
+    "source_status": "Paid \u2014 $0 due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Paid 02/06/2026 \u2014 $0 due.",
+    "source_doc": "https://drive.google.com/file/d/1Gy5hZEfxfL8RFga_mfpezA5V3bpfhqvm/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-007",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-07-15",
+    "status": "Tax Due",
+    "source_status": "Promise-pay plan active. Est. balance $47,569.47 as of 07/07/2026 (ref: $49,654.44 on 05/29/2026, \u2212$2,084.97/mo on 15th)",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Auto-deduct $2,084.97/mo on 15th. Next payment: 07/15/2026. Verify each payment processes.",
+    "action_url": "",
+    "amount": "47569.47",
+    "responsible": "Pat \u2014 Canton Property Management",
+    "notes": "Promise-pay: $2,084.97/mo auto-deduct on 15th. Ref balance $49,654.44 as of 05/29/2026. $13,292.20 lump paid 05/04/2026. FY2027-28 bill expected ~May 2027 \u2014 update row when received.",
+    "source_doc": "https://drive.google.com/file/d/1Nqbcn3uLKjdjzBGymTI0XOw6Aa-KGPGX/view",
+    "pp_ref_balance": 49654.44,
+    "pp_ref_date": "2026-05-29",
+    "pp_amount": 2084.97,
+    "pp_day": 15,
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-008",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Current",
+    "source_status": "Paid \u2014 $0 due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Paid 04/17/2026 \u2014 $0 due.",
+    "source_doc": "https://drive.google.com/file/d/1PZDMM2kBzIsWNnKVqAUmNRQ3DkMMArqF/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-009",
+    "portfolio": "JHU",
+    "address": "219 W 29th St",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Current",
+    "source_status": "Paid \u2014 Baltimore City",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Paid 08/07/2025 \u2014 $0 due. One of 3 properties under Abell St LLC.",
+    "source_doc": "https://drive.google.com/file/d/1edMrb3Busngg5WNo_YCDFG4ka084-Y_T/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-010",
+    "portfolio": "JHU",
+    "address": "328 E 33rd St",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Current",
+    "source_status": "Paid \u2014 Baltimore City",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Paid 12/10/2025 \u2014 $0 due. One of 3 properties under Abell St LLC.",
+    "source_doc": "https://drive.google.com/file/d/13Og-lwB0Rbx9wp0sdIAT26ewvJvEj2i2/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-TAX-011",
+    "portfolio": "JHU",
+    "address": "3410 Oakenshaw Pl",
+    "unit": "",
+    "entity": "3106 N Calvert, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-08-30 00:00:00",
+    "status": "Superseded",
+    "source_status": "Paid \u2014 $0 due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Maya",
+    "notes": "Duplicate of JHU-TAX-002 \u2014 same property, same non-Blakeworth owner. Superseded.",
+    "source_doc": "https://drive.google.com/file/d/1JHgFzEsxMCKAuQhdS5tSiPeGszOO-LCb/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-001",
+    "portfolio": "SLP",
+    "address": "114 W 4th St",
+    "unit": "",
+    "entity": "114 W 4th St, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Cleared",
+    "source_status": "07/07/2026: Portal confirmed $0.00 property tax balance. Previously $1,202.04 (2025 delinquent ~$1,396.84). Parcel 202-001271.",
+    "cleared_at": "07/07/2026",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Marj/Kristina \u2014 Forefront Property Management",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1Ej0-bYqo0n7ofMHGCT08fQ7APeQchF4G/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-002",
+    "portfolio": "SLP",
+    "address": "13 W Morton St",
+    "unit": "",
+    "entity": "13 W Morton St, LLC",
+    "category": "Property Tax",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Cleared",
+    "source_status": "07/07/2026: Portal confirmed $0.00 property tax balance. Previously $328.32. Parcel 202-045282.",
+    "cleared_at": "07/07/2026",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Marj/Kristina \u2014 Forefront Property Management",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1OSImkMdOQRmdMwlDvo4QPykEeQm_63OV/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-003",
+    "portfolio": "SLP",
+    "address": "316 E 5th St",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed $0 ACTIVE \u2014 Bethlehem City portal 07/07/2026. Was previously Superseded into SLP-TAX-SUM-01.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1vYjyo_WjeQtobo3gPnMWhMVNCh08JN6A/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-006",
+    "portfolio": "SLP",
+    "address": "422 Pierce St",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 422 Pierce St Unit 1 \u2014 Rental License $10.00 (cust 0000017399).",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1sKsXRQ_ayX_Hv62BJfJYUI3WuSkjW3zC/view",
+    "amount": "10.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1sKsXRQ_ayX_Hv62BJfJYUI3WuSkjW3zC/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-005",
+    "portfolio": "SLP",
+    "address": "424 Pierce St",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed current \u2014 2529 E 4th St LLC parcel. Was previously Superseded into SLP-TAX-SUM-02.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1QAUd49P1NACiqVtwwgwwi8fgv0LCcvQB/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-006",
+    "portfolio": "SLP",
+    "address": "428 Montclair Ave",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed current \u2014 2529 E 4th St LLC parcel. Was previously Superseded into SLP-TAX-SUM-02.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1QAUd49P1NACiqVtwwgwwi8fgv0LCcvQB/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-007",
+    "portfolio": "SLP",
+    "address": "430 Montclair Ave",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 430 Montclair Ave \u2014 Rental License $20.00 (cust 0000016969).",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/18vzebsSKNi0HTfEbmDdHhUhlm0wsO0Dx/view",
+    "amount": "20.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/18vzebsSKNi0HTfEbmDdHhUhlm0wsO0Dx/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-008",
+    "portfolio": "SLP",
+    "address": "462 Carlton Ave",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 462 Carlton Ave \u2014 Rental License $500.00 (cust 0000009939).",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/14GiCM-apey938anDGUHb9G_GBVRBapuI/view",
+    "amount": "500.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/14GiCM-apey938anDGUHb9G_GBVRBapuI/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-009",
+    "portfolio": "SLP",
+    "address": "505 Thomas St",
+    "unit": "",
+    "entity": "505 Thomas St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 505 Thomas St \u2014 Rental License total $310.00: $300.00 (cust 0000007453) + $10.00 Unit 1 (cust 0000017348). Two invoices, same address.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1Paf8EYhucF9HaBfuvimUxKGIs-GzdyPZ/view",
+    "amount": "310.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1Paf8EYhucF9HaBfuvimUxKGIs-GzdyPZ/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-010",
+    "portfolio": "SLP",
+    "address": "508 Selfridge St",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed current \u2014 2529 E 4th St LLC parcel. Was previously Superseded into SLP-TAX-SUM-02.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1QAUd49P1NACiqVtwwgwwi8fgv0LCcvQB/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-011",
+    "portfolio": "SLP",
+    "address": "510 East Packer Ave",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed current \u2014 2529 E 4th St LLC parcel. Was previously Superseded into SLP-TAX-SUM-02.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1QAUd49P1NACiqVtwwgwwi8fgv0LCcvQB/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-012",
+    "portfolio": "SLP",
+    "address": "526 E 5th St",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed $0 ACTIVE \u2014 Bethlehem City portal 07/07/2026. Was previously Superseded into SLP-TAX-SUM-01.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1jRQsaLwwZWc2Kw65t5X1Bap1dtLukYe8/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-010",
+    "portfolio": "SLP",
+    "address": "527 E Packer Ave",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 527 E Packer Ave \u2014 Rental License $10.00 (cust 0000017388).",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1NWmDpWWMdTCdL8HwDyOQwJNJAEE3C_jC/view",
+    "amount": "10.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1NWmDpWWMdTCdL8HwDyOQwJNJAEE3C_jC/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-014",
+    "portfolio": "SLP",
+    "address": "528 E 5th St",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed $0 ACTIVE \u2014 Bethlehem City portal 07/07/2026. Was previously Superseded into SLP-TAX-SUM-01.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1dMSyCh2dhlX1vkm2Sv9-TOKLngX2jJJ5/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-011",
+    "portfolio": "SLP",
+    "address": "571 Hillside Ave",
+    "unit": "",
+    "entity": "505 Thomas St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 571 Hillside Ave \u2014 Rental License total $170.00: $150.00 (cust 0000007452) + $20.00 (cust 0000017347). Two invoices, same address.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1chVaADX_tEXuo-ZSTwRkeEJyqs5B2aik/view",
+    "amount": "170.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1chVaADX_tEXuo-ZSTwRkeEJyqs5B2aik/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-012",
+    "portfolio": "SLP",
+    "address": "608 Pierce St",
+    "unit": "",
+    "entity": "Packer Ave, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 608 Pierce St \u2014 Rental License $325.00 (cust 0000014087).",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1rRvAQkSS9mGWYWrJpgdNZlPQlt_Z_wX9/view",
+    "amount": "325.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1rRvAQkSS9mGWYWrJpgdNZlPQlt_Z_wX9/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-013",
+    "portfolio": "SLP",
+    "address": "610 Pierce St",
+    "unit": "",
+    "entity": "Packer Ave, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 610 Pierce St \u2014 Rental License total $38.99: $28.99 (cust 0000016592) + $10.00 (cust 0000017411). Two invoices, same address.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1ggsf38q96IPHQMteRqTauXLr8IQIyi_o/view",
+    "amount": "38.99",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1ggsf38q96IPHQMteRqTauXLr8IQIyi_o/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-014",
+    "portfolio": "SLP",
+    "address": "612 Pierce St",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 612 Pierce St \u2014 Rental License $75.00 (cust 0000015107).",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1qnRnvUD9e2selPGnSRe8m4VXFA0d2fgR/view",
+    "amount": "75.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1qnRnvUD9e2selPGnSRe8m4VXFA0d2fgR/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-015",
+    "portfolio": "SLP",
+    "address": "614 Pierce St",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-06-01 00:00:00",
+    "status": "Invoice Due",
+    "source_status": "07/07/2026: 614 Pierce St \u2014 Rental License $10.00 (cust 0000017413).",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Rental license invoice unpaid \u2014 pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1dQT7E5g-L6QTI1NWN9DiQr8I3Bg3Papu/view",
+    "amount": "10.0",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1dQT7E5g-L6QTI1NWN9DiQr8I3Bg3Papu/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-021",
+    "portfolio": "SLP",
+    "address": "616 Pierce St",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed $0 ACTIVE \u2014 Bethlehem City portal 07/07/2026. Was previously Superseded into SLP-TAX-SUM-01.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1OkE7oTHdOhZnU7jnt7j-BV0B-xY4OBKf/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-022",
+    "portfolio": "SLP",
+    "address": "618 Pierce St",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed $0 ACTIVE \u2014 Bethlehem City portal 07/07/2026. Was previously Superseded into SLP-TAX-SUM-01.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-023",
+    "portfolio": "SLP",
+    "address": "620 Pierce St",
+    "unit": "",
+    "entity": "Pierce St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed $0 ACTIVE \u2014 Bethlehem City portal 07/07/2026. Was previously Superseded into SLP-TAX-SUM-01.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-024",
+    "portfolio": "SLP",
+    "address": "621 Parkhill St",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed current \u2014 2529 E 4th St LLC parcel. Was previously Superseded into SLP-TAX-SUM-02.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1QAUd49P1NACiqVtwwgwwi8fgv0LCcvQB/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-025",
+    "portfolio": "SLP",
+    "address": "623 Parkhill St",
+    "unit": "",
+    "entity": "2529 E 4th St, LLC",
+    "category": "Property Tax",
+    "due_date": "2027-06-01",
+    "status": "Current",
+    "source_status": "Property tax confirmed current \u2014 2529 E 4th St LLC parcel. Was previously Superseded into SLP-TAX-SUM-02.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Maya",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1QAUd49P1NACiqVtwwgwwi8fgv0LCcvQB/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-TAX-016",
+    "portfolio": "SLP",
+    "address": "573 Hillside Ave",
+    "unit": "",
+    "entity": "505 Thomas St, LLC",
+    "category": "Property Tax",
+    "due_date": "",
+    "status": "Cleared",
+    "source_status": "07/07/2026: Portal confirmed $0.00 \u2014 573 Hillside Ave misc billing cleared. Previously $90 (04/17/2026 invoice). Under 505 Thomas St LLC.",
+    "cleared_at": "07/07/2026",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Marj/Kristina \u2014 Forefront Property Management",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1R5msyqdkMIqT1Y6bQGcDW4pZ61H6AB1J/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-001",
+    "portfolio": "JHU",
+    "address": "219 W 29th St",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "Rental License",
+    "due_date": "2028-05-13 00:00:00",
+    "status": "Current",
+    "source_status": "Licensed \u2014 expires May 13 2028",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "License #L-518968. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/1en6lHlE9j2k1ASeX5AUwgwEO55xksoDT/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-002",
+    "portfolio": "JHU",
+    "address": "304 E University Pkwy",
+    "unit": "",
+    "entity": "3000 N Calvert St, LLC",
+    "category": "Rental License",
+    "due_date": "2028-04-28 00:00:00",
+    "status": "Current",
+    "source_status": "Licensed \u2014 expires Apr 28 2028",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "License #L-518802. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/14oPtoqlSOAddhp-Vfaf721wZ54o5zOUj/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-003",
+    "portfolio": "JHU",
+    "address": "3119 N Calvert St",
+    "unit": "",
+    "entity": "3119 N Calvert, LLC",
+    "category": "Rental License",
+    "due_date": "2027-03-26 00:00:00",
+    "status": "Current",
+    "source_status": "Licensed \u2014 expires Mar 26 2027",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "License #172121. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/1Uvnq_pMmdl_yxzD3zUHv6M_L9-a_kcVT/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-004",
+    "portfolio": "JHU",
+    "address": "232 E University Pkwy",
+    "unit": "",
+    "entity": "University Pkwy, LLC",
+    "category": "Rental License",
+    "due_date": "2027-05-15 00:00:00",
+    "status": "Current",
+    "source_status": "Licensed \u2014 expires May 15 2027",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "License #174269. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/1ZBTA5lk5VoIE_iBrzxFxFV_q1nMsYoGb/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-005",
+    "portfolio": "JHU",
+    "address": "300 E University Pkwy",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "Rental License",
+    "due_date": "",
+    "status": "Reinstatement Required",
+    "source_status": "License REVOKED by DHCD \u2014 obtain new license",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "License 173602 revoked by DHCD Jun 12 2026 \u2014 new license required immediately. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/1EPPMWArbywNKFkrJHabVIc40KNNaFM82/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-006",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "",
+    "entity": "Saint Paul St, LLC",
+    "category": "Rental License",
+    "due_date": "",
+    "status": "License Renewal Needed",
+    "source_status": "Registration only \u2014 no rental license on file",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "License #R165361. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/16SzfG6yk_DzO2RlSbyVfnGA41UbVGxOZ/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-007",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Rental License",
+    "due_date": "2028-08-15 00:00:00",
+    "status": "Current",
+    "source_status": "Licensed \u2014 expires Aug 15 2028",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Pat \u2014 Canton Property Management",
+    "notes": "License #L-514221 / R177322. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/1O2n4S4AYJ1vrbA2xYzs5vn0OUj62Kk-k/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-008",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Rental License",
+    "due_date": "",
+    "status": "License Renewal Needed",
+    "source_status": "Registration only \u2014 no rental license on file",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "License #R170393. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/16t1m2SjLEV-8vvoatjUc980g1oMptgCC/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-LIC-009",
+    "portfolio": "JHU",
+    "address": "328 E 33rd St",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "Rental License",
+    "due_date": "2026-09-19 00:00:00",
+    "status": "License Renewal Needed",
+    "source_status": "Licensed \u2014 expires Sep 19 2026 (renew soon)",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "License #160976. Managing agent: American Management LLC.",
+    "source_doc": "https://drive.google.com/file/d/1yyRF0O_9e9rpTKjLb3bbMU4LcZzqP3rW/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "HLD-DE-001",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Basha Enterprises, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-06-01",
+    "status": "Tax Due",
+    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "cleared_at": "",
+    "state": "Delaware",
+    "entity_id": "7157623",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Cease Good Standing",
+    "csc_thru": "07/04/2026",
+    "ra_invoice_status": "\u2705 Paid $123.75 ACH 07/01/2026",
+    "action_required": "Pay $515.00 at corp.delaware.gov/paytaxes.shtml",
+    "action_url": "https://drive.google.com/file/d/1VOUtWKO5yw4U7zZwMcXi68fOqNWSSJtm/view",
+    "amount": "515.00",
+    "responsible": "Dallas",
+    "notes": "Cease Good Standing since 06/11/2026. DE 2025 franchise tax owed. delaware.gov (File #7157623).",
+    "source_doc": "https://drive.google.com/file/d/1VV2Z4hD8WUDlUxYKpXyqicQObcRtz0B6/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "HLD-DE-002",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Basha Real Estate, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-06-01",
+    "status": "Tax Due",
+    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "cleared_at": "",
+    "state": "Delaware",
+    "entity_id": "7157433",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Cease Good Standing",
+    "csc_thru": "07/04/2026",
+    "ra_invoice_status": "N/A",
+    "action_required": "Pay $515.00 at corp.delaware.gov/paytaxes.shtml",
+    "action_url": "https://drive.google.com/file/d/1O8K_urrXC1G27IXGjqgA8E6w7iNKm9nc/view",
+    "amount": "515.00",
+    "responsible": "Dallas",
+    "notes": "Cease Good Standing since 06/10/2026. DE franchise tax amount unconfirmed. delaware.gov (File #7157433).",
+    "source_doc": "https://drive.google.com/file/d/1MIoSdF0XXdPOmGDHQGliyZcSC8vnKDd9/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "HLD-DE-003",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Blakeworth Management, LLC",
+    "category": "LLC Filing",
+    "due_date": "2023-06-01",
+    "status": "Reinstatement Required",
+    "source_status": "CSC: Cancelled, Failure To Pay Tax (thru 07/04/2026)",
+    "cleared_at": "",
+    "state": "Delaware",
+    "entity_id": "5653981",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Cancelled \u2014 Failure To Pay Tax",
+    "csc_thru": "07/04/2026",
+    "ra_invoice_status": "\u2705 Paid $108.90 ACH 07/01/2026",
+    "action_required": "CALL (302) 739-3073 Opt 2 \u2014 payment alone will not restore",
+    "action_url": "https://drive.google.com/file/d/1jc8s3rFJvuuSAB_W8vOPRc4yrrP67Wj5/view",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "CANCELLED for failure to pay DE franchise tax \u2014 most serious status. Reinstatement required.",
+    "source_doc": "https://drive.google.com/file/d/1MIoSdF0XXdPOmGDHQGliyZcSC8vnKDd9/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "HLD-DE-004",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Blakeworth Properties, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-06-01",
+    "status": "Tax Due",
+    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "cleared_at": "",
+    "state": "Delaware",
+    "entity_id": "3138393",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Cease Good Standing",
+    "csc_thru": "07/04/2026",
+    "ra_invoice_status": "N/A",
+    "action_required": "Pay $515.00 at corp.delaware.gov/paytaxes.shtml",
+    "action_url": "https://drive.google.com/file/d/1xg76tY6pPlLE-6X8ye95yagckwGr2M3R/view",
+    "amount": "515.00",
+    "responsible": "Dallas",
+    "notes": "Cease Good Standing since 06/10/2026. DE franchise tax amount unconfirmed. delaware.gov (File #3138393).",
+    "source_doc": "https://drive.google.com/file/d/1MIoSdF0XXdPOmGDHQGliyZcSC8vnKDd9/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "HLD-DE-005",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Blakeworth, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-06-01",
+    "status": "Tax Due",
+    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "cleared_at": "",
+    "state": "Delaware",
+    "entity_id": "3073248",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Cease Good Standing",
+    "csc_thru": "07/04/2026",
+    "ra_invoice_status": "N/A",
+    "action_required": "Pay $515.00 at corp.delaware.gov/paytaxes.shtml",
+    "action_url": "https://drive.google.com/file/d/1jy0UB04GvrLm7Rtvy_oQSmtHSsgFogSi/view",
+    "amount": "515.00",
+    "responsible": "Dallas",
+    "notes": "Cease Good Standing since 06/10/2026. DE franchise tax amount unconfirmed. delaware.gov (File #3073248).",
+    "source_doc": "https://drive.google.com/file/d/1MIoSdF0XXdPOmGDHQGliyZcSC8vnKDd9/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "HLD-DE-006",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "DCSK GP, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-06-01",
+    "status": "Tax Due",
+    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "cleared_at": "",
+    "state": "Delaware",
+    "entity_id": "7585818",
+    "registered_agent": "CSC",
+    "ra_account": "8362966",
+    "csc_status": "Cease Good Standing",
+    "csc_thru": "07/04/2026",
+    "ra_invoice_status": "\u26a0\ufe0f Outstanding $123.75 (inv 85139386, due 05/09/2026)",
+    "action_required": "Pay $515.00 at corp.delaware.gov/paytaxes.shtml",
+    "action_url": "https://drive.google.com/file/d/1hWIDvHzKCQJOqN1V9y-VRmBHeuOeFzgi/view",
+    "amount": "515.00",
+    "responsible": "Dallas",
+    "notes": "Cease Good Standing since 06/11/2026. RA invoice also outstanding ($123.75 \u2014 see CSC-RA-14). delaware.gov (File #7585818) and CSC invoice.",
+    "source_doc": "https://drive.google.com/file/d/1-ZojS-Li3hEqNFWWXJkQXliFSqynX2jL/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "HLD-DE-007",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Thg Portland, LLC",
+    "category": "LLC Filing",
+    "due_date": "2023-06-01",
+    "status": "Reinstatement Required",
+    "source_status": "CSC: Cancelled, Failure To Pay Tax (thru 07/04/2026)",
+    "cleared_at": "",
+    "state": "Delaware",
+    "entity_id": "7565891",
+    "registered_agent": "Unknown",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "URGENT: CALL (302) 739-3073 Opt 2 \u2014 3 years owed ($1,770), payment alone will not restore",
+    "action_url": "https://drive.google.com/file/d/1F4vtVkBquHm3DaEteKBeGClcHSLLY68x/view",
+    "amount": "1770.00",
+    "responsible": "Dallas",
+    "notes": "CANCELLED for failure to pay DE franchise tax. RA invoice also outstanding ($247.50 \u2014 see CSC-RA-10).",
+    "source_doc": "https://drive.google.com/file/d/1MIoSdF0XXdPOmGDHQGliyZcSC8vnKDd9/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "HLD-DE-008",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Pinedale LP, LLC",
+    "category": "LLC Filing",
+    "due_date": "2025-06-01",
+    "status": "Tax Due",
+    "source_status": "Standing unverified \u2014 separate CSC account",
+    "cleared_at": "",
+    "state": "Delaware",
+    "entity_id": "10139442",
+    "registered_agent": "Unknown",
+    "ra_account": "N/A",
+    "csc_status": "Not on CSC",
+    "csc_thru": "N/A",
+    "ra_invoice_status": "N/A",
+    "action_required": "Pay $515.00 at corp.delaware.gov/paytaxes.shtml",
+    "action_url": "https://drive.google.com/file/d/1iJH-yyu0EgamsmE7BBJt8fBVLe6gmN1f/view",
+    "amount": "515.00",
+    "responsible": "Dallas",
+    "notes": "Separate CSC account 8516082 \u2014 contact listed as Lori A. Sauselein (not Dallas). Confirm ownership and DE tax status.",
+    "source_doc": "https://drive.google.com/file/d/14IPBa5Cnw0lQZ9E4MqVFOQU2LC11F1_W/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "CSC-003",
+    "portfolio": "JHU",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "University Pkwy, LLC \u2014 CSC invoice 84864561",
+    "category": "Registered Agent",
+    "due_date": "",
+    "status": "Current",
+    "source_status": "CSC: Active (thru 06/01/2026)",
+    "cleared_at": "Confirmed by CSC statement Jun 2026",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Dallas",
+    "notes": "University Pkwy RA invoice (84864561) confirmed removed from June 2026 CSC statement \u2014 likely paid. No balance shown.",
+    "source_doc": "https://drive.google.com/file/d/1NKwuYYnXDE2zY0FKPcOEy9KccXnKqTu9/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "CSC-004",
+    "portfolio": "HOLDING",
+    "address": "Entity-level",
+    "unit": "",
+    "entity": "Pinedale LP, LLC \u2014 CSC Account 8516082",
+    "category": "Registered Agent",
+    "due_date": "",
+    "status": "Outstanding Balance",
+    "source_status": "Pinedale CSC account \u2014 RA fees overdue",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Confirm ownership and pay or assign.",
+    "action_url": "",
+    "amount": "348.08",
+    "responsible": "Dallas",
+    "notes": "Separate Pinedale account. $348.08 overdue. Contact: Lori A. Sauselein (not Dallas).",
+    "source_doc": "https://drive.google.com/file/d/1df2m-7XklfD22Dq64xMD7TFwUUlcYF6o/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "BAL-001",
+    "portfolio": "JHU",
+    "address": "219 W 29th St",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "Property Tax",
+    "due_date": "",
+    "status": "Cleared",
+    "source_status": "Delinquent alley-paving lien",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Verify amount and pay.",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Abell St LLC \u2014 Baltimore City property tax overdue. Separate from JHU-TAX rows (those are for different Abell St properties).",
+    "source_doc": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "BAL-002",
+    "portfolio": "JHU",
+    "address": "328 E 33rd St (Rear)",
+    "unit": "",
+    "entity": "Abell St, LLC",
+    "category": "Citation",
+    "due_date": "2026-07-09 00:00:00",
+    "status": "Cleared",
+    "source_status": "Environmental citation \u2014 due Jul 9, triples if unpaid",
+    "cleared_at": "2026-07-02 13:30:32.891000",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Check city portal for details and deadline.",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Abell St LLC \u2014 Baltimore City citation.",
+    "source_doc": "https://drive.google.com/file/d/1bRAF8M4UgTndSQ0WqpL0CvMlKN6OaO8n/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "BAL-003",
+    "portfolio": "JHU",
+    "address": "304 E University Pkwy",
+    "unit": "",
+    "entity": "3000 N Calvert St, LLC",
+    "category": "Inspection",
+    "due_date": "",
+    "status": "Cleared",
+    "source_status": "Abated 02/20/2026 \u2014 closed",
+    "cleared_at": "2026-07-02 14:25:11.541000",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "",
+    "action_url": "",
+    "amount": "",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "3000 N Calvert \u2014 inspection current. No action needed.",
+    "source_doc": "https://drive.google.com/file/d/11STsdSLahYnRINvtqEy4ogGnxyIm5n5l/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-LIC-005",
+    "portfolio": "SLP",
+    "address": "114 W 4th St",
+    "unit": "",
+    "entity": "114 W 4th St, LLC",
+    "category": "Rental License",
+    "due_date": "",
+    "status": "Cleared",
+    "source_status": "07/07/2026: Portal confirmed $0.00 misc billing balance. Previously $75 (May 2026 unpaid). Rental license now clear.",
+    "cleared_at": "07/07/2026",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/12Bxkh2E0ukZ250Ba_ggQoWqm14dSXZKO/view",
+    "amount": "",
+    "responsible": "Marj/Kristina \u2014 Forefront Property Management",
+    "notes": "",
+    "source_doc": "https://drive.google.com/file/d/1Ej0-bYqo0n7ofMHGCT08fQ7APeQchF4G/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "SLP-UTIL-001",
+    "portfolio": "SLP",
+    "address": "610 Pierce St",
+    "unit": "",
+    "entity": "Packer Ave, LLC",
+    "category": "Utility",
+    "due_date": "",
+    "status": "Outstanding Balance",
+    "source_status": "Bethlehem City utility acct 017511-01 (610 Pierce St). Balance as of 07/07/2026: $0.15. Previously $3,438.60 in May 2026 \u2014 paid down.",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "Pay via Bethlehem City portal",
+    "action_url": "https://drive.google.com/file/d/1VMyCdibp85jJLyTbh6sEeg7fQv8QrTpN/view",
+    "amount": "0.15",
+    "responsible": "Marj/Kristina \u2014 Forefront Property Management",
+    "notes": "Was $3,438.60 in May 2026. Portal confirms $0.15 balance as of 07/07/2026.",
+    "source_doc": "https://drive.google.com/file/d/1VMyCdibp85jJLyTbh6sEeg7fQv8QrTpN/view",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-A1",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "A1",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-A2",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "A2",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-A3",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "A3",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142266) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142266 | Passed 7/30/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-A4",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "A4",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142258) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142258 | Passed 7/30/2025 | Guilford Apartments",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "2025-08-22",
+    "lease_end_date": "2027-07-31",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-A5",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "A5",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142257) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142257 | Passed 7/30/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "2026-08-01",
+    "lease_end_date": "2028-07-31",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-A6",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "A6",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142264) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142264 | Passed 7/30/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2026-07-24",
+    "move_in_date": "2026-08-01",
+    "lease_end_date": "2027-07-31",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-A7",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "A7",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-B1",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "B1",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-B2",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "B2",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-B3",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "B3",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142261) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142261 | Passed 7/30/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "2026-08-01",
+    "lease_end_date": "2028-07-31",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-B4",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "B4",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142251) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142251 | Passed 7/30/2025 | Guilford Apartments",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "2025-08-22",
+    "lease_end_date": "2027-07-31",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-B5",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "B5",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142252) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142252 | Passed 8/1/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "2026-08-01",
+    "lease_end_date": "2027-07-31",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-B6",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "B6",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142256) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142256 | Passed 7/30/2025 | Guilford Apartments",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-B7",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "B7",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-C1",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "C1",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-C2",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "C2",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-C3",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "C3",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142259) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142259 | Passed 7/30/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-C4",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "C4",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142248) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142248 | Passed 7/30/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2026-07-13",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-C5",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "C5",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-C6",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "C6",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142267) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142267 | Passed 7/30/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "2025-08-22",
+    "lease_end_date": "2027-06-10",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-C7",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "C7",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142249) \u2014 notify Property Manager at next tenant turnover to re-certify",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "MDE Cert #1142249 | Passed 7/30/2025 | Valid while current tenant remains \u2014 new cert required at turnover",
+    "source_doc": "",
+    "move_out_date": "2026-07-31",
+    "move_in_date": "2026-08-10",
+    "lease_end_date": "2027-07-31",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-G1",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "G1",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-G2",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "G2",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-G-G3",
+    "portfolio": "JHU",
+    "address": "3401 Guilford Terr",
+    "unit": "G3",
+    "entity": "Guilford Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Property Manager to schedule lead inspection",
+    "action_url": "https://mdolrr.mde.state.md.us/CustomPages/PublicOLRRSearch.aspx",
+    "amount": "0",
+    "responsible": "Katie Teta",
+    "notes": "NO RECORD in MDE OLRR portal as of Jul 2026 \u2014 inspection and cert required before next tenant",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-SP-1",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "Unit 1",
+    "entity": "Saint Paul St, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Steve (American Mgmt) to schedule lead inspection",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "NO RECORD in MDE OLRR portal for current tenancy. Old portal entries (2005\u20132009) predate current tenants.",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-SP-2",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "Unit 2",
+    "entity": "Saint Paul St, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Steve (American Mgmt) to schedule lead inspection",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "NO RECORD in MDE OLRR portal for current tenancy. Old portal entries (2005\u20132009) predate current tenants.",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-SP-3",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "Unit 3",
+    "entity": "Saint Paul St, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Steve (American Mgmt) to schedule lead inspection",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "NO RECORD in MDE OLRR portal for current tenancy. Old portal entries (2005\u20132009) predate current tenants.",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-SP-4",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "Unit 4",
+    "entity": "Saint Paul St, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Steve (American Mgmt) to schedule lead inspection",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "NO RECORD in MDE OLRR portal for current tenancy. Old portal entries (2005\u20132009) predate current tenants.",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-SP-5",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "Unit 5",
+    "entity": "Saint Paul St, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Steve (American Mgmt) to schedule lead inspection",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "NO RECORD in MDE OLRR portal for current tenancy. Old portal entries (2005\u20132009) predate current tenants.",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-SP-6",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "Unit 6",
+    "entity": "Saint Paul St, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Steve (American Mgmt) to schedule lead inspection",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "NO RECORD in MDE OLRR portal for current tenancy. Old portal entries (2005\u20132009) predate current tenants.",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-SP-7",
+    "portfolio": "JHU",
+    "address": "2920 Saint Paul St",
+    "unit": "Unit 7",
+    "entity": "Saint Paul St, LLC",
+    "category": "Lead Certification",
+    "health": "\u26a0\ufe0f",
+    "due_date": "2026-08-01",
+    "status": "Inspection Due",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\ud83d\udd34 No cert on file \u2014 notify Steve (American Mgmt) to schedule lead inspection",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "NO RECORD in MDE OLRR portal for current tenancy. Old portal entries (2005\u20132009) predate current tenants.",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-300-APT1",
+    "portfolio": "JHU",
+    "address": "300 E University Pkwy",
+    "unit": "APT 1",
+    "entity": "Abell St, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1153167) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1153167 on portal (Nov 2025) \u2014 no PDF on file yet",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-300-APT2",
+    "portfolio": "JHU",
+    "address": "300 E University Pkwy",
+    "unit": "APT 2",
+    "entity": "Abell St, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1153173) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1153173 on portal (Nov 2025) \u2014 no PDF on file yet",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-300-APT3",
+    "portfolio": "JHU",
+    "address": "300 E University Pkwy",
+    "unit": "APT 3",
+    "entity": "Abell St, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1153174) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1153174 on portal (Nov 2025) \u2014 no PDF on file yet",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-300-APT4",
+    "portfolio": "JHU",
+    "address": "300 E University Pkwy",
+    "unit": "APT 4",
+    "entity": "Abell St, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1153178) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1153178 on portal (Nov 2025) \u2014 no PDF on file yet",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-A1",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "A1",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1169240) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1169240 | Passed 5/30/2026",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-A2",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "A2",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1124330) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1124330 | Passed 1/9/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-A3",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "A3",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1169120) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1169120 | Passed 5/30/2026",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-A4",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "A4",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1124332) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1124332 | Passed 1/9/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-A5",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "A5",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1139148) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1139148 | Passed 7/8/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-A6",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "A6",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1139143) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1139143 | Passed 7/8/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-1E",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "1E",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142286) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1142286 | Passed 8/1/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-2E",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "2E",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1139154) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1139154 | Passed 7/8/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-3E",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "3E",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1153763) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1153763 | Passed 12/4/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-4E",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "4E",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1144037) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1144037 | Passed 8/20/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-5E",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "5E",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142296) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1142296 | Passed 8/1/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-6E",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "6E",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1153764) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1153764 | Passed 12/4/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-1W",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "1W",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1142291) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1142291 | Passed 8/1/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-2W",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "2W",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1124331) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1124331 | Passed 1/9/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-3W",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "3W",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1124336) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1124336 | Passed 1/9/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-4W",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "4W",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1139158) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1139158 | Passed 7/8/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-5W",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "5W",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1124335) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1124335 | Passed 1/9/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-W-6W",
+    "portfolio": "JHU",
+    "address": "300 E 30th St",
+    "unit": "6W",
+    "entity": "Woodrow Apartments, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1124328) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1124328 | Passed 1/9/2025",
+    "source_doc": "",
+    "move_out_date": "2027-08-01",
+    "move_in_date": "",
+    "lease_end_date": "",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-C-1",
+    "portfolio": "JHU",
+    "address": "3119 N Calvert St",
+    "unit": "1",
+    "entity": "3119 N Calvert, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "Lead certificate on file | 2025 cert",
+    "source_doc": "https://drive.google.com/file/d/15cOBozzFLzaUuDIoI0SQXqeXIuFVu7Nd/view",
+    "move_out_date": "2027-08-01",
+    "comm_status": "Unstarted"
+  },
+  {
+    "id": "JHU-MDE-C-2",
+    "portfolio": "JHU",
+    "address": "3119 N Calvert St",
+    "unit": "2",
+    "entity": "3119 N Calvert, LLC",
+    "category": "Lead Certification",
+    "health": "Current",
+    "due_date": "2026-08-01",
+    "status": "Active",
+    "cleared_at": "",
+    "state": "",
+    "entity_id": "",
+    "registered_agent": "",
+    "ra_account": "",
+    "csc_status": "",
+    "csc_thru": "",
+    "ra_invoice_status": "",
+    "action_required": "\u2705 Cert on file (Cert #1169117) \u2014 notify Steve (American Mgmt) at next tenant turnover to re-certify",
+    "action_url": "",
+    "amount": "0",
+    "responsible": "Steve \u2014 American Management",
+    "notes": "MDE Cert #1169117 | Passed 5/31/2026 | 3119 N Calvert Unit 2 \u2014 3119 N Calvert LLC",
+    "source_doc": "https://drive.google.com/file/d/1STzwmt5j-kb_ALZFtjcnbZkpuuqIH3Wy/view",
+    "move_out_date": "2027-08-01",
+    "comm_status": "Unstarted"
+  }
+];
+
+// ── state ────────────────────────────────────────────────────────────────────
+let activeRow = null;
+let filterStatus = 'all';
+let filterPortfolio = null;
+let filterCategory = null;
+const logs = {};
+
+// ── localStorage ─────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'blakeworth_compliance_v1';
+function saveState() {
+  const state = {comm:{}, logs:{}};
+  DATA.forEach(r => { if (r.comm_status && r.comm_status !== 'Unstarted') state.comm[r.id] = r.comm_status; });
+  Object.keys(logs).forEach(id => { if (logs[id]?.length) state.logs[id] = logs[id]; });
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    if (state.comm) Object.entries(state.comm).forEach(([id,cs]) => {
+      const r = DATA.find(x=>x.id===id); if (r) r.comm_status = cs;
+    });
+    if (state.logs) Object.entries(state.logs).forEach(([id,entries]) => { logs[id] = entries; });
+  } catch(e) {}
+}
+
+// ── status helpers ────────────────────────────────────────────────────────────
+const FLAGGED_SET = new Set(['Filing Needed','Reinstatement Required','Tax Due','Invoice Due','License Renewal Needed','Outstanding Balance','Verify with Dallas','Inspection Due']);
+const isFlagged = r => FLAGGED_SET.has(r.status);
+const isCurrent = r => ['Current','Auto-pay','Active'].includes(r.status);
+const isCleared = r => ['Cleared','Superseded'].includes(r.status);
+
+function statusBadgeClass(s) {
+  if (s==='Reinstatement Required') return 'badge-red';
+  if (['Filing Needed','Invoice Due','Tax Due','Verify with Dallas'].includes(s)) return 'badge-yellow';
+  if (['License Renewal Needed','Inspection Due'].includes(s)) return 'badge-purple';
+  if (['Auto-pay','Outstanding Balance'].includes(s)) return 'badge-blue';
+  if (['Current','Cleared','Active','Superseded'].includes(s)) return 'badge-green';
+  return 'badge-gray';
+}
+function priDotClass(s) {
+  if (s==='Reinstatement Required') return 'pri-red';
+  if (['Filing Needed','Tax Due','Invoice Due','Verify with Dallas'].includes(s)) return 'pri-yellow';
+  if (['License Renewal Needed','Inspection Due'].includes(s)) return 'pri-purple';
+  if (['Outstanding Balance','Auto-pay'].includes(s)) return 'pri-blue';
+  if (['Current','Cleared','Active','Superseded'].includes(s)) return 'pri-green';
+  return 'pri-gray';
+}
+function rowClass(r) {
+  const c=[];
+  if (r.status==='Reinstatement Required') c.push('critical');
+  else if (isFlagged(r)) c.push('warning');
+  if (isCurrent(r)||isCleared(r)) c.push('muted');
+  return c.join(' ');
+}
+function daysUntil(d) {
+  if (!d) return null;
+  const dt=new Date(d), today=new Date(); today.setHours(0,0,0,0);
+  return Math.round((dt-today)/86400000);
+}
+function daysHtml(r) {
+  if (isCleared(r)||isCurrent(r)) return '';
+  const n=daysUntil(r.due_date); if (n===null) return '';
+  if (n<0) return `<span class="days-badge days-overdue">Overdue ${Math.abs(n)}d</span>`;
+  if (n<=30) return `<span class="days-badge days-urgent">${n}d</span>`;
+  return `<span class="days-badge days-ok">${n}d</span>`;
+}
+function commBadgeHtml(cs) {
+  const map={'Unstarted':'comm-unstarted','Notified':'comm-notified','Acknowledged':'comm-acknowledged','Pending Verification':'comm-pending','Cleared':'comm-cleared'};
+  return `<span class="comm-badge ${map[cs]||'comm-unstarted'}">${cs}</span>`;
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function fmtAmt(a) {
+  if (!a) return '';
+  return '$'+parseFloat(a).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+// ── stats ─────────────────────────────────────────────────────────────────────
+function updateStats() {
+  const fl=DATA.filter(isFlagged);
+  document.getElementById('stat-flagged').textContent=fl.length;
+  const out=fl.reduce((s,r)=>s+parseFloat(r.amount||0),0);
+  document.getElementById('stat-outstanding').textContent=out.toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('stat-awaiting').textContent=DATA.filter(r=>r.comm_status==='Notified').length;
+  document.getElementById('all-badge').textContent=fl.length;
+}
+
+// ── filter & render ───────────────────────────────────────────────────────────
+function visibleRows() {
+  return DATA.filter(r=>{
+    if (filterPortfolio && r.portfolio!==filterPortfolio) return false;
+    if (filterCategory && r.category!==filterCategory) return false;
+    if (filterStatus==='flagged' && !isFlagged(r)) return false;
+    if (filterStatus==='current' && !isCurrent(r)) return false;
+    if (filterStatus==='cleared' && !isCleared(r)) return false;
+    return true;
+  });
+}
+function renderTable() {
+  const rows=visibleRows();
+  document.getElementById('row-count').textContent=rows.length+' items';
+  document.getElementById('tbody').innerHTML=rows.map(r=>`
+    <tr class="data-row ${rowClass(r)}${activeRow===r.id?' active':''}" id="row-${r.id}" onclick="toggleRow('${r.id}')">
+      <td><span class="pri-dot ${priDotClass(r.status)}"></span></td>
+      <td class="col-entity">
+        <div class="entity-name">${r.entity}</div>
+        <div class="entity-sub">${r.portfolio} · ${r.address}</div>
+      </td>
+      <td style="font-size:12px;font-weight:600;color:#475569;text-align:center">${r.unit||'—'}</td>
+      <td style="font-size:12px;color:#64748b;text-align:center">${r.category}</td>
+      <td style="text-align:center"><span class="badge ${statusBadgeClass(r.status)}">${r.status}</span></td>
+      <td style="font-size:12px;color:#64748b;text-align:center">${fmtDate(r.due_date)}${daysHtml(r)}</td>
+      <td style="font-size:12px;font-weight:600;color:#b91c1c;text-align:center">${r.amount&&parseFloat(r.amount)>0?fmtAmt(r.amount):''}</td>
+      <td>${commBadgeHtml(r.comm_status)}</td>
+    </tr>`).join('');
+}
+
+// ── nav ───────────────────────────────────────────────────────────────────────
+function filterBy(port,cat) {
+  filterPortfolio=port; filterCategory=cat;
+  document.querySelectorAll('.cat-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('nav-all').classList.toggle('active',!port);
+  if (port&&cat) {
+    const el=document.querySelector(`.cat-item[data-portfolio="${port}"][data-category="${cat}"]`);
+    if (el) el.classList.add('active');
+  }
+  renderTable();
+}
+function togglePort(p) { document.getElementById('pg-'+p).classList.toggle('expanded'); }
+function setFilter(f,btn) {
+  filterStatus=f;
+  document.querySelectorAll('.pill').forEach(el=>el.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+// ── overview ──────────────────────────────────────────────────────────────────
+function toggleOverview() {
+  document.getElementById('overview-section').classList.toggle('collapsed');
+  const ch=document.getElementById('ov-chevron');
+  ch.style.transform=document.getElementById('overview-section').classList.contains('collapsed')?'rotate(-90deg)':'rotate(0deg)';
+}
+
+// ── detail panel ─────────────────────────────────────────────────────────────
+const COMM_STEPS=['Unstarted','Notified','Acknowledged','Pending Verification','Cleared'];
+function toggleRow(id) {
+  if (activeRow===id) { closePanel(); return; }
+  activeRow=id;
+  document.querySelectorAll('.data-row').forEach(el=>el.classList.remove('active'));
+  document.getElementById('row-'+id)?.classList.add('active');
+  const r=DATA.find(x=>x.id===id); if (r) openPanel(r);
+}
+function openPanel(r) {
+  document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('dp-entity').textContent=r.entity;
+  document.getElementById('dp-sub').textContent=r.portfolio+' · '+r.category+(r.address?' · '+r.address:'')+(r.unit?' — Unit '+r.unit:'');
+  const sb=document.getElementById('dp-status-badge');
+  sb.textContent=r.status; sb.className='badge '+statusBadgeClass(r.status);
+  const n=daysUntil(r.due_date), db=document.getElementById('dp-days-badge');
+  if (n!==null&&isFlagged(r)) {
+    db.textContent=n<0?'Overdue '+Math.abs(n)+'d':n+'d until due';
+    db.className='days-badge '+(n<0?'days-overdue':n<=30?'days-urgent':'days-ok');
+  } else db.textContent=r.due_date?fmtDate(r.due_date):'';
+  document.getElementById('dp-source').textContent=r.source_status||'—';
+  document.getElementById('dp-amount').textContent=r.amount?fmtAmt(r.amount):'—';
+  document.getElementById('dp-responsible').textContent=r.responsible||'—';
+  document.getElementById('dp-action').textContent=r.action_required||'No action required.';
+  document.getElementById('dp-notes').textContent=r.notes||'—';
+  // comm flow
+  const stepIdx=COMM_STEPS.indexOf(r.comm_status);
+  document.getElementById('dp-comm-flow').innerHTML=COMM_STEPS.map((s,i)=>{
+    const cls=i<stepIdx?'done':i===stepIdx?'current':'';
+    return `<div class="cf-step ${cls}" onclick="setCommStep(${i})">
+      <div class="cf-dot ${i<stepIdx?'done':i===stepIdx?'current':''}">${i<stepIdx?'✓':''}</div>
+      <div class="cf-label">${s}</div></div>`;
+  }).join('');
+  renderLog(r.id);
+  // portals
+  const pDiv=document.getElementById('dp-portals'), links=[];
+  if (r.action_url) links.push([r.action_url,'🔗',r.action_url.includes('drive.google')?'Source doc':'Action portal']);
+  if (r.source_doc) links.push([r.source_doc,'📄','Source doc']);
+  if (links.length) {
+    document.getElementById('dp-portals-section').style.display='';
+    pDiv.innerHTML=links.map(([url,ico,lbl])=>`<a class="portal-link" href="${url}" target="_blank"><span class="pl-icon">${ico}</span>${lbl}</a>`).join('');
+  } else document.getElementById('dp-portals-section').style.display='none';
+  // RA
+  if (r.registered_agent||r.ra_account||r.csc_status) {
+    document.getElementById('dp-ra-section').style.display='';
+    document.getElementById('dp-ra').innerHTML=[
+      ['Agent',r.registered_agent],['Account',r.ra_account],
+      ['CSC Status',r.csc_status],['CSC Thru',r.csc_thru],
+      ['State',r.state],['Entity ID',r.entity_id],
+    ].filter(([,v])=>v).map(([k,v])=>`<div class="ra-row"><span class="ra-key">${k}</span><span class="ra-val">${v}</span></div>`).join('');
+  } else document.getElementById('dp-ra-section').style.display='none';
+}
+function closePanel() {
+  activeRow=null;
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelectorAll('.data-row').forEach(el=>el.classList.remove('active'));
+}
+document.addEventListener('click',e=>{
+  const panel=document.getElementById('detail-panel');
+  if (panel.classList.contains('open')&&!panel.contains(e.target)&&!e.target.closest('.data-row')&&!e.target.closest('.modal-overlay')) closePanel();
+});
+
+// ── comm flow ─────────────────────────────────────────────────────────────────
+function setCommStep(i) {
+  if (!activeRow) return;
+  const r=DATA.find(x=>x.id===activeRow); if (!r) return;
+  const old=r.comm_status, newS=COMM_STEPS[i];
+  if (old===newS) return;
+  r.comm_status=newS;
+  const ts=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  if (!logs[r.id]) logs[r.id]=[];
+  logs[r.id].push({date:ts,text:`Status changed: ${old} → ${newS}`});
+  saveState(); openPanel(r); renderTable(); updateStats();
+}
+function cycleCommStatus() {
+  if (!activeRow) return;
+  const r=DATA.find(x=>x.id===activeRow);
+  setCommStep(Math.min(COMM_STEPS.indexOf(r.comm_status)+1,COMM_STEPS.length-1));
+}
+
+// ── log ───────────────────────────────────────────────────────────────────────
+function renderLog(id) {
+  const entries=logs[id]||[];
+  document.getElementById('dp-log').innerHTML=entries.length
+    ?entries.slice().reverse().map(e=>`<div class="log-entry"><span class="log-date">${e.date} — </span>${e.text}</div>`).join('')
+    :'<div style="font-size:11px;color:#94a3b8">No activity yet.</div>';
+}
+function addLog() {
+  if (!activeRow) return;
+  const input=document.getElementById('log-input'), txt=input.value.trim(); if (!txt) return;
+  if (!logs[activeRow]) logs[activeRow]=[];
+  const ts=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  logs[activeRow].push({date:ts,text:txt});
+  input.value=''; renderLog(activeRow); saveState();
+}
+
+// ── draft email ───────────────────────────────────────────────────────────────
+function draftEmail() {
+  const r=DATA.find(x=>x.id===activeRow); if (!r) return;
+  const subj=encodeURIComponent(`Action required: ${r.entity} — ${r.status}`);
+  const body=encodeURIComponent(`Hi,\n\nPlease action the following compliance item:\n\nEntity: ${r.entity}\nStatus: ${r.status}\nDue: ${fmtDate(r.due_date)}\nAmount: ${r.amount?fmtAmt(r.amount):'N/A'}\n\nAction required:\n${r.action_required||'See tracker.'}\n\nThank you,\nBlakeworth Management`);
+  window.open(`mailto:?subject=${subj}&body=${body}`);
+}
+
+// ── instructions modal ────────────────────────────────────────────────────────
+function openInstructions() { document.getElementById('instr-modal').classList.add('open'); }
+function closeInstructions(e) {
+  if (!e||e.target===document.getElementById('instr-modal')) document.getElementById('instr-modal').classList.remove('open');
+}
+
+// ── init ──────────────────────────────────────────────────────────────────────
+loadState();
+updateStats();
+renderTable();
+</script>
+</body>
+</html>
