@@ -166,6 +166,8 @@ td.col-entity{text-align:left}
 .portal-link.link-portal:hover{background:#dbeafe}
 .portal-link.link-source{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
 .portal-link.link-source:hover{background:#dcfce7}
+.de-file-chip{display:inline-flex;align-items:center;margin-top:4px;padding:4px 10px;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;font-size:11px;font-weight:600;color:#15803d;cursor:pointer;user-select:none;transition:background .15s}
+.de-file-chip:hover{background:#dcfce7}
 .portal-link .pl-icon{font-size:13px}
 
 /* RA rows */
@@ -2171,6 +2173,7 @@ const DATA = [
   {
     "id": "HLD-DE-001",
     "portal_url": "https://icis.corp.delaware.gov/",
+    "de_file_num": "7157623",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2198,6 +2201,7 @@ const DATA = [
   {
     "id": "HLD-DE-002",
     "portal_url": "https://icis.corp.delaware.gov/",
+    "de_file_num": "7157433",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2252,6 +2256,7 @@ const DATA = [
   {
     "id": "HLD-DE-004",
     "portal_url": "https://icis.corp.delaware.gov/",
+    "de_file_num": "3138393",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2279,6 +2284,7 @@ const DATA = [
   {
     "id": "HLD-DE-005",
     "portal_url": "https://icis.corp.delaware.gov/",
+    "de_file_num": "3073248",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2306,6 +2312,7 @@ const DATA = [
   {
     "id": "HLD-DE-006",
     "portal_url": "https://icis.corp.delaware.gov/",
+    "de_file_num": "7585818",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -4768,7 +4775,10 @@ function openPanel(r) {
   if (r.source_doc && r.source_doc !== r.action_url) links.push([r.source_doc,'🗂️','View source file →']);
   if (links.length) {
     document.getElementById('dp-portals-section').style.display='';
-    pDiv.innerHTML=links.map(([url,ico,lbl])=>`<a class="portal-link ${lbl.includes('portal')?'link-portal':'link-source'}" href="${url}" target="_blank"><span class="pl-icon">${ico}</span>${lbl}</a>`).join('');
+    const fileNumChip = r.de_file_num
+      ? `<span class="de-file-chip" title="Click to copy Delaware file number" onclick="navigator.clipboard.writeText('${r.de_file_num}');this.textContent='✓ Copied!';setTimeout(()=>this.textContent='File # ${r.de_file_num} 📋',1200)">File # ${r.de_file_num} 📋</span>`
+      : '';
+    pDiv.innerHTML=links.map(([url,ico,lbl])=>`<a class="portal-link ${lbl.includes('portal')?'link-portal':'link-source'}" href="${url}" target="_blank"><span class="pl-icon">${ico}</span>${lbl}</a>`).join('')+fileNumChip;
   } else document.getElementById('dp-portals-section').style.display='none';
   // RA
   if (r.registered_agent||r.ra_account||r.csc_status) {
