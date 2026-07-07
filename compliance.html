@@ -4747,9 +4747,10 @@ function openPanel(r) {
   const stepIdx=COMM_STEPS.indexOf(r.comm_status);
   document.getElementById('dp-comm-flow').innerHTML=COMM_STEPS.map((s,i)=>{
     const cls=i<stepIdx?'done':i===stepIdx?'current':'';
+    const label = (i === COMM_STEPS.length - 1) ? terminalLabel(r.category) : s;
     return `<div class="cf-step ${cls}" onclick="setCommStep(${i})">
       <div class="cf-dot ${i<stepIdx?'done':i===stepIdx?'current':''}">${i<stepIdx?'✓':''}</div>
-      <div class="cf-label">${s}</div></div>`;
+      <div class="cf-label">${label}</div></div>`;
   }).join('');
   renderLog(r.id);
   // portals
@@ -4815,11 +4816,52 @@ function addLog() {
 }
 
 // ── draft email ───────────────────────────────────────────────────────────────
+function terminalLabel(category) {
+  const map = {
+    'LLC Filing': 'Good Standing',
+    'Registered Agent': 'Good Standing',
+    'Property Tax': 'Paid',
+    'Utility': 'Paid',
+    'Rental License': 'Licensed',
+    'Lead Certification': 'Certified',
+    'MDE': 'Certified',
+    'Inspection': 'Passed',
+    'Citation': 'Cleared',
+  };
+  return map[category] || 'Cleared';
+}
+
 function draftEmail() {
   const r=DATA.find(x=>x.id===activeRow); if (!r) return;
-  const subj=encodeURIComponent(`Action required: ${r.entity} — ${r.status}`);
-  const body=encodeURIComponent(`Hi,\n\nPlease action the following compliance item:\n\nEntity: ${r.entity}\nStatus: ${r.status}\nDue: ${fmtDate(r.due_date)}\nAmount: ${r.amount?fmtAmt(r.amount):'N/A'}\n\nAction required:\n${r.action_required||'See tracker.'}\n\nThank you,\nBlakeworth Management`);
-  window.open(`mailto:?subject=${subj}&body=${body}`);
+  // Resolve contact
+  const CONTACTS_LOCAL={
+    'Dallas':    {name:'Dallas Basha',email:'dallas@blakeworth.com'},
+    'Steve':     {name:'Steve Riegger',email:'propertymanager@americanmanage.com'},
+    'Marjorie':  {name:'Marjorie Feehan Roberts',email:'marjorie@4frontmgmt.com'},
+    'Maya':      {name:'Maya Miyazaki',email:'maya@blakeworth.com'},
+    'CSC':       {name:'Zachary Tolliver',email:'Zachary.Tolliver@cscglobal.com'},
+    'Steve — American Management': {name:'Steve Riegger',email:'propertymanager@americanmanage.com'},
+    'Marj/Kristina — Forefront Property Management': {name:'Marjorie Feehan Roberts',email:'marjorie@4frontmgmt.com'},
+  };
+  const ct = CONTACTS_LOCAL[r.responsible] || {};
+  const toEmail = ct.email || '';
+  const firstName = ct.name ? ct.name.split(' ')[0] : (r.responsible || 'Team');
+  const sourceLink = r.source_doc ? `\nSource document: ${r.source_doc}\n` : '';
+  const amtLine = r.amount && parseFloat(r.amount) > 0 ? `\nAmount: ${fmtAmt(r.amount)}` : '';
+  const dueLine = r.due_date ? `\nDue date: ${fmtDate(r.due_date)}` : '';
+  const subj = encodeURIComponent(`Action Required: ${r.entity} — ${r.category}`);
+  const body = encodeURIComponent(
+    `Hi ${firstName},\n\nThese are the items that need your attention. Could you please assist us with the information below?\n\n` +
+    `————————————————————\n` +
+    `Entity / Property: ${r.entity}${r.address && r.address !== 'Entity-level' ? ' — ' + r.address : ''}${r.unit ? ', ' + r.unit : ''}\n` +
+    `Category: ${r.category}\n` +
+    `Current status: ${r.status}${dueLine}${amtLine}\n` +
+    `\nAction needed:\n${r.action_required || 'Please review and advise.'}${sourceLink}\n` +
+    `————————————————————\n\n` +
+    `Thank you,\nMaya Miyazaki\nManager – Real Estate Operations\nBlakeworth Management\nmaya@blakeworth.com | +1 (202) 919-7788`
+  );
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1${toEmail ? '&to=' + encodeURIComponent(toEmail) : ''}&su=${subj}&body=${body}`;
+  window.open(gmailUrl, '_blank');
 }
 
 // ── instructions modal ────────────────────────────────────────────────────────
