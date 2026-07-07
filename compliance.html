@@ -4632,7 +4632,6 @@ function renderSidebar() {
       return `<div class="cat-item" data-portfolio="${port}" data-category="${cat}" onclick="filterBy('${port}','${cat}')">${cat}<span class="${badgeClass}">${badgeText}</span></div>`;
     }).join('');
   });
-}
   // Update ov-card summary counts
   ['JHU','SLP','HOLDING','DC'].forEach(port => {
     const el = document.getElementById('ovc-' + port);
@@ -4828,6 +4827,7 @@ function closeInstructions(e) {
 // ── init ──────────────────────────────────────────────────────────────────────
 loadState();
 updateStats();
+renderSidebar();
 renderTable();
 </script>
 </body>
