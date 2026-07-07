@@ -324,7 +324,7 @@ td.col-entity{text-align:left}
         <div id="dp-ra"></div>
       </div>
       <div class="dp-section" id="dp-portals-section">
-        <div class="dp-section-title">Portal Link</div>
+        <div class="dp-section-title">Links & Documents</div>
         <div id="dp-portals"></div>
       </div>
       <div class="dp-section">
@@ -951,7 +951,7 @@ const DATA = [
     "category": "LLC Filing",
     "due_date": "2027-04-01 00:00:00",
     "status": "Reinstatement Required",
-    "source_status": "CSC: Revoked (thru 07/01/2026)",
+    "source_status": "CSC: Revoked",
     "cleared_at": "",
     "state": "",
     "entity_id": "",
@@ -2170,6 +2170,7 @@ const DATA = [
   },
   {
     "id": "HLD-DE-001",
+    "portal_url": "https://icis.corp.delaware.gov/",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2177,7 +2178,7 @@ const DATA = [
     "category": "LLC Filing",
     "due_date": "2025-06-01",
     "status": "Tax Due",
-    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "source_status": "CSC: Cease Good Standing",
     "cleared_at": "",
     "state": "Delaware",
     "entity_id": "7157623",
@@ -2196,6 +2197,7 @@ const DATA = [
   },
   {
     "id": "HLD-DE-002",
+    "portal_url": "https://icis.corp.delaware.gov/",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2203,7 +2205,7 @@ const DATA = [
     "category": "LLC Filing",
     "due_date": "2025-06-01",
     "status": "Tax Due",
-    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "source_status": "CSC: Cease Good Standing",
     "cleared_at": "",
     "state": "Delaware",
     "entity_id": "7157433",
@@ -2222,6 +2224,7 @@ const DATA = [
   },
   {
     "id": "HLD-DE-003",
+    "portal_url": "https://icis.corp.delaware.gov/",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2229,7 +2232,7 @@ const DATA = [
     "category": "LLC Filing",
     "due_date": "2023-06-01",
     "status": "Reinstatement Required",
-    "source_status": "CSC: Cancelled, Failure To Pay Tax (thru 07/04/2026)",
+    "source_status": "CSC: Cancelled, Failure To Pay Tax",
     "cleared_at": "",
     "state": "Delaware",
     "entity_id": "5653981",
@@ -2248,6 +2251,7 @@ const DATA = [
   },
   {
     "id": "HLD-DE-004",
+    "portal_url": "https://icis.corp.delaware.gov/",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2255,7 +2259,7 @@ const DATA = [
     "category": "LLC Filing",
     "due_date": "2025-06-01",
     "status": "Tax Due",
-    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "source_status": "CSC: Cease Good Standing",
     "cleared_at": "",
     "state": "Delaware",
     "entity_id": "3138393",
@@ -2274,6 +2278,7 @@ const DATA = [
   },
   {
     "id": "HLD-DE-005",
+    "portal_url": "https://icis.corp.delaware.gov/",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2281,7 +2286,7 @@ const DATA = [
     "category": "LLC Filing",
     "due_date": "2025-06-01",
     "status": "Tax Due",
-    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "source_status": "CSC: Cease Good Standing",
     "cleared_at": "",
     "state": "Delaware",
     "entity_id": "3073248",
@@ -2300,6 +2305,7 @@ const DATA = [
   },
   {
     "id": "HLD-DE-006",
+    "portal_url": "https://icis.corp.delaware.gov/",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2307,7 +2313,7 @@ const DATA = [
     "category": "LLC Filing",
     "due_date": "2025-06-01",
     "status": "Tax Due",
-    "source_status": "CSC: Cease Good Standing (thru 07/04/2026)",
+    "source_status": "CSC: Cease Good Standing",
     "cleared_at": "",
     "state": "Delaware",
     "entity_id": "7585818",
@@ -2326,6 +2332,7 @@ const DATA = [
   },
   {
     "id": "HLD-DE-007",
+    "portal_url": "https://icis.corp.delaware.gov/",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2333,7 +2340,7 @@ const DATA = [
     "category": "LLC Filing",
     "due_date": "2023-06-01",
     "status": "Reinstatement Required",
-    "source_status": "CSC: Cancelled, Failure To Pay Tax (thru 07/04/2026)",
+    "source_status": "CSC: Cancelled, Failure To Pay Tax",
     "cleared_at": "",
     "state": "Delaware",
     "entity_id": "7565891",
@@ -2352,6 +2359,7 @@ const DATA = [
   },
   {
     "id": "HLD-DE-008",
+    "portal_url": "https://icis.corp.delaware.gov/",
     "portfolio": "HOLDING",
     "address": "Entity-level",
     "unit": "",
@@ -2385,7 +2393,7 @@ const DATA = [
     "category": "Registered Agent",
     "due_date": "",
     "status": "Current",
-    "source_status": "CSC: Active (thru 06/01/2026)",
+    "source_status": "CSC: Active",
     "cleared_at": "Confirmed by CSC statement Jun 2026",
     "state": "",
     "entity_id": "",
@@ -4755,6 +4763,7 @@ function openPanel(r) {
   renderLog(r.id);
   // portals
   const pDiv=document.getElementById('dp-portals'), links=[];
+  if (r.portal_url) links.push([r.portal_url,'🌐','Go to portal →']);
   if (r.action_url) links.push([r.action_url, r.action_url.includes('drive.google')?'🗂️':'🌐', r.action_url.includes('drive.google')?'View source file →':'Go to portal →']);
   if (r.source_doc && r.source_doc !== r.action_url) links.push([r.source_doc,'🗂️','View source file →']);
   if (links.length) {
