@@ -464,7 +464,6 @@ html[data-mode="dark"] .greeting {
 .filter-tab[data-port="slp"] .dot { background: var(--slp-bar); }
 .filter-tab[data-port="jhu"] .dot { background: var(--jhu-bar); }
 .filter-tab[data-port="dc"]  .dot { background: var(--dc-bar); }
-.filter-tab[data-port="ins"] .dot { background: #2E7D32; }
 .filter-tab .label  { font-size: 11px; font-weight: 600; }
 .filter-tab .count  {
   font-size: 10px; font-weight: 700;
@@ -476,33 +475,6 @@ html[data-mode="dark"] .greeting {
   background: rgba(255,255,255,0.2);
   color: inherit;
 }
-/* Insurance panel */
-.ins-panel { padding: 12px 14px 24px; }
-.ins-header-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-.ins-title { font-size:15px; font-weight:700; color:var(--text); }
-.ins-totals { display:flex; gap:12px; }
-.ins-total-chip { background:var(--chip-bg); border:1px solid var(--chip-border); border-radius:10px; padding:4px 10px; font-size:11px; color:var(--text-2); }
-.ins-total-chip strong { color:var(--text); }
-.ins-note { font-size:10px; color:var(--text-3); margin-bottom:14px; font-style:italic; }
-.ins-group { background:var(--card); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; }
-.ins-group-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--section-bg); border-bottom:1px solid var(--border); }
-.ins-group-llc { font-size:12px; font-weight:700; color:var(--text); }
-.ins-group-agent { font-size:10px; color:var(--text-3); }
-.ins-group-total { font-size:12px; font-weight:700; color:var(--text-2); }
-.ins-table { width:100%; border-collapse:collapse; }
-.ins-table th { font-size:9px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.5px; padding:6px 14px; text-align:left; background:var(--expand-bg); }
-.ins-table td { font-size:11px; color:var(--text); padding:8px 14px; border-top:1px solid var(--border); vertical-align:middle; }
-.ins-table tr:hover td { background:var(--icon-bg); }
-.ins-amt { font-weight:700; font-variant-numeric:tabular-nums; }
-.ins-mo { font-size:10px; color:var(--text-3); }
-.ins-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:700; text-transform:uppercase; }
-.ins-badge.current { background:#E8F5EF; color:#1E6E4F; }
-.ins-badge.pastdue { background:#FDECEA; color:#C0392B; }
-.ins-badge.pending { background:#FFF8E1; color:#856404; }
-.ins-agents-bar { display:flex; gap:10px; padding:10px 14px; border-top:1px solid var(--border); background:var(--section-bg); flex-wrap:wrap; }
-.ins-agent-card { display:flex; flex-direction:column; font-size:10px; }
-.ins-agent-name { font-weight:700; color:var(--text); }
-.ins-agent-info { color:var(--text-3); }
 
 
 /* Sort toggle */
@@ -1208,10 +1180,7 @@ html[data-mode="dark"] .tc-btn.c-holdoff { color: #C47F1A; border-color: #C47F1A
     <button class="filter-tab" data-port="dc" onclick="setPortfolio('dc')">
       <span class="dot"></span><span class="label">DC</span><span class="count" id="count-dc">0</span>
     </button>
-    <button class="filter-tab" data-port="ins" onclick="setPortfolio('ins')">
-      <span class="dot"></span><span class="label">Insurance</span>
-    </button>
-  </div>
+    div>
 
   <!-- ── SORT TOGGLE ── -->
   <div class="sort-row">
@@ -1226,31 +1195,7 @@ html[data-mode="dark"] .tc-btn.c-holdoff { color: #C47F1A; border-color: #C47F1A
   </div>
 
 
-  <!-- ── INSURANCE PANEL ── -->
-  <div id="insurancePanel" class="ins-panel" style="display:none;">
-    <div class="ins-header-row">
-      <div class="ins-title">🛡️ Insurance Overview</div>
-      <div class="ins-totals">
-        <div class="ins-total-chip">Annual: <strong id="insTotalAnnual">—</strong></div>
-        <div class="ins-total-chip">Monthly: <strong id="insTotalMonthly">—</strong></div>
-      </div>
-    </div>
-    <div class="ins-note" id="insNote"></div>
-    <div id="insGroups"></div>
-
-    <!-- Agent directory -->
-    <div class="ins-agents-bar">
-      <div class="ins-agent-card">
-        <span class="ins-agent-name">Tom French — SLP/Bethlehem</span>
-        <span class="ins-agent-info">📞 610-725-8700 · Policy prefix 98-GY / 98-GC / 98-GD / 98-E9</span>
-      </div>
-      <div class="ins-agent-card">
-        <span class="ins-agent-name">Rhea Baker RICP® — DC/JHU</span>
-        <span class="ins-agent-info">📞 703-847-6880 · VA-544283</span>
-      </div>
-    </div>
-  </div>
-
+  
   <!-- ── RECENT WINS ── -->
   <div class="wins-section" id="winsSection" style="display:none;">
     <div class="wins-header">
@@ -1694,136 +1639,20 @@ function pickVoice() { closeCreateChooser(); openVoiceModal(); }
 function pickWrite() { closeCreateChooser(); openWriteModal(); }
 
 
-// ════════════════════════════════════════════════════════
-// INSURANCE DATA + RENDERER
-// ════════════════════════════════════════════════════════
-const INS_DATA = [
-  {
-    llc: "PIERCE ST LLC",
-    agent: "Tom French", phone: "610-725-8700",
-    properties: [
-      { addr: "527 E Packer Ave, Bethlehem PA",  annual: 879,  renewal: "Sep 5",  status: "current" },
-      { addr: "620 Pierce St, Bethlehem PA",     annual: 1272, renewal: "Sep 5",  status: "current" },
-      { addr: "618 Pierce St, Bethlehem PA",     annual: 1272, renewal: "Sep 5",  status: "current" },
-      { addr: "612 Pierce St, Bethlehem PA",     annual: 923,  renewal: "Sep 5",  status: "current" },
-      { addr: "616 Pierce St, Bethlehem PA",     annual: 769,  renewal: "Jul 1",  status: "current" },
-      { addr: "614 Pierce St, Bethlehem PA",     annual: 769,  renewal: "Jul 1",  status: "current" },
-      { addr: "316 E 5th St, Bethlehem PA",      annual: 594,  renewal: "Dec 3",  status: "current" },
-      { addr: "528 E 5th St, Bethlehem PA",      annual: 696,  renewal: "Dec 29", status: "current" },
-      { addr: "526 E 5th St, Bethlehem PA",      annual: 670,  renewal: "Dec 29", status: "current" },
-    ]
-  },
-  {
-    llc: "114 W 4TH ST LLC",
-    agent: "Tom French", phone: "610-725-8700",
-    properties: [
-      { addr: "114 W 4th St, Bethlehem PA", annual: 1314, renewal: "Jun 7", status: "current" },
-    ]
-  },
-  {
-    llc: "3538 6TH ST NW LLC",
-    agent: "Rhea Baker RICP®", phone: "703-847-6880",
-    properties: [
-      { addr: "3538 6th St NW, Washington DC", annual: null, renewal: "—", status: "pastdue", note: "⚠️ $195 past due — contact Rhea Baker" },
-    ]
-  },
-  // 14 additional LLCs pending — log back into State Farm to complete
-  { llc: "2529 E 4TH ST LLC",                     agent: "Tom French",       phone: "610-725-8700", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "3000 N CALVERT ST, LLC",                 agent: "Rhea Baker RICP®", phone: "703-847-6880", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "3106 N CALVERT LLC",                     agent: "Rhea Baker RICP®", phone: "703-847-6880", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "505 THOMAS ST LLC",                      agent: "Tom French",       phone: "610-725-8700", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "ABELL ST, LLC",                          agent: "Rhea Baker RICP®", phone: "703-847-6880", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "CALVERT ST LLC",                         agent: "Rhea Baker RICP®", phone: "703-847-6880", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "FAIRVIEW ST LLC",                        agent: "Tom French",       phone: "610-725-8700", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "HILLSIDE AVE 621.5, LLC",                agent: "Tom French",       phone: "610-725-8700", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "LEHIGH PROPERTIES, LLC",                 agent: "Tom French",       phone: "610-725-8700", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "LEHIGH PROPERTIES & LORIOT PROPERTIES",  agent: "Tom French",       phone: "610-725-8700", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "LORIOT PROPERTIES, LLC",                 agent: "Tom French",       phone: "610-725-8700", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "MONTCLAIR AVE LLC",                      agent: "Rhea Baker RICP®", phone: "703-847-6880", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-  { llc: "PACKER AVE, LLC",                        agent: "Tom French",       phone: "610-725-8700", properties: [{ addr: "Pending — State Farm login needed", annual: null, renewal: "—", status: "pending" }] },
-];
-
-function fmt$(n) { return n != null ? "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2}) : "—"; }
-function fmtMo(n) { return n != null ? "$" + (n/12).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2}) : "—"; }
-
-function renderInsurance() {
-  const panel = document.getElementById("insurancePanel");
-  if (!panel) return;
-
-  // Totals (only confirmed amounts)
-  let totalAnnual = 0, confirmedCount = 0;
-  INS_DATA.forEach(g => g.properties.forEach(p => { if (p.annual) { totalAnnual += p.annual; confirmedCount++; } }));
-  document.getElementById("insTotalAnnual").textContent  = fmt$(totalAnnual);
-  document.getElementById("insTotalMonthly").textContent = fmtMo(totalAnnual);
-  const pendingLLCs = INS_DATA.filter(g => g.properties.some(p => p.status === "pending")).length;
-  document.getElementById("insNote").textContent = confirmedCount + " properties confirmed · " + pendingLLCs + " LLCs pending State Farm login";
-
-  // Groups
-  const container = document.getElementById("insGroups");
-  container.innerHTML = "";
-  INS_DATA.forEach(g => {
-    const llcTotal = g.properties.reduce((s,p) => s + (p.annual||0), 0);
-    const hasPastDue = g.properties.some(p => p.status === "pastdue");
-
-    const div = document.createElement("div");
-    div.className = "ins-group";
-    div.innerHTML = `
-      <div class="ins-group-header">
-        <div>
-          <div class="ins-group-llc">${hasPastDue ? "⚠️ " : ""}${g.llc}</div>
-          <div class="ins-group-agent">Agent: ${g.agent} · ${g.phone}</div>
-        </div>
-        <div class="ins-group-total">${llcTotal ? fmt$(llcTotal) + "/yr · " + fmtMo(llcTotal) + "/mo" : "—"}</div>
-      </div>
-      <table class="ins-table">
-        <thead><tr>
-          <th>Property</th>
-          <th>Annual</th>
-          <th>Monthly</th>
-          <th>Renewal</th>
-          <th>Status</th>
-        </tr></thead>
-        <tbody>
-          ${g.properties.map(p => `
-            <tr>
-              <td>${p.note ? p.addr + "<br><small style='color:var(--danger)'>" + p.note + "</small>" : p.addr}</td>
-              <td class="ins-amt">${fmt$(p.annual)}</td>
-              <td class="ins-mo">${fmtMo(p.annual)}</td>
-              <td>${p.renewal}</td>
-              <td><span class="ins-badge ${p.status}">${p.status === "current" ? "✓ Current" : p.status === "pastdue" ? "⚠ Past Due" : "Pending"}</span></td>
-            </tr>`).join("")}
-        </tbody>
-      </table>
-    `;
-    container.appendChild(div);
-  });
-}
-
 // Filter + sort UI handlers
 function setPortfolio(p) {
   state.portfolio = p;
   localStorage.setItem("bw_filter", p);
   document.querySelectorAll(".filter-tab").forEach(b => b.classList.toggle("active", b.dataset.port === p));
-  const insPanel  = document.getElementById("insurancePanel");
   const taskList  = document.getElementById("taskList");
   const sortRow   = document.querySelector(".sort-row");
   const winsSection = document.getElementById("winsSection");
-  if (p === "ins") {
-    if (insPanel)  insPanel.style.display  = "block";
-    if (taskList)  taskList.style.display  = "none";
-    if (sortRow)   sortRow.style.display   = "none";
-    if (winsSection) winsSection.style.display = "none";
-    renderInsurance();
-  } else {
-    if (insPanel)  insPanel.style.display  = "none";
     if (taskList)  taskList.style.display  = "block";
     if (sortRow)   sortRow.style.display   = "";
     renderAll();
   }
-}
 function setSort(s) {
   state.sort = s;
-  localStorage.setItem("bw_sort", s);
   document.querySelectorAll(".sort-btn").forEach(b => b.classList.toggle("active", b.dataset.sort === s));
   renderAll();
 }
