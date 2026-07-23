@@ -1471,6 +1471,10 @@ function inferPortfolio(task) {
   if (p === "SLP PORTFOLIO" || p === "SLP" || p === "SOUTHLIGHT") return "SLP";
   if (p === "JHU PORTFOLIO" || p === "JHU") return "JHU";
   if (p === "DC PORTFOLIO" || p === "DC" || p === "WASHINGTON DC") return "DC";
+   // Handle "JHU - Building" / "SLP - Address" naming pattern
+   if (p.startsWith("JHU -")) return "JHU";
+   if (p.startsWith("SLP -")) return "SLP";
+   if (p.startsWith("DC -")) return "DC";
   for (const port of ["SLP","JHU","DC"]) {
     if (PROPERTIES_BY_PORTFOLIO[port].some(addr => p.indexOf(addr) >= 0 || addr.indexOf(p) >= 0)) return port;
   }
